@@ -13,7 +13,7 @@ module.exports = function () {
     // app.use(express.static(process.cwd() + '/public'));
 
     // 도메인 추가
-    require('../src/app/User/userRoute')(app);
+    require('../src/app/Record/recordRoute')(app);
 
     return app;
 };
