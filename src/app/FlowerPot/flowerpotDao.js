@@ -1,8 +1,8 @@
 // 화분 조회
 async function selectUserFlowerpot(connection, userIdx) {
     const selectUserFlowerpotQuery = `
-    SELECT d.idx as idx,
-          p.idx as idx,
+    SELECT d.idx as flowerDataIdx,
+          p.idx as flowerPotIdx,
           d.name,
           d.engName,
           d.flowerImgUrl,

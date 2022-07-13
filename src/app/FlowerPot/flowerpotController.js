@@ -3,6 +3,7 @@ const flowerpotService = require("./flowerpotService");
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response, errResponse} = require("../../../config/response");
 
+
 /**
  * API No.1
  * API Name : 화분 조회 API

@@ -9,6 +9,6 @@ exports.retrieveFlowerpot = async function (userIdx) {
   
     connection.release();
   
-    return userFlowerpotResult[0];
+    return userFlowerpotResult;
   };
   
