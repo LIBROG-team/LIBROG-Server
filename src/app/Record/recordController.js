@@ -55,6 +55,18 @@ exports.postRecords = async function(req, res){
         return res.send(errResponse(baseResponse.RECORDS_BOOKIDX_EMPTY));
     }else if(bookIdx <= 0){
         return res.send(errResponse(baseResponse.RECORDS_BOOKIDX_LENGTH));
+    }else if(!userIdx){
+        return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
+    }else if(userIdx <= 0){
+        return res.send(errResponse(baseResponse.USER_USERIDX_LENGTH));
+    }else if(!flowerPotIdx){
+        return res.send(errResponse(baseResponse.RECORDS_FLOWERPOTIDX_EMPTY));
+    }else if(flowerPotIdx <= 0){
+        return res.send(errResponse(baseResponse.RECORDS_FLOWERPOTIDX_LENGTH));
+    }else if(quote.length > 1000){
+        return res.send(errResponse(baseResponse.RECORDS_QUOTE_LENGTH));
+    }else if(content.length > 10000){
+        return res.send(errResponse(baseResponse.RECORDS_CONTENT_LENGTH));
     }
     // starRating - 0~5 사이의 값인지만 validation
     if(starRating < 0 || starRating > 5){
@@ -85,6 +97,8 @@ exports.patchRecords = async function(req, res){
     // 여기서도 starRating Validation만 해줌.
     if(starRating < 0 || starRating > 5){
         return res.send(errResponse(baseResponse.RECORDS_RATING_LENGTH));
+    }else if(idx <= 0){
+        return res.send(errResponse(baseResponse.RECORDS_RECORDSIDX_LENGTH));
     }
     // 정규식 검사로 특수문자 등 못넣게(SQL injection 방지) 해야함.
     const patchRecordsParams = [starRating, quote, content, idx];
@@ -107,6 +121,9 @@ exports.patchRecords = async function(req, res){
  */
 exports.deleteRecords = async function(req, res){
     const recordsIdx = req.body.recordsIdx;
+    if(recordsIdx <= 0){
+        res.send(errResponse(baseResponse.RECORDS_RECORDSIDX_LENGTH));
+    }
     const deleteRecordsResult = await recordService.removeRecords(recordsIdx);
     return res.send(deleteRecordsResult);
 }
