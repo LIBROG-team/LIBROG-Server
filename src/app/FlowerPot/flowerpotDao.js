@@ -6,7 +6,6 @@ async function selectUserFlowerpot(connection, userIdx) {
           d.name,
           d.engName,
           d.flowerImgUrl,
-          d.flowerPotImgUrl,
           d.maxExp,
           d.bloomingPeriod,
           d.content,
@@ -17,7 +16,7 @@ async function selectUserFlowerpot(connection, userIdx) {
           p.recordCount
     FROM FlowerPot as p
           left join FlowerData as d on d.idx = p.flowerDataIdx and p.status='ACTIVE'
-  WHERE p.userIdx = ?
+    WHERE p.userIdx = ?
     `;
     const [userFlowerpotRow] = await connection.query(selectUserFlowerpotQuery, userIdx);
     return userFlowerpotRow;
