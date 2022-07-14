@@ -10,11 +10,11 @@ module.exports = function(app){
     app.get('/records/flowerpot/:flowerPotIdx', record.getFlowerPotRecords);
 
     // 2.3 독서 기록 추가 API
-    // app.post('/records/addition', record.postRecords);
+    app.post('/records/addition', record.postRecords);
 
     // 2.4 독서 기록 수정 API
-    // app.patch('/records/edit', record.patchRecords);
+    app.patch('/records/fix', record.patchRecords);
 
-    // 2.5 ㄷ고서 기록 삭제 API
-    // app.patch('/records/removal', record.deleteRecords);
+    // 2.5 독서 기록 삭제 API
+    app.patch('/records/removal', record.deleteRecords);
 }
