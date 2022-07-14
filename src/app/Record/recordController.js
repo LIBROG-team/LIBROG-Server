@@ -99,6 +99,10 @@ exports.patchRecords = async function(req, res){
         return res.send(errResponse(baseResponse.RECORDS_RATING_LENGTH));
     }else if(idx <= 0){
         return res.send(errResponse(baseResponse.RECORDS_RECORDSIDX_LENGTH));
+    }else if(quote.length > 1000){
+        return res.send(errResponse(baseResponse.RECORDS_QUOTE_LENGTH));
+    }else if(content.length > 10000){
+        return res.send(errResponse(baseResponse.RECORDS_CONTENT_LENGTH));
     }
     // 정규식 검사로 특수문자 등 못넣게(SQL injection 방지) 해야함.
     const patchRecordsParams = [starRating, quote, content, idx];
