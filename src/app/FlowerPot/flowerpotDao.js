@@ -22,7 +22,25 @@ async function selectUserFlowerpot(connection, userIdx) {
     return userFlowerpotRow;
   }
   
+  //획득 화분 조회
+async function selectUserAcquiredFlowerpot(connection, userIdx) {
+      const selectUserAcquiredFlowerpotQuery = `
+      SELECT fl.idx,
+            fd.name,
+            fd.engName,
+            fd.type,
+            fd.bloomingPeriod,
+            fd.content,
+            fd.flowerImgUrl
+      FROM UserFlowerList as fl
+      left join FlowerData as fd on fd.idx =fl.flowerDataIdx
+      WHERE fl.userIdx =?
+      `;
+      const [userAcquiredFlowerpotRow] = await connection.query(selectUserAcquiredFlowerpotQuery, userIdx);
+      return userAcquiredFlowerpotRow;
+    }
 
   module.exports ={
-    selectUserFlowerpot
+    selectUserFlowerpot,
+    selectUserAcquiredFlowerpot
   };

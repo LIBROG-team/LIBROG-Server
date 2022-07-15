@@ -15,7 +15,6 @@ module.exports = function () {
     // 도메인 추가
     require('../src/app/Record/recordRoute')(app);
     require('../src/app/FlowerPot/flowerpotRoute')(app);
-    
 
     return app;
 };
