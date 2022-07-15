@@ -1,8 +1,8 @@
 .idea/*
 node_modules/*
-package-lock.json
 log/*
 .DS_Store
 secret.js
 node_modules
 log
+기타 파일들/*
