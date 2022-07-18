@@ -46,3 +46,29 @@ exports.readFlowerPotRecords = async function(flowerPotIdx){
     }
     return response(baseResponse.SUCCESS, flowerPotRecordsList);
 }
+
+/**
+ * API No. 2.6
+ * API Name: 유저 독서 기록 통계 조회 API
+ * [GET] /records/statistics/:userIdx
+ */
+exports.readStatistics = async function(userIdx){
+    const connection = await pool.getConnection(async (conn) => conn);
+    const checkUserRows = await recordDao.checkUserIdx(connection, userIdx);
+    // console.log('checkUserRows', checkUserRows);
+    // user validation
+    if(checkUserRows.length < 1){
+        connection.release();
+        return errResponse(baseResponse.USER_NOT_EXIST);
+    }else if(checkUserRows[0].status == 'INACTIVE'){
+        connection.release();
+        return errResponse(baseResponse.USER_INACTIVE_USER);
+    }else if(checkUserRows[0].status == 'DELETED'){
+        connection.release();
+        return errResponse(baseResponse.USER_DELETED_USER);
+    }
+    const statisticsRows = await recordDao.selectStatistics(connection, userIdx);
+    // console.log('statisticsRows', statisticsRows);
+    connection.release();
+    return response(baseResponse.SUCCESS, statisticsRows[0]);
+}
