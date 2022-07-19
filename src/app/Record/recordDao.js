@@ -34,9 +34,9 @@ async function checkRecords(connection, recordsIdx){
  */
 async function selectUserRecords(connection, userIdx){
     const selectUserFlowerPotQuery = `
-    SELECT r.idx, r.bookIdx, r.flowerPotIdx, r.userIdx, r.date, r.starRating, r.content, r.quote
+    SELECT r.idx, r.bookIdx, r.flowerPotIdx, r.userIdx, r.date, r.starRating, r.content, r.quote, r.status
         FROM ReadingRecord r
-        WHERE userIdx = ?
+        WHERE userIdx = ? AND status = 'ACTIVE'
         LIMIT 1000;
     `
     const [userRecordRows] = await connection.query(selectUserFlowerPotQuery, userIdx);
@@ -50,9 +50,9 @@ async function selectUserRecords(connection, userIdx){
  */
 async function selectFlowerPotRecords(connection, flowerPotIdx){
     const selectFlowerPotRecordsQuery = `
-        SELECT r.idx, r.bookIdx, r.flowerPotIdx, r.userIdx, r.date, r.starRating, r.content, r.quote
+        SELECT r.idx, r.bookIdx, r.flowerPotIdx, r.userIdx, r.date, r.starRating, r.content, r.quote, r.status
         FROM ReadingRecord r
-        WHERE flowerPotIdx = ?
+        WHERE flowerPotIdx = ? AND status='ACTIVE'
         LIMIT 1000;
     `
     const [selectFlowerPotRecordsRows] = await connection.query(selectFlowerPotRecordsQuery, flowerPotIdx);
@@ -102,6 +102,42 @@ async function deleteRecords(connection, recordIdx){
     const [deleteRecordsRows] = await connection.query(deleteRecordsQuery, recordIdx);
     return deleteRecordsRows;
 }
+
+/**
+ * API No. 2.6
+ * API Name: 유저 독서 기록 통계 조회 API
+ * [GET] /records/statistics/:userIdx
+ */
+async function selectStatistics(connection, userIdx){
+    const selectStatisticsQuery = `
+        SELECT User.idx as userIdx,
+        IF(flowerCnt is null, 0, flowerCnt) as flowerCnt,
+        IF(readingCnt is null, 0, readingCnt) as readingCnt,
+        IF(starRatingCnt is null, 0, starRatingcnt) as starRatingCnt,
+        IF(quoteCnt is null, 0, quoteCnt) as quoteCnt,
+        IF(contentCnt is null, 0, contentCnt) as contentCnt
+        FROM User
+        LEFT JOIN (
+            SELECT FlowerPot.idx, userIdx, COUNT(FlowerPot.idx) as flowerCnt
+            FROM FlowerPot
+            WHERE FlowerPot.status = 'ACTIVE'
+            GROUP BY userIdx
+        ) fp on fp.userIdx = User.idx
+        LEFT JOIN(
+            SELECT ReadingRecord.idx, userIdx, starRating, quote, content,
+                    COUNT(ReadingRecord.idx) as readingCnt,
+                    COUNT(starRating) as starRatingCnt,
+                    COUNT(quote) as quoteCnt,
+                    COUNT(content) as contentCnt
+            FROM ReadingRecord
+            WHERE ReadingRecord.status = 'ACTIVE'
+            GROUP BY userIdx
+        ) rr on rr.userIdx = User.idx
+        HAVING User.idx = ?;
+    `
+    const [selectStatisticsRows] = await connection.query(selectStatisticsQuery, userIdx);
+    return selectStatisticsRows;
+}
 module.exports = {
     checkUserIdx,
     checkFlowerPot,
@@ -110,5 +146,6 @@ module.exports = {
     selectFlowerPotRecords,
     insertRecords,
     updateRecords,
-    deleteRecords
+    deleteRecords,
+    selectStatistics
 }

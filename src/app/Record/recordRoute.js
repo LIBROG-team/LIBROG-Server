@@ -17,4 +17,7 @@ module.exports = function(app){
 
     // 2.5 독서 기록 삭제 API
     app.patch('/records/removal', record.deleteRecords);
+
+    // 2.6 유저별 독서 기록 통계 조회 API
+    app.get('/records/statistics/:userIdx', record.getStatistics);
 }
