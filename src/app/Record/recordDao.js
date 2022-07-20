@@ -34,7 +34,7 @@ async function checkRecords(connection, recordsIdx){
  */
 async function selectUserRecords(connection, userIdx){
     const selectUserFlowerPotQuery = `
-        SELECT r.idx, r.bookIdx, r.flowerPotIdx, r.date, r.starRating, r.content, r.quote, r.status, B.imgUrl
+        SELECT r.idx, r.bookIdx, r.flowerPotIdx, r.userIdx, r.date, r.starRating, r.content, r.quote, r.status, B.imgUrl
         FROM ReadingRecord r
             LEFT JOIN BookImgUrl B
             on r.bookIdx = B.bookIdx
