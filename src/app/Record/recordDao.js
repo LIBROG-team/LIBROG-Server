@@ -34,11 +34,13 @@ async function checkRecords(connection, recordsIdx){
  */
 async function selectUserRecords(connection, userIdx){
     const selectUserFlowerPotQuery = `
-    SELECT r.idx, r.bookIdx, r.flowerPotIdx, r.userIdx, r.date, r.starRating, r.content, r.quote, r.status
+        SELECT r.idx, r.bookIdx, r.flowerPotIdx, r.date, r.starRating, r.content, r.quote, r.status, B.imgUrl
         FROM ReadingRecord r
-        WHERE userIdx = ? AND status = 'ACTIVE'
+            LEFT JOIN BookImgUrl B
+            on r.bookIdx = B.bookIdx
+        WHERE r.userIdx = ? AND r.status = 'ACTIVE'
         LIMIT 1000;
-    `
+        `
     const [userRecordRows] = await connection.query(selectUserFlowerPotQuery, userIdx);
     return userRecordRows;
 }
@@ -50,11 +52,13 @@ async function selectUserRecords(connection, userIdx){
  */
 async function selectFlowerPotRecords(connection, flowerPotIdx){
     const selectFlowerPotRecordsQuery = `
-        SELECT r.idx, r.bookIdx, r.flowerPotIdx, r.userIdx, r.date, r.starRating, r.content, r.quote, r.status
+        SELECT r.idx, r.bookIdx, r.flowerPotIdx, r.userIdx, r.date, r.starRating, r.content, r.quote, r.status, B.imgUrl
         FROM ReadingRecord r
+            LEFT JOIN BookImgUrl B
+            on B.bookIdx = r.bookIdx
         WHERE flowerPotIdx = ? AND status='ACTIVE'
         LIMIT 1000;
-    `
+        `
     const [selectFlowerPotRecordsRows] = await connection.query(selectFlowerPotRecordsQuery, flowerPotIdx);
     return selectFlowerPotRecordsRows;
 }
