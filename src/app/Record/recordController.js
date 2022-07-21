@@ -55,16 +55,10 @@ exports.postRecords = async function(req, res){
         return res.send(errResponse(baseResponse.RECORDS_BOOKNAME_EMPTY));
     }else if(bookName <= 0){
         return res.send(errResponse(baseResponse.RECORDS_BOOKNAME_LENGTH));
-    }else if(!author){
-        return res.send(errResponse(baseResponse.RECORDS_AUTHOR_EMPTY));
     }else if(author.length > 45){
         return res.send(errResponse(baseResponse.RECORDS_AUTHOR_LENGTH));
-    }else if(!publisher){
-        return res.send(errResponse(baseResponse.RECORDS_PUBLISHER_EMPTY));
     }else if(publisher.length > 45){
         return res.send(errResponse(baseResponse.RECORDS_PUBLISHER_LENGTH));
-    }else if(!publishedDate){
-        return res.send(errResponse(baseResponse.RECORDS_PUBLISHED_DATE_EMPTY));
     }else if(publishedDate.length > 45){
         return res.send(errResponse(baseResponse.RECORDS_PUBLISHED_DATE_LENGTH));
     }else if(!userIdx){

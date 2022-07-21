@@ -29,3 +29,13 @@ exports.retrieveFlowerpot = async function (userIdx) {
   
     return userunAcquiredFlowerpotResult;
   };
+
+  
+  exports.retrieveFlowerPotInfo = async function (flowerDataIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const userFlowerpotInfo = await flowerpotDao.selectFlowerpotInfo(connection, flowerDataIdx);
+  
+    connection.release();
+  
+    return userFlowerpotInfo;
+  };

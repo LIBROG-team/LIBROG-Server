@@ -11,7 +11,9 @@ module.exports = function(app){
     //3.3 미획득 화분 조회 API
     app.get('/flowerpots/:userIdx/unacqUserflowerlist',flowerpot.getunacquiredflowerpots);
     
-    //
+    //3.4 획득/미획득 화분 상세정보 조회 API
+
+    app.get('/flowerpots/flowerPotInfo/:flowerDataIdx',flowerpot.getflowerPotInfo);
 
 
 

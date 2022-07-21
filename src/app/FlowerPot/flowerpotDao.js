@@ -26,14 +26,11 @@ async function selectUserFlowerpot(connection, userIdx) {
   //획득 화분 조회
 async function selectUserAcquiredFlowerpot(connection, userIdx) {
       const selectUserAcquiredFlowerpotQuery = `
-      SELECT fl.idx,
+      SELECT fl.flowerDataIdx,
             fd.name,
-            fd.engName,
             fd.type,
             fd.bloomingPeriod,
-            fd.content,
-            fd.flowerImgUrl,
-            fd.flowerPotImgUrl
+            fd.flowerImgUrl
       FROM UserFlowerList as fl
       left join FlowerData as fd on fd.idx =fl.flowerDataIdx
       WHERE fl.userIdx =?
@@ -47,12 +44,9 @@ async function selectUserunAcquiredFlowerpot(connection, userIdx) {
       const selectUserunAcquiredFlowerpotQuery = `
       SELECT  fd.idx as flowerDataIdx,
             fd.name,
-            fd.engName,
             fd.type,
-            fd.bloomingPeriod,
-            fd.content,
             fd.flowerImgUrl,
-            fd.flowerPotImgUrl
+            fd.condition
       FROM FlowerData as fd
       WHERE  fd.idx NOT IN (SELECT  fd.idx FROM UserFlowerList as fl left join FlowerData as fd on fd.idx =fl.flowerDataIdx
       WHERE fl.userIdx =?)
@@ -62,8 +56,24 @@ async function selectUserunAcquiredFlowerpot(connection, userIdx) {
       return userunAcquiredFlowerpotRow;
     }
 
+         //   획득/미획득 화분 상세정보 조회
+async function selectFlowerpotInfo(connection, flowerDataIdx) {
+      const selectFlowerpotInfoQuery = `
+      SELECT  fd.idx as flowerDataIdx,
+            fd.name,
+            fd.engName,
+            fd.content,
+            fd.flowerImgUrl
+      FROM FlowerData as fd
+      WHERE fd.idx =?
+      `;
+      const [userflowerpotInfoRow] = await connection.query(selectFlowerpotInfoQuery, flowerDataIdx);
+      return userflowerpotInfoRow;
+    }
+
   module.exports ={
     selectUserFlowerpot,
     selectUserAcquiredFlowerpot,
-    selectUserunAcquiredFlowerpot
+    selectUserunAcquiredFlowerpot,
+    selectFlowerpotInfo
   };

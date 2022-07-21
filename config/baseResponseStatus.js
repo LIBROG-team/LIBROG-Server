@@ -20,16 +20,19 @@ module.exports = {
     
     RECORDS_BOOKNAME_EMPTY : { "isSuccess": false, "code": 2028, "message":"bookname값을 입력해주세요." },
     RECORDS_BOOKNAME_LENGTH : { "isSuccess": false, "code": 2029, "message":"bookname값은 100자보다 짧게 입력해주세요." },
-    
     RECORDS_QUOTE_LENGTH : { "isSuccess": false, "code": 2030, "message":"quote는 1000자보다 짧게 입력해주세요." },
     RECORDS_CONTENT_LENGTH : { "isSuccess": false, "code": 2031, "message":"content는 10000자보다 짧게 입력해주세요." },
 
-    RECORDS_AUTHOR_EMPTY : { "isSuccess": false, "code": 2032, "message":"author값을 입력해주세요." },
+    
     RECORDS_AUTHOR_LENGTH : { "isSuccess": false, "code": 2033, "message":"author값은 45자보다 짧게 입력해주세요." },
-    RECORDS_PUBLISHER_EMPTY : { "isSuccess": false, "code": 2034, "message":"publisher값을 입력해주세요." },
+    
     RECORDS_PUBLISHER_LENGTH : { "isSuccess": false, "code": 2035, "message":"publisher값은 45자보다 짧게 입력해주세요." },
-    RECORDS_PUBLISHED_DATE_EMPTY : { "isSuccess": false, "code": 2036, "message":"publishedDate값을 입력해주세요." },
+    
     RECORDS_PUBLISHED_DATE_LENGTH : { "isSuccess": false, "code": 2037, "message":"publishedDate값은 45자보다 짧게 입력해주세요." },
+
+    FLOWERDATA_EMPTY : { "isSuccess": false, "code": 2041, "message": "flowerDataIdx를 입력해주세요." },
+    FLOWERDATA_LENGTH : { "isSuccess": false, "code": 2042, "message": "flowerDataIdx는 0보다 큰 값으로 입력해주세요." },
+
     // 3000 : 의미적 Validation Error
     USER_NO_RECORDS : { "isSuccess": false, "code": 3000, "message":"해당 유저에 독서 기록이 존재하지 않습니다." },
     FLOWERPOT_NO_FLOWERPOTS : { "isSuccess": false, "code": 3005, "message":"지워졌거나 존재하지 않는 화분입니다." },
