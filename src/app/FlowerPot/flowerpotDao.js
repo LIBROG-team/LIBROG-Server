@@ -6,6 +6,7 @@ async function selectUserFlowerpot(connection, userIdx) {
           d.name,
           d.engName,
           d.flowerImgUrl,
+          d.flowerPotImgUrl,
           d.maxExp,
           d.bloomingPeriod,
           d.content,
@@ -31,7 +32,8 @@ async function selectUserAcquiredFlowerpot(connection, userIdx) {
             fd.type,
             fd.bloomingPeriod,
             fd.content,
-            fd.flowerImgUrl
+            fd.flowerImgUrl,
+            fd.flowerPotImgUrl
       FROM UserFlowerList as fl
       left join FlowerData as fd on fd.idx =fl.flowerDataIdx
       WHERE fl.userIdx =?
@@ -49,7 +51,8 @@ async function selectUserunAcquiredFlowerpot(connection, userIdx) {
             fd.type,
             fd.bloomingPeriod,
             fd.content,
-            fd.flowerImgUrl
+            fd.flowerImgUrl,
+            fd.flowerPotImgUrl
       FROM FlowerData as fd
       WHERE  fd.idx NOT IN (SELECT  fd.idx FROM UserFlowerList as fl left join FlowerData as fd on fd.idx =fl.flowerDataIdx
       WHERE fl.userIdx =?)
