@@ -62,8 +62,24 @@ async function selectUserunAcquiredFlowerpot(connection, userIdx) {
       return userunAcquiredFlowerpotRow;
     }
 
+         //   획득/미획득 화분 상세정보 조회
+async function selectFlowerpotInfo(connection, flowerDataIdx) {
+      const selectFlowerpotInfoQuery = `
+      SELECT  fd.idx as flowerDataIdx,
+            fd.name,
+            fd.engName,
+            fd.content,
+            fd.flowerImgUrl
+      FROM FlowerData as fd
+      WHERE fd.idx =?
+      `;
+      const [userflowerpotInfoRow] = await connection.query(selectFlowerpotInfoQuery, flowerDataIdx);
+      return userflowerpotInfoRow;
+    }
+
   module.exports ={
     selectUserFlowerpot,
     selectUserAcquiredFlowerpot,
-    selectUserunAcquiredFlowerpot
+    selectUserunAcquiredFlowerpot,
+    selectFlowerpotInfo
   };
