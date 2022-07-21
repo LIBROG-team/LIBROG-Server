@@ -11,4 +11,21 @@ exports.retrieveFlowerpot = async function (userIdx) {
   
     return userFlowerpotResult;
   };
+
+  exports.retrieveAcquiredFlowerpot = async function (userIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const userAcquiredFlowerpotResult = await flowerpotDao.selectUserAcquiredFlowerpot(connection, userIdx);
   
+    connection.release();
+  
+    return userAcquiredFlowerpotResult;
+  };
+
+  exports.retrieveunAcquiredFlowerpot = async function (userIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const userunAcquiredFlowerpotResult = await flowerpotDao.selectUserunAcquiredFlowerpot(connection, userIdx);
+  
+    connection.release();
+  
+    return userunAcquiredFlowerpotResult;
+  };
