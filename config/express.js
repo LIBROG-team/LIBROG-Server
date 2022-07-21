@@ -17,7 +17,6 @@ module.exports = function () {
     require('../src/app/User/userRoute')(app);
     // require('../src/app/Auth/authRoute')(app);
     require('../src/app/FlowerPot/flowerpotRoute')(app);
-    
 
     return app;
 };

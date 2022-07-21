@@ -125,8 +125,10 @@ exports.patchRecords = async function(req, res){
  */
 exports.deleteRecords = async function(req, res){
     const recordsIdx = req.body.recordsIdx;
-    if(recordsIdx <= 0){
-        res.send(errResponse(baseResponse.RECORDS_RECORDSIDX_LENGTH));
+    if(!recordsIdx){
+        return res.send(errResponse(baseResponse.RECORDS_RECORDSIDX_EMPTY));
+    }else if(recordsIdx <= 0){
+        return res.send(errResponse(baseResponse.RECORDS_RECORDSIDX_LENGTH));
     }
     const deleteRecordsResult = await recordService.removeRecords(recordsIdx);
     return res.send(deleteRecordsResult);
@@ -136,3 +138,20 @@ exports.deleteRecords = async function(req, res){
     "recordsIdx":2
 }
  */
+
+/**
+ * API No. 2.6
+ * API Name: 유저 독서 기록 통계 조회 API
+ * [GET] /records/statistics/:userIdx
+ */
+exports.getStatistics = async function(req, res){
+    const userIdx = req.params.userIdx;
+    // validation
+    if(!userIdx){
+        return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
+    }else if(userIdx <= 0){
+        return res.send(errResponse(baseResponse.USER_USERIDX_LENGTH));
+    }
+    const getStatisticsResult = await recordProvider.readStatistics(userIdx);
+    return res.send(getStatisticsResult);
+}
