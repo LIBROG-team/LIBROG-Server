@@ -39,6 +39,23 @@ exports.createRecords = async function(createRecordsParams){
 }
 
 /**
+ * API No. 2.36
+ * API Name: 책 table에 추가 API
+ */
+exports.createBook = async function(createBookParams){
+    const connection = await pool.getConnection(async (conn) => conn);
+    try{
+        const createBookList = await recordDao.insertBookIdx(connection, createBookParams);
+        return response(baseResponse.SUCCESS, createBookList);
+    }catch(err){
+        logger.error(`App - createBook Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }finally{
+        connection.release();
+    }
+}
+
+/**
  * API No. 2.4
  * API Name: 독서 기록 수정 API
  * [PATCH] /records/fix

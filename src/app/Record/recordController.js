@@ -48,13 +48,19 @@ exports.getFlowerPotRecords = async function(req, res){
  * [POST] /records/addition
  */
 exports.postRecords = async function(req, res){
-    const {bookIdx, userIdx, flowerPotIdx, starRating, quote, content} = req.body;
-    const createRecordsParams = [bookIdx, userIdx, flowerPotIdx, starRating, quote, content];
+    const {bookName, author, publisher, publishedDate, userIdx, flowerPotIdx, starRating, quote, content} = req.body;
+    
     // validation
-    if(!bookIdx){
-        return res.send(errResponse(baseResponse.RECORDS_BOOKIDX_EMPTY));
-    }else if(bookIdx <= 0){
-        return res.send(errResponse(baseResponse.RECORDS_BOOKIDX_LENGTH));
+    if(!bookName){
+        return res.send(errResponse(baseResponse.RECORDS_BOOKNAME_EMPTY));
+    }else if(bookName <= 0){
+        return res.send(errResponse(baseResponse.RECORDS_BOOKNAME_LENGTH));
+    }else if(author.length > 45){
+        return res.send(errResponse(baseResponse.RECORDS_AUTHOR_LENGTH));
+    }else if(publisher.length > 45){
+        return res.send(errResponse(baseResponse.RECORDS_PUBLISHER_LENGTH));
+    }else if(publishedDate.length > 45){
+        return res.send(errResponse(baseResponse.RECORDS_PUBLISHED_DATE_LENGTH));
     }else if(!userIdx){
         return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
     }else if(userIdx <= 0){
@@ -72,7 +78,24 @@ exports.postRecords = async function(req, res){
     if(starRating < 0 || starRating > 5){
         return res.send(errResponse(baseResponse.RECORDS_RATING_LENGTH));
     }
-    // quote, content도 마찬가지.
+
+    // 일단 bookName으로 bookIdx 존재하는지 검색
+    let bookIdxResult = await recordProvider.readBookIdx(bookName);
+    let bookIdx;
+    
+    // Book table에 책 존재하는 경우
+    if(bookIdxResult.result.length > 0){
+        bookIdx = bookIdxResult.result[0].idx;
+        // console.log('exist', bookIdxResult);
+    }else{
+        // Book table에 책 존재하지 않는 경우 -> 책 새로 추가하기
+        const createBookParams = [bookName, author, publisher, publishedDate];
+        bookIdxResult = await recordService.createBook(createBookParams);
+        bookIdx = bookIdxResult.result.insertId;
+        // console.log('not exist', bookIdxResult);
+    }
+    // console.log(bookIdx);
+    const createRecordsParams = [bookIdx, userIdx, flowerPotIdx, starRating, quote, content];
     const postRecordsResult = await recordService.createRecords(createRecordsParams);
     return res.send(postRecordsResult);
 }
@@ -94,11 +117,16 @@ exports.postRecords = async function(req, res){
  */
 exports.patchRecords = async function(req, res){
     const {starRating, quote, content, idx} = req.body;
+    console.log(starRating, quote, content, idx);
     // 여기서도 starRating Validation만 해줌.
     if(starRating < 0 || starRating > 5){
         return res.send(errResponse(baseResponse.RECORDS_RATING_LENGTH));
+    }else if(!idx){
+        return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
     }else if(idx <= 0){
         return res.send(errResponse(baseResponse.RECORDS_RECORDSIDX_LENGTH));
+    }else if(!quote){
+
     }else if(quote.length > 1000){
         return res.send(errResponse(baseResponse.RECORDS_QUOTE_LENGTH));
     }else if(content.length > 10000){
@@ -154,4 +182,38 @@ exports.getStatistics = async function(req, res){
     }
     const getStatisticsResult = await recordProvider.readStatistics(userIdx);
     return res.send(getStatisticsResult);
+}
+
+// DB 조회 쿼리
+exports.getBookDB = async function(req, res){
+    const getBookDBResult = await recordProvider.readBookDB();
+    return res.send(getBookDBResult);
+}
+exports.getBookImgUrlDB = async function(req, res){
+    const getBookImgUrlDBResult = await recordProvider.readBookImgUrlDB();
+    return res.send(getBookImgUrlDBResult);
+}
+exports.getFlowerDataDB = async function(req, res){
+    const getFlowerDataDBResult = await recordProvider.readFlowerDataDB();
+    return res.send(getFlowerDataDBResult);
+}
+exports.getFlowerPotDB = async function(req, res){
+    const getFlowerPotDBResult = await recordProvider.readFlowerPotDB();
+    return res.send(getFlowerPotDBResult);
+}
+exports.getFollowDB = async function(req, res){
+    const getFollowDBResult = await recordProvider.readFollowDB();
+    return res.send(getFollowDBResult);
+}
+exports.getReadingRecordDB = async function(req, res){
+    const getReadingRecordDBResult = await recordProvider.readReadingRecordDB();
+    return res.send(getReadingRecordDBResult);
+}
+exports.getUserDB = async function(req, res){
+    const getUserDBResult = await recordProvider.readUserDB();
+    return res.send(getUserDBResult);
+}
+exports.getUserFlowerListDB = async function(req, res){
+    const getUserFlowerListDBResult = await recordProvider.readUserFlowerListDB();
+    return res.send(getUserFlowerListDBResult);
 }
