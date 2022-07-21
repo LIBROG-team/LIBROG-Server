@@ -18,16 +18,14 @@ module.exports = {
     RECORDS_RECORDSIDX_LENGTH : { "isSuccess": false, "code": 2026, "message":"recordsIdx값은 0보다 큰 값으로 입력해주세요." },
     RECORDS_RECORDSIDX_EMPTY : { "isSuccess": false, "code": 2027, "message":"recordsIdx값을 입력해주세요." },
     
-    RECORDS_BOOKNAME_EMPTY : { "isSuccess": false, "code": 2028, "message":"bookname값을 입력해주세요." },
-    RECORDS_BOOKNAME_LENGTH : { "isSuccess": false, "code": 2029, "message":"bookname값은 100자보다 짧게 입력해주세요." },
+    RECORDS_BOOKNAME_EMPTY : { "isSuccess": false, "code": 2028, "message":"bookName값을 입력해주세요." },
+    RECORDS_BOOKNAME_LENGTH : { "isSuccess": false, "code": 2029, "message":"bookName값은 100자보다 짧게 입력해주세요." },
     RECORDS_QUOTE_LENGTH : { "isSuccess": false, "code": 2030, "message":"quote는 1000자보다 짧게 입력해주세요." },
     RECORDS_CONTENT_LENGTH : { "isSuccess": false, "code": 2031, "message":"content는 10000자보다 짧게 입력해주세요." },
 
     
     RECORDS_AUTHOR_LENGTH : { "isSuccess": false, "code": 2033, "message":"author값은 45자보다 짧게 입력해주세요." },
-    
     RECORDS_PUBLISHER_LENGTH : { "isSuccess": false, "code": 2035, "message":"publisher값은 45자보다 짧게 입력해주세요." },
-    
     RECORDS_PUBLISHED_DATE_LENGTH : { "isSuccess": false, "code": 2037, "message":"publishedDate값은 45자보다 짧게 입력해주세요." },
 
     FLOWERDATA_EMPTY : { "isSuccess": false, "code": 2041, "message": "flowerDataIdx를 입력해주세요." },
