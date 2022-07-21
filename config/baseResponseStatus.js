@@ -20,6 +20,9 @@ module.exports = {
     RECORDS_QUOTE_LENGTH : { "isSuccess": false, "code": 2030, "message":"quote는 1000자보다 짧게 입력해주세요." },
     RECORDS_CONTENT_LENGTH : { "isSuccess": false, "code": 2031, "message":"content는 10000자보다 짧게 입력해주세요." },
 
+    FLOWERDATA_EMPTY : { "isSuccess": false, "code": 2041, "message": "flowerDataIdx를 입력해주세요." },
+    FLOWERDATA_LENGTH : { "isSuccess": false, "code": 2042, "message": "flowerDataIdx는 0보다 큰 값으로 입력해주세요." },
+
     // 3000 : 의미적 Validation Error
     USER_NO_RECORDS : { "isSuccess": false, "code": 3000, "message":"해당 유저에 독서 기록이 존재하지 않습니다." },
     FLOWERPOT_NO_FLOWERPOTS : { "isSuccess": false, "code": 3005, "message":"지워졌거나 존재하지 않는 화분입니다." },
