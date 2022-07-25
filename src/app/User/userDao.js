@@ -23,9 +23,38 @@ async function insertUserInfo(connection, insertUserInfoParams) {
     return insertUserInfoRow;
   }
 
+// 패스워드 체크
+async function selectUserPassword(connection, email) {
+  const selectUserPasswordQuery = `
+        SELECT idx, password
+        FROM User
+        WHERE email = ?`;
+  const selectUserPasswordRow = await connection.query(
+      selectUserPasswordQuery,
+      email
+  );
+
+  return selectUserPasswordRow;
+}
+
+// 유저 계정 상태 체크 (jwt 생성 위해 idx 값도 가져온다.)
+async function selectUserAccount(connection, email) {
+  const selectUserAccountQuery = `
+        SELECT status, idx
+        FROM User
+        WHERE email = ?;`;
+  const selectUserAccountRow = await connection.query(
+      selectUserAccountQuery,
+      email
+  );
+  return selectUserAccountRow[0];
+}
+
 
 
   module.exports = {
     selectUserEmail,
     insertUserInfo,
+    selectUserPassword,
+    selectUserAccount,
   };
