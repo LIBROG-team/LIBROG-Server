@@ -108,3 +108,30 @@ exports.getflowerpots = async function(req, res){
             return res.send(response(baseResponse.SUCCESS, flowerDataIdxResult))
         
         }
+
+        
+    /**
+ * API No.5
+ * API Name : 유저 화분 삭제 API
+ * [GET] /app/flowerpots/flowerpotDelete/:flowerpotIdx
+ * 
+ */
+     exports.deleteFlowerpot = async function(req, res){
+        /*
+            Path Variable : flowerpotIdx
+        */
+            const flowerpotIdx = req.params.flowerpotIdx;
+        
+            // validation
+            if(!flowerpotIdx) {
+                return res.send(errResponse(baseResponse.FLOWERPOT_EMPTY));
+            } 
+            if (flowerpotIdx <= 0) {
+                return res.send(errResponse(baseResponse.FLOWERPOT_LENGTH));
+            }
+        
+            const flowerpotIdxResult = await flowerpotService.deleteFlowerPotInfo(flowerpotIdx);
+            
+            return res.send(response(baseResponse.SUCCESS, flowerpotIdxResult))
+        
+        }

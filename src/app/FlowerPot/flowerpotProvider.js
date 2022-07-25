@@ -1,11 +1,17 @@
 const { pool } = require("../../../config/database");
 const { logger } = require("../../../config/winston");
-
+const baseResponse = require("../../../config/baseResponseStatus");
+const { response, errResponse } = require("../../../config/response");
 const flowerpotDao = require("./flowerpotDao");
 
 exports.retrieveFlowerpot = async function (userIdx) {
     const connection = await pool.getConnection(async (conn) => conn);
     const userFlowerpotResult = await flowerpotDao.selectUserFlowerpot(connection, userIdx);
+
+    if(userFlowerpotResult.length < 1){
+      connection.release();
+      return errResponse(baseResponse.USER_NOT_EXIST);
+  }
   
     connection.release();
   
@@ -15,6 +21,11 @@ exports.retrieveFlowerpot = async function (userIdx) {
   exports.retrieveAcquiredFlowerpot = async function (userIdx) {
     const connection = await pool.getConnection(async (conn) => conn);
     const userAcquiredFlowerpotResult = await flowerpotDao.selectUserAcquiredFlowerpot(connection, userIdx);
+
+    if(userAcquiredFlowerpotResult.length < 1){
+      connection.release();
+      return errResponse(baseResponse.USER_NOT_EXIST);
+  }
   
     connection.release();
   
@@ -24,6 +35,11 @@ exports.retrieveFlowerpot = async function (userIdx) {
   exports.retrieveunAcquiredFlowerpot = async function (userIdx) {
     const connection = await pool.getConnection(async (conn) => conn);
     const userunAcquiredFlowerpotResult = await flowerpotDao.selectUserunAcquiredFlowerpot(connection, userIdx);
+
+    if(userunAcquiredFlowerpotResult.length < 1){
+      connection.release();
+      return errResponse(baseResponse.USER_NOT_EXIST);
+  }
   
     connection.release();
   
@@ -34,6 +50,12 @@ exports.retrieveFlowerpot = async function (userIdx) {
   exports.retrieveFlowerPotInfo = async function (flowerDataIdx) {
     const connection = await pool.getConnection(async (conn) => conn);
     const userFlowerpotInfo = await flowerpotDao.selectFlowerpotInfo(connection, flowerDataIdx);
+    
+
+    if(userFlowerpotInfo.length < 1){
+      connection.release();
+      return errResponse(baseResponse.FLOWERPOT_NO_FLOWERDATA);
+  }
   
     connection.release();
   

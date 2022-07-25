@@ -71,9 +71,25 @@ async function selectFlowerpotInfo(connection, flowerDataIdx) {
       return userflowerpotInfoRow;
     }
 
+    
+//유저의 화분 삭제
+    async function deleteFlowerPot(connection, flowerpotIdx) {
+      const deleteFlowerpotInfoQuery = `
+      DELETE  a, b
+      FROM ReadingRecord a
+      LEFT JOIN FlowerPot b
+      ON a.flowerPotIdx = b.idx
+      WHERE b.idx=?
+      `;
+      const [deleteuserflowerpotInfoRow] = await connection.query(deleteFlowerpotInfoQuery, flowerpotIdx);
+      return deleteuserflowerpotInfoRow;
+    }
+
+
   module.exports ={
     selectUserFlowerpot,
     selectUserAcquiredFlowerpot,
     selectUserunAcquiredFlowerpot,
-    selectFlowerpotInfo
+    selectFlowerpotInfo,
+    deleteFlowerPot
   };
