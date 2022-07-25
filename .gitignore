@@ -3,6 +3,6 @@ node_modules/*
 log/*
 .DS_Store
 node_modules
-secret.js
+config/secret.js
 log
 기타 파일들/*
