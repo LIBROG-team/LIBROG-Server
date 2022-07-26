@@ -21,4 +21,7 @@ module.exports = function(app){
     // JWT 검증 API
     // app.get('/app/auto-login', jwtMiddleware, user.check);
     // TODO: 탈퇴하기 API
+
+    // 1.10 Kakao Login 및 인증
+    app.post('/users/kakao/certificate/', user.KakaoLogin);
 }
