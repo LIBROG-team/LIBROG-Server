@@ -54,6 +54,7 @@ module.exports = {
     USER_NO_RECORDS : { "isSuccess": false, "code": 3001, "message":"해당 유저에 독서 기록이 존재하지 않습니다." },
     FLOWERPOT_NO_FLOWERPOTS : { "isSuccess": false, "code": 3005, "message":"지워졌거나 존재하지 않는 화분입니다." },
     FLOWERPOT_NO_RECORDS : { "isSuccess": false, "code": 3006, "message":"해당 화분에 독서 기록이 존재하지 않습니다." },
+    USER_NO_AVAILABLE_FLOWERPOTS : { "isSuccess": false, "code": 3007, "message":"현재 유저가 추가할 수 있는 화분이 없습니다. 화분을 만들고 기록을 추가해주세요" },
 
     USER_NOT_EXIST : { "isSuccess": false, "code": 3010, "message":"해당 idx의 유저가 존재하지 않습니다." },
     USER_INACTIVE_USER : { "isSuccess": false, "code": 3011, "message":"비활성화된 계정입니다." },

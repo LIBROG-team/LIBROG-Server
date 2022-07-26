@@ -21,12 +21,22 @@ exports.createRecords = async function(createRecordsParams){
     const connection = await pool.getConnection(async (conn) => conn);
     try{
         // bookIdx DB에 있는지 check? -> db에 있는것만 검색 api에서 주니까 pass
-        // flowerPotIdx만 check
-        const checkFlowerPotList = await recordDao.checkFlowerPot(connection, createRecordsParams[2])
-        if(checkFlowerPotList.length < 1 || checkFlowerPotList[0].status == 'DELETED'){
-            connection.release();
-            return errResponse(baseResponse.FLOWERPOT_NO_FLOWERPOTS);
+        // flowerPotIdx만 check -> 0725 최근 화분으로 고정.
+        const userIdx = createRecordsParams[1];
+        const flowerPotCheckResult = await recordDao.checkFlowerPot(connection, userIdx);
+        
+        if(flowerPotCheckResult.length < 1){
+            return errResponse(baseResponse.USER_NO_AVAILABLE_FLOWERPOTS);
         }
+        // console.log(flowerPotCheckResult);
+        
+        const flowerPotIdx = flowerPotCheckResult[0].FlowerPotIdx;
+        // console.log(flowerPotCheckResult, flowerPotIdx);
+        // return;
+        
+        createRecordsParams.push(flowerPotIdx);
+        // console.log(createRecordsParams);
+        // return;
         const createRecordsList = await recordDao.insertRecords(connection, createRecordsParams);
         // console.log(createRecordsList);
         return response(baseResponse.SUCCESS, {'createdRecordId':createRecordsList.insertId});

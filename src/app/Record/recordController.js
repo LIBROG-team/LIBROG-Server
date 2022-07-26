@@ -48,7 +48,7 @@ exports.getFlowerPotRecords = async function(req, res){
  * [POST] /records/addition
  */
 exports.postRecords = async function(req, res){
-    const {bookName, author, publisher, publishedDate, userIdx, flowerPotIdx, starRating, quote, content} = req.body;
+    const {bookName, author, publisher, publishedDate, userIdx, starRating, quote, content} = req.body;
     
     // validation
     if(!bookName){
@@ -65,10 +65,6 @@ exports.postRecords = async function(req, res){
         return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
     }else if(userIdx <= 0){
         return res.send(errResponse(baseResponse.USER_USERIDX_LENGTH));
-    }else if(!flowerPotIdx){
-        return res.send(errResponse(baseResponse.RECORDS_FLOWERPOTIDX_EMPTY));
-    }else if(flowerPotIdx <= 0){
-        return res.send(errResponse(baseResponse.RECORDS_FLOWERPOTIDX_LENGTH));
     }else if(quote.length > 1000){
         return res.send(errResponse(baseResponse.RECORDS_QUOTE_LENGTH));
     }else if(content.length > 10000){
@@ -83,7 +79,7 @@ exports.postRecords = async function(req, res){
     let bookIdxResult = await recordProvider.readBookIdx(bookName);
     let bookIdx;
     
-    // Book table에 책 존재하는 경우
+    // Book table에 책 존재하는 경우 -> idx 받아옴
     if(bookIdxResult.result.length > 0){
         bookIdx = bookIdxResult.result[0].idx;
         // console.log('exist', bookIdxResult);
@@ -95,7 +91,7 @@ exports.postRecords = async function(req, res){
         // console.log('not exist', bookIdxResult);
     }
     // console.log(bookIdx);
-    const createRecordsParams = [bookIdx, userIdx, flowerPotIdx, starRating, quote, content];
+    const createRecordsParams = [bookIdx, userIdx, starRating, quote, content];
     const postRecordsResult = await recordService.createRecords(createRecordsParams);
     return res.send(postRecordsResult);
 }
@@ -125,8 +121,6 @@ exports.patchRecords = async function(req, res){
         return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
     }else if(idx <= 0){
         return res.send(errResponse(baseResponse.RECORDS_RECORDSIDX_LENGTH));
-    }else if(!quote){
-
     }else if(quote.length > 1000){
         return res.send(errResponse(baseResponse.RECORDS_QUOTE_LENGTH));
     }else if(content.length > 10000){

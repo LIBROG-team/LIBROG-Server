@@ -8,13 +8,24 @@ async function checkUserIdx(connection, userIdx){
     return checkUserRows;
 }
 
-async function checkFlowerPot(connection, flowerPotIdx){
+async function checkFlowerPot(connection, userIdx){
+    // 0725 유저 최근 화분 조회 쿼리
+    /**
+     * 1. status == 'ACTIVE'이고
+     * 2. 아직 화분 채우고 있는 상태(maxExp > exp)이고
+     * 3. 그중 가장 exp percentage를 많이 채운 순으로(내림차순 정렬) 화분 선택
+     */
     const checkFlowerPotQuery = `
-        SELECT f.idx, f.flowerDataIdx, f.status
-        FROM FlowerPot f
-        WHERE idx = ?;
+        SELECT FlowerPot.idx FlowerPotIdx, flowerDataIdx, maxExp, exp, IF(exp > 0, (exp / maxExp * 100), 0) as percentage
+        FROM FlowerPot
+            LEFT JOIN (
+                SELECT maxExp, idx
+                FROM FlowerData) data
+            on data.idx = FlowerPot.flowerDataIdx
+        WHERE status = 'ACTIVE' AND maxExp > exp AND userIdx = 1
+        ORDER BY percentage DESC;
     `;
-    const [checkFlowerPotRows] = await connection.query(checkFlowerPotQuery, flowerPotIdx);
+    const [checkFlowerPotRows] = await connection.query(checkFlowerPotQuery, userIdx);
     return checkFlowerPotRows;
 }
 
@@ -71,7 +82,7 @@ async function selectFlowerPotRecords(connection, flowerPotIdx){
 async function insertRecords(connection, createRecordsParams){
     const insertRecordsQuery = `
         INSERT INTO ReadingRecord
-        (bookIdx, userIdx, flowerPotIdx, starRating, quote, content, date)
+        (bookIdx, userIdx, starRating, quote, content, flowerPotIdx, date)
         VALUES (?, ?, ?, ?, ?, ?, now());
     `;
     const [insertRecordsRows] = await connection.query(insertRecordsQuery, createRecordsParams);
