@@ -56,6 +56,7 @@ exports.kakaoLogin = async function (kakaoResult) {
 
             const kakaoLoginResultObj = {
                 "message": '새로운 카카오 계정이 DB에 등록 되었습니다.',
+                "idx": kakaoUserIdResult[0].insertId,
                 "eamil": kakaoResult.email,
                 "name": kakaoResult.nickname,
                 "profileImgUrl": kakaoResult.profileImgUrl,
@@ -69,6 +70,7 @@ exports.kakaoLogin = async function (kakaoResult) {
             const kakaoAccountInfoRow = await userProvider.kakaoUserAccountInfo(kakaoAccountRow[0].email, 'kakao');
             const kakaoLoginResultObj = {
                 "message": '이미 가입된 유저입니다.',
+                "idx": kakaoAccountInfoRow[0].idx,
                 "eamil": kakaoAccountInfoRow[0].email,
                 "name": kakaoAccountInfoRow[0].name,
                 "profileImgUrl": kakaoAccountInfoRow[0].profileImgUrl,

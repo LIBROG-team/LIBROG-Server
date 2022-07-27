@@ -83,7 +83,7 @@ async function kakaoUserAccountInsert(connection, insertKakaoUserInfoParams) {
 // DB에 저장된 카카오 로그인 정보 가져오기
 async function kakaoUserAccountInfo(connection, email, type) {
   const selectkakaoUserAccountInfoQuery = `
-        SELECT email, name, profileImgUrl, type
+        SELECT idx, email, name, profileImgUrl, type
         FROM User
         WHERE email = ? AND type = 'kakao';`;
         const [kakaoUserAccountInfoRow] = await connection.query(
