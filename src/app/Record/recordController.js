@@ -48,16 +48,24 @@ exports.getFlowerPotRecords = async function(req, res){
  * [POST] /records/addition
  */
 exports.postRecords = async function(req, res){
-    const {bookName, author, publisher, publishedDate, userIdx, starRating, quote, content} = req.body;
+    const {
+        bookName, authorArr, publisher, publishedDate, bookInstruction, 
+        bookImgUrl, userIdx, starRating, quote, content} = req.body;
     
     // validation
     if(!bookName){
         return res.send(errResponse(baseResponse.RECORDS_BOOKNAME_EMPTY));
-    }else if(bookName <= 0){
+    }else if(bookName.length > 100){
         return res.send(errResponse(baseResponse.RECORDS_BOOKNAME_LENGTH));
-    }else if(author.length > 45){
-        return res.send(errResponse(baseResponse.RECORDS_AUTHOR_LENGTH));
-    }else if(publisher.length > 45){
+    }
+    // 저자 arr 요소 하나씩 validation
+    authorArr.forEach((author) => {
+        if(author.length > 45){
+            return res.send(errResponse(baseResponse.RECORDS_AUTHOR_LENGTH));
+        }
+    });
+    
+    if(publisher.length > 45){
         return res.send(errResponse(baseResponse.RECORDS_PUBLISHER_LENGTH));
     }else if(publishedDate.length > 45){
         return res.send(errResponse(baseResponse.RECORDS_PUBLISHED_DATE_LENGTH));
@@ -77,6 +85,7 @@ exports.postRecords = async function(req, res){
 
     // 일단 bookName으로 bookIdx 존재하는지 검색
     let bookIdxResult = await recordProvider.readBookIdx(bookName);
+    
     let bookIdx;
     
     // Book table에 책 존재하는 경우 -> idx 받아옴
@@ -85,12 +94,17 @@ exports.postRecords = async function(req, res){
         // console.log('exist', bookIdxResult);
     }else{
         // Book table에 책 존재하지 않는 경우 -> 책 새로 추가하기
-        const createBookParams = [bookName, author, publisher, publishedDate];
+        const createBookParams = [bookName, publisher, publishedDate, bookInstruction, bookImgUrl];
         bookIdxResult = await recordService.createBook(createBookParams);
         bookIdx = bookIdxResult.result.insertId;
-        // console.log('not exist', bookIdxResult);
+        // 책 먼저 추가후, 추가된 bookIdx 가지고 bookAuthor 추가
+        
+        const createBookAuthorParams = [bookIdx, authorArr];
+        const bookAuthorResult = await recordService.createBookAuthor(createBookAuthorParams);
+        
     }
     // console.log(bookIdx);
+    
     const createRecordsParams = [bookIdx, userIdx, starRating, quote, content];
     const postRecordsResult = await recordService.createRecords(createRecordsParams);
     return res.send(postRecordsResult);
