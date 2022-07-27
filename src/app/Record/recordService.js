@@ -3,7 +3,7 @@ const {pool} = require("../../../config/database");
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response, errResponse} = require("../../../config/response");
 const {connect} = require("http2");
-const recordProvider = require("./recordProvider");
+// const recordProvider = require("./recordProvider");
 const recordDao = require("./recordDao");
 
 /**
@@ -21,14 +21,19 @@ exports.createRecords = async function(createRecordsParams){
     const connection = await pool.getConnection(async (conn) => conn);
     try{
         // bookIdx DB에 있는지 check? -> db에 있는것만 검색 api에서 주니까 pass
-        // flowerPotIdx만 check
-        const checkFlowerPotList = await recordDao.checkFlowerPot(connection, createRecordsParams[2])
-        if(checkFlowerPotList.length < 1 || checkFlowerPotList[0].status == 'DELETED'){
-            connection.release();
-            return errResponse(baseResponse.FLOWERPOT_NO_FLOWERPOTS);
+        // flowerPotIdx만 check -> 0725 최근 화분으로 고정.
+        const userIdx = createRecordsParams[1];
+        const flowerPotCheckResult = await recordDao.checkFlowerPot(connection, userIdx);
+        // 유저가 키우는 화분 없을때
+        if(flowerPotCheckResult.length < 1){
+            return errResponse(baseResponse.USER_NO_AVAILABLE_FLOWERPOTS);
         }
+        
+        // 화분 인덱스 저장 -> 가장 최근의 exp값 제일 높은 화분으로
+        const flowerPotIdx = flowerPotCheckResult[0].FlowerPotIdx;
+        createRecordsParams.push(flowerPotIdx);
         const createRecordsList = await recordDao.insertRecords(connection, createRecordsParams);
-        // console.log(createRecordsList);
+        
         return response(baseResponse.SUCCESS, {'createdRecordId':createRecordsList.insertId});
     }catch(err){
         logger.error(`App - createRecords Service error\n: ${err.message}`);
@@ -39,7 +44,7 @@ exports.createRecords = async function(createRecordsParams){
 }
 
 /**
- * API No. 2.36
+ * API No. 2.31
  * API Name: 책 table에 추가 API
  */
 exports.createBook = async function(createBookParams){
@@ -49,6 +54,23 @@ exports.createBook = async function(createBookParams){
         return response(baseResponse.SUCCESS, createBookList);
     }catch(err){
         logger.error(`App - createBook Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }finally{
+        connection.release();
+    }
+}
+
+/**
+ * API No. 2.32
+ * API Name: 책 저자 추가 API
+ */
+exports.createBookAuthor = async function(createBookAuthorParams){
+    const connection = await pool.getConnection(async (conn) => conn);
+    try{
+        const createBookAuthorList = await recordDao.insertBookAuthor(connection, createBookAuthorParams);
+        return response(baseResponse.SUCCESS);
+    }catch(err){
+        logger.error(`App - createBookAuthor Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
     }finally{
         connection.release();
