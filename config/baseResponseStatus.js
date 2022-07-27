@@ -2,11 +2,16 @@ module.exports = {
 
     // 1000: Success
     SUCCESS : { "isSuccess": true, "code": 1000, "message":"성공" },
+    
+    SUCCESS_KAKAO_LOGIN : { "isSuccess": true, "code": 1500, "message":"카카오 로그인 성공" },
 
     // Common
     TOKEN_EMPTY : { "isSuccess": false, "code": 2000, "message":"JWT 토큰을 입력해주세요." },
     TOKEN_VERIFICATION_FAILURE : { "isSuccess": false, "code": 3000, "message":"JWT 토큰 검증 실패" },
-    TOKEN_VERIFICATION_SUCCESS : { "isSuccess": true, "code": 1001, "message":"JWT 토큰 검증 성공" }, // ?
+    TOKEN_VERIFICATION_SUCCESS : { "isSuccess": true, "code": 1001, "message":"JWT 토큰 검증 성공" },
+    KAKAO_LOGIN_ERROR : { "isSuccess": false, "code": 3500, "message":"카카오 로그인에서 오류가 발생했습니다. 서버로그를 참조해주세요." },
+    KAKAO_ACCESS_TOKEN_UNDEFINED : { "isSuccess": false, "code": 3501, "message":"카카오 Access Token 값이 비어있거나 유효하지 않습니다." },
+    KAKAO_LOGIN_UNAUTHORIZED_ERROR : { "isSuccess": false, "code": 3502, "message":"카카오 로그인 에러. 인증되지 않은 Token 입니다. (code : 401)" },
 
     // 2000 : 형식적 Validation Error
     USER_USERIDX_EMPTY : { "isSuccess": false, "code": 2001, "message": "userIdx를 입력해주세요." },
