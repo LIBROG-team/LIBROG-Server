@@ -42,26 +42,42 @@ exports.createUser = async function (email, password, name) {
 };
 
 exports.kakaoLogin = async function (kakaoResult) {
-    // 이미 가입된 유저인지 확인
-    const kakaoAccountRow = await userProvider.kakaoAccountCheck(kakaoResult.email, 'kakao');
-
     try {
-        if (kakaoAccountRow[0].email.length > 0 && kakaoAccountRow[0].type == 'kakao') {
-            console.log('이미 가입된 유저입니다.');
-            console.log(baseResponse.SUCCESS_KAKAO_LOGIN, kakaoAccountRow);
-            return response(baseResponse.SUCCESS_KAKAO_LOGIN, kakaoAccountRow);
-        } 
-    } catch(err) {
-    // DB에 등록 되있지 않은 유저라면, DB에 정보 추가
-        const insertKakaoUserInfoParams = [kakaoResult.email, kakaoResult.nickname, kakaoResult.profileImgUrl, 'kakao'];
+        const kakaoAccountRow = await userProvider.kakaoAccountCheck(kakaoResult.email, 'kakao');
+        if (kakaoAccountRow[0] === undefined) {
+            // DB에 등록 되있지 않은 유저라면, DB에 정보 추가
+            const insertKakaoUserInfoParams = [kakaoResult.email, kakaoResult.nickname, kakaoResult.profileImgUrl, 'kakao'];
 
-        const connection = await pool.getConnection(async (conn) => conn);
-        
-        const kakaoUserIdResult = await userDao.kakaoUserAccountInsert(connection, insertKakaoUserInfoParams);
-        console.log(`추가된 회원 : ${kakaoUserIdResult[0].insertId}`)
-        connection.release();
-        console.log(baseResponse.SUCCESS_KAKAO_LOGIN, kakaoAccountRow);
-        return response(baseResponse.SUCCESS_KAKAO_LOGIN, kakaoAccountRow);
+            const connection = await pool.getConnection(async (conn) => conn);
+            
+            const kakaoUserIdResult = await userDao.kakaoUserAccountInsert(connection, insertKakaoUserInfoParams);
+            console.log(`추가된 회원 : ${kakaoUserIdResult[0].insertId}`)
+            connection.release();
+
+            const kakaoLoginResultObj = {
+                "message": '새로운 카카오 계정이 DB에 등록 되었습니다.',
+                "eamil": kakaoResult.email,
+                "name": kakaoResult.nickname,
+                "profileImgUrl": kakaoResult.profileImgUrl,
+                "loginType": 'kakao',
+            }
+            return response(baseResponse.SUCCESS_KAKAO_LOGIN, kakaoLoginResultObj);
+        }
+
+        // 이미 가입된 유저라면 로그인 결과 return
+        if (kakaoAccountRow[0].email.length > 0 && kakaoAccountRow[0].type == 'kakao') {
+            const kakaoAccountInfoRow = await userProvider.kakaoUserAccountInfo(kakaoAccountRow[0].email, 'kakao');
+            const kakaoLoginResultObj = {
+                "message": '이미 가입된 유저입니다.',
+                "eamil": kakaoAccountInfoRow[0].email,
+                "name": kakaoAccountInfoRow[0].name,
+                "profileImgUrl": kakaoAccountInfoRow[0].profileImgUrl,
+                "loginType": 'kakao',
+            }
+            return response(baseResponse.SUCCESS_KAKAO_LOGIN, kakaoLoginResultObj);
+        }
+    } catch(err) {
+        console.log(err);
     }
 
 }

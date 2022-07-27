@@ -36,3 +36,11 @@ exports.emailCheck = async function (email) {
   
     return kakaoAccountCheckResult;
   }
+
+  exports.kakaoUserAccountInfo = async function(email, type) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const kakaoUserAccountInfoResult = await userDao.kakaoUserAccountInfo(connection, email, type);
+    connection.release();
+  
+    return kakaoUserAccountInfoResult;
+  }

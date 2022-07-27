@@ -77,6 +77,13 @@ exports.KakaoLogin = async function (req, res) {
      * Body: accessToken
      */
     const { accessToken } = req.body;
+    
+    async function tokenReult(result) {
+        const kakaoTokenResult = await userService.kakaoLogin(
+            result
+        );
+        return res.send(kakaoTokenResult);
+    }
 
     // token 값이 비었는지 확인
     if (!accessToken)
@@ -96,11 +103,7 @@ exports.KakaoLogin = async function (req, res) {
             profileImgUrl: kakaoResponse.data.kakao_account.profile.profile_image_url,
             loginType: 'kakao',
         }
-
-        const kakaoTokenResult = userService.kakaoLogin(
-            kakaoResult
-        );
-        return res.send(kakaoTokenResult);
+        return tokenReult(kakaoResult);
 
     }).catch( err => {
 
@@ -108,10 +111,7 @@ exports.KakaoLogin = async function (req, res) {
         if (err.response.status == '401') {
             return res.send(response(baseResponse.KAKAO_LOGIN_UNAUTHORIZED_ERROR));
         }
-
-        // 401 이외의 다른 에러 발생시
-        return res.send(response(kakaoLoginErr(err.response.status, err.response.statusText)));
+        return res.send(response(baseResponse.KAKAO_LOGIN_ERROR));
     });
-    
-    // return res.send(certificateResponse);
+
 };
