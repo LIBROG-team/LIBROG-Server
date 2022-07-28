@@ -22,7 +22,7 @@ async function checkFlowerPot(connection, userIdx){
                 SELECT maxExp, idx
                 FROM FlowerData) data
             on data.idx = FlowerPot.flowerDataIdx
-        WHERE status = 'ACTIVE' AND maxExp > exp AND userIdx = 1
+        WHERE status = 'ACTIVE' AND maxExp > exp AND userIdx = ?
         ORDER BY percentage DESC;
     `;
     const [checkFlowerPotRows] = await connection.query(checkFlowerPotQuery, userIdx);
@@ -51,7 +51,7 @@ async function selectUserRecords(connection, userIdx){
                 SELECT idx, bookImgUrl
                 FROM Book
             ) b on b.idx = r.bookIdx
-        WHERE r.userIdx = 1 AND r.status = 'ACTIVE'
+        WHERE r.userIdx = ? AND r.status = 'ACTIVE'
         LIMIT 1000;
         `;
     const [userRecordRows] = await connection.query(selectUserFlowerPotQuery, userIdx);
