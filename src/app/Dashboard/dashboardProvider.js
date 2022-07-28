@@ -11,3 +11,21 @@ exports.retrieveUserCount = async function () {
 
     return userCountResult[0];
   };
+
+exports.retrieveFlowerpotCount = async function () {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const flowerpotCountResult = await dashboardDao.selectFlowerpotCount(connection);
+
+  connection.release();
+
+  return flowerpotCountResult[0];
+};
+
+exports.retrieveBookCount = async function () {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const bookCountResult = await dashboardDao.selectBookCount(connection);
+
+  connection.release();
+
+  return bookCountResult[0];
+};
