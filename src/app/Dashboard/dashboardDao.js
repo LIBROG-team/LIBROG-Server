@@ -7,6 +7,26 @@ async function selectUserCount(connection) {
     return userCountRow;
   }
 
+async function selectFlowerpotCount(connection) {
+    const selectflowerpotCountQuery = `
+    SELECT count(*) AS flowerpotCount
+    FROM FlowerPot;
+    `;
+    const [flowerpotCountRow] = await connection.query(selectflowerpotCountQuery, "count(*)");
+    return flowerpotCountRow;
+  }
+
+async function selectBookCount(connection) {
+    const selectBookCountQuery = `
+    SELECT count(*) AS bookCount
+    FROM Book;
+    `;
+    const [bookCountRow] = await connection.query(selectBookCountQuery, "count(*)");
+    return bookCountRow;
+  }
+
   module.exports = {
     selectUserCount,
+    selectFlowerpotCount,
+    selectBookCount,
   }
