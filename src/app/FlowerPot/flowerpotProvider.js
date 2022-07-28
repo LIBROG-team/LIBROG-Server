@@ -61,3 +61,4 @@ exports.retrieveFlowerpot = async function (userIdx) {
   
     return userFlowerpotInfo;
   };
+  

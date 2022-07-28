@@ -19,7 +19,7 @@ module.exports = function(app){
 
     app.delete('/flowerpots/flowerpotDelete/:flowerpotIdx',flowerpot.deleteFlowerpot);
 
-    //3.6 획득 화분 내 화분으로 추가 API
+ 
     
 
    
