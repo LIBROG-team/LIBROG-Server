@@ -23,7 +23,7 @@ exports.createRecords = async function(createRecordsParams){
         // bookIdx DB에 있는지 check? -> db에 있는것만 검색 api에서 주니까 pass
         // flowerPotIdx만 check -> 0725 최근 화분으로 고정.
         const userIdx = createRecordsParams[1];
-        const flowerPotCheckResult = await recordDao.checkFlowerPot(connection, userIdx);
+        const flowerPotCheckResult = await recordDao.checkRecentFlowerPot(connection, userIdx);
         // 유저가 키우는 화분 없을때
         if(flowerPotCheckResult.length < 1){
             return errResponse(baseResponse.USER_NO_AVAILABLE_FLOWERPOTS);
@@ -122,4 +122,8 @@ exports.removeRecords = async function(recordsIdx){
     }finally{
         connection.release();
     }
+}
+
+exports.readRecentBookRecords = async function(userIdx){
+    const connection = await pool.getConnection(async (conn) => conn);   
 }

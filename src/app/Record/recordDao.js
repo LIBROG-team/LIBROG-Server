@@ -7,8 +7,16 @@ async function checkUserIdx(connection, userIdx){
     const [checkUserRows] = await connection.query(checkUserIdxQuery, userIdx);
     return checkUserRows;
 }
-
-async function checkFlowerPot(connection, userIdx){
+async function checkFlowerPot(connection, flowerPotIdx){
+    const checkFlowerPotQuery = `
+        SELECT idx, f.status
+        FROM FlowerPot f
+        WHERE idx = ? AND f.status = 'ACTIVE';
+    `;
+    const [checkFlowerPotRows] = await connection.query(checkFlowerPotQuery, flowerPotIdx);
+    return checkFlowerPotRows;
+}
+async function checkRecentFlowerPot(connection, userIdx){
     // 0725 유저 최근 화분 조회 쿼리
     /**
      * 1. status == 'ACTIVE'이고
@@ -69,7 +77,7 @@ async function selectFlowerPotRecords(connection, flowerPotIdx){
         FROM ReadingRecord r
             LEFT JOIN Book B
             on B.idx = r.bookIdx
-        WHERE flowerPotIdx = ? AND status='ACTIVE'
+        WHERE flowerPotIdx = ? AND r.status='ACTIVE'
         LIMIT 1000;
         `;
     const [selectFlowerPotRecordsRows] = await connection.query(selectFlowerPotRecordsQuery, flowerPotIdx);
@@ -285,6 +293,7 @@ async function selectUserFlowerListDB(connection){
 module.exports = {
     checkUserIdx,
     checkFlowerPot,
+    checkRecentFlowerPot,
     checkRecords,
     selectUserRecords,
     selectFlowerPotRecords,
