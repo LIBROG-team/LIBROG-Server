@@ -7,6 +7,7 @@ async function checkUserIdx(connection, userIdx){
     const [checkUserRows] = await connection.query(checkUserIdxQuery, userIdx);
     return checkUserRows;
 }
+// 2.2 -> 유저 가지고 있는 화분 조회 API
 async function checkFlowerPot(connection, flowerPotIdx){
     const checkFlowerPotQuery = `
         SELECT idx, f.status
@@ -53,13 +54,17 @@ async function checkRecords(connection, recordsIdx){
  */
 async function selectUserRecords(connection, userIdx){
     const selectUserFlowerPotQuery = `
-        SELECT r.idx, r.bookIdx, r.flowerPotIdx, r.date, r.starRating, r.content, r.quote, r.status, b.bookImgUrl
+        SELECT r.idx readingRecordIdx, r.bookIdx, r.flowerPotIdx, r.date, r.starRating, r.status, b.bookImgUrl
         FROM ReadingRecord r
             LEFT JOIN (
                 SELECT idx, bookImgUrl
                 FROM Book
             ) b on b.idx = r.bookIdx
-        WHERE r.userIdx = ? AND r.status = 'ACTIVE'
+            LEFT JOIN(
+                SELECT idx, userIdx
+                FROM FlowerPot
+            ) f on f.idx = r.flowerPotIdx
+        WHERE f.userIdx = ? AND r.status = 'ACTIVE'
         LIMIT 1000;
         `;
     const [userRecordRows] = await connection.query(selectUserFlowerPotQuery, userIdx);
@@ -73,7 +78,7 @@ async function selectUserRecords(connection, userIdx){
  */
 async function selectFlowerPotRecords(connection, flowerPotIdx){
     const selectFlowerPotRecordsQuery = `
-        SELECT r.idx, r.bookIdx, r.flowerPotIdx, r.userIdx, r.date, r.starRating, r.content, r.quote, r.status, B.bookImgUrl
+        SELECT r.idx readingRecordIdx, r.bookIdx, r.flowerPotIdx, r.date, r.starRating, r.status, B.bookImgUrl
         FROM ReadingRecord r
             LEFT JOIN Book B
             on B.idx = r.bookIdx
