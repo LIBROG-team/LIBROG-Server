@@ -77,3 +77,19 @@ exports.retrieveFlowerpot = async function (userIdx) {
     return serchAcqFlowerpot;
    
   };
+  
+  exports.retrieveSearchUnacqFlowerpot = async function (userIdx,flowerName) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const serchUnacqFlowerpot = await flowerpotDao.selectSerchUnacqFlowerpot(connection, userIdx,flowerName);
+    
+
+    if(serchUnacqFlowerpot.length < 1){
+      connection.release();
+      return errResponse(baseResponse.FLOWERPOT_NO_FLOWERPOTS);
+  }
+  
+    connection.release();
+  
+    return serchUnacqFlowerpot;
+   
+  };
