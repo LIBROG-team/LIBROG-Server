@@ -102,6 +102,23 @@ async function selectFlowerpotInfo(connection, flowerDataIdx) {
       return searchAcqFlowerpotRow;
     }
 
+//미획득 화분 내에서 검색
+
+async function selectSerchUnacqFlowerpot(connection, userIdx, flowerName) {
+      const selectSearchUnacqFlowerpotQuery = `
+      SELECT  fd.idx as flowerDataIdx,
+            fd.name,
+            fd.type,
+            fd.flowerImgUrl,
+            fd.condition
+      FROM FlowerData as fd
+      WHERE ( fd.idx NOT IN (SELECT  fd.idx FROM UserFlowerList as fl left join FlowerData as fd on fd.idx =fl.flowerDataIdx
+      WHERE fl.userIdx =?)and name Like concat('%',?,'%'));
+      `;
+      const [searchUnacqFlowerpotRow] = await connection.query(selectSearchUnacqFlowerpotQuery, [userIdx,flowerName]);
+      console.log(searchUnacqFlowerpotRow);
+      return searchUnacqFlowerpotRow;
+    }
 
 
   module.exports ={
@@ -110,5 +127,6 @@ async function selectFlowerpotInfo(connection, flowerDataIdx) {
     selectUserunAcquiredFlowerpot,
     selectFlowerpotInfo,
     deleteFlowerPot,
-    selectSerchAcqFlowerpot
+    selectSerchAcqFlowerpot,
+    selectSerchUnacqFlowerpot
   };

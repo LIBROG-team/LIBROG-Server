@@ -22,6 +22,8 @@ module.exports = function(app){
     //3.6 획득 화분 내에서 검색 API
     app.get ('/flowerpots/:userIdx/searchAcqFlower',flowerpot.getSerachAcqFlowerpot);
 
+    //3.7 미획득 화분 내에서 검색 API 
+    app.get ('/flowerpots/:userIdx/searchUnacqFlower', flowerpot.getSerachUnacqFlowerpot);
  
     
 

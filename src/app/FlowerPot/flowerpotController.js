@@ -166,5 +166,34 @@ exports.getflowerpots = async function(req, res){
         
         return res.send(response(baseResponse.SUCCESS, searchAcqResult))
     }
- 
 
+     /**
+ * API No.7
+ * API Name : 미획득화분내에서 검색 API
+ * [GET] /app/flowerpots/:userIdx/searchUnacqFlower?flowerName=
+ * 
+ */
+      exports.getSerachUnacqFlowerpot = async function(req, res){
+        /*
+            Path Variable : userIdx
+
+            Query String: flowerName
+        */
+            const userIdx = req.params.userIdx;
+            const flowerName=req.query.flowerName;
+
+        // validation
+        if(!userIdx) {
+            return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
+        } 
+        if (userIdx <= 0) {
+            return res.send(errResponse(baseResponse.USER_USERIDX_LENGTH));
+        }
+        if(!flowerName) {
+            return res.send(errResponse(baseResponse.FLOWERNAME_EMPTY));
+        } 
+    
+        const searchUnacqResult = await flowerpotProvider.retrieveSearchUnacqFlowerpot(userIdx,flowerName);
+        
+        return res.send(response(baseResponse.SUCCESS, searchUnacqResult))
+    }
