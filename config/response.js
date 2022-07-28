@@ -3,7 +3,7 @@ const response = ({isSuccess, code, message}, result) => {
         isSuccess: isSuccess,
         code: code,
         message: message,
-        result: result
+        result: result,
    }
   };
 

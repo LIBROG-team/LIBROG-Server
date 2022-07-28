@@ -6,6 +6,7 @@ const {response, errResponse} = require("../../../config/response");
 
 const regexEmail = require("regex-email");
 const {emit} = require("nodemon");
+const axios = require("axios");
 
 
 /**
@@ -64,3 +65,53 @@ const {emit} = require("nodemon");
  * [PATCH] /app/users
  */
 
+
+/**
+ * API No. 1.10
+ * API Name : Kakao Token 인증 API
+ * [POST] /app/users/kakao/certificate/
+ */
+exports.KakaoLogin = async function (req, res) {
+
+    /**
+     * Body: accessToken
+     */
+    const { accessToken } = req.body;
+    
+    async function tokenReult(result) {
+        const kakaoTokenResult = await userService.kakaoLogin(
+            result
+        );
+        return res.send(kakaoTokenResult);
+    }
+
+    // token 값이 비었는지 확인
+    if (!accessToken)
+        return res.send(response(baseResponse.KAKAO_ACCESS_TOKEN_UNDEFINED));
+
+    axios({
+        method: 'get',
+        url: 'https://kapi.kakao.com/v2/user/me',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`
+        }
+    }).then((kakaoResponse) => {
+        // 로그인 성공시
+        const kakaoResult = {
+            email: kakaoResponse.data.kakao_account.email,
+            nickname: kakaoResponse.data.properties.nickname,
+            profileImgUrl: kakaoResponse.data.kakao_account.profile.profile_image_url,
+            loginType: 'kakao',
+        }
+        return tokenReult(kakaoResult);
+
+    }).catch( err => {
+
+        // 401 Error 인증되지 않은 Token 값
+        if (err.response.status == '401') {
+            return res.send(response(baseResponse.KAKAO_LOGIN_UNAUTHORIZED_ERROR));
+        }
+        return res.send(response(baseResponse.KAKAO_LOGIN_ERROR));
+    });
+
+};

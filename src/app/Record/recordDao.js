@@ -7,14 +7,34 @@ async function checkUserIdx(connection, userIdx){
     const [checkUserRows] = await connection.query(checkUserIdxQuery, userIdx);
     return checkUserRows;
 }
-
+// 2.2 -> 유저 가지고 있는 화분 조회 API
 async function checkFlowerPot(connection, flowerPotIdx){
     const checkFlowerPotQuery = `
-        SELECT f.idx, f.flowerDataIdx, f.status
+        SELECT idx, f.status
         FROM FlowerPot f
-        WHERE idx = ?;
+        WHERE idx = ? AND f.status = 'ACTIVE';
     `;
     const [checkFlowerPotRows] = await connection.query(checkFlowerPotQuery, flowerPotIdx);
+    return checkFlowerPotRows;
+}
+async function checkRecentFlowerPot(connection, userIdx){
+    // 0725 유저 최근 화분 조회 쿼리
+    /**
+     * 1. status == 'ACTIVE'이고
+     * 2. 아직 화분 채우고 있는 상태(maxExp > exp)이고
+     * 3. 그중 가장 exp percentage를 많이 채운 순으로(내림차순 정렬) 화분 선택
+     */
+    const checkFlowerPotQuery = `
+        SELECT FlowerPot.idx FlowerPotIdx, flowerDataIdx, maxExp, exp, IF(exp > 0, (exp / maxExp * 100), 0) as percentage
+        FROM FlowerPot
+            LEFT JOIN (
+                SELECT maxExp, idx
+                FROM FlowerData) data
+            on data.idx = FlowerPot.flowerDataIdx
+        WHERE status = 'ACTIVE' AND maxExp > exp AND userIdx = ?
+        ORDER BY percentage DESC;
+    `;
+    const [checkFlowerPotRows] = await connection.query(checkFlowerPotQuery, userIdx);
     return checkFlowerPotRows;
 }
 
@@ -34,11 +54,17 @@ async function checkRecords(connection, recordsIdx){
  */
 async function selectUserRecords(connection, userIdx){
     const selectUserFlowerPotQuery = `
-        SELECT r.idx, r.bookIdx, r.flowerPotIdx, r.userIdx, r.date, r.starRating, r.content, r.quote, r.status, B.imgUrl
+        SELECT r.idx readingRecordIdx, r.bookIdx, r.flowerPotIdx, r.date, r.starRating, r.status, b.bookImgUrl
         FROM ReadingRecord r
-            LEFT JOIN BookImgUrl B
-            on r.bookIdx = B.bookIdx
-        WHERE r.userIdx = ? AND r.status = 'ACTIVE'
+            LEFT JOIN (
+                SELECT idx, bookImgUrl
+                FROM Book
+            ) b on b.idx = r.bookIdx
+            LEFT JOIN(
+                SELECT idx, userIdx
+                FROM FlowerPot
+            ) f on f.idx = r.flowerPotIdx
+        WHERE f.userIdx = ? AND r.status = 'ACTIVE'
         LIMIT 1000;
         `;
     const [userRecordRows] = await connection.query(selectUserFlowerPotQuery, userIdx);
@@ -52,11 +78,11 @@ async function selectUserRecords(connection, userIdx){
  */
 async function selectFlowerPotRecords(connection, flowerPotIdx){
     const selectFlowerPotRecordsQuery = `
-        SELECT r.idx, r.bookIdx, r.flowerPotIdx, r.userIdx, r.date, r.starRating, r.content, r.quote, r.status, B.imgUrl
+        SELECT r.idx readingRecordIdx, r.bookIdx, r.flowerPotIdx, r.date, r.starRating, r.status, B.bookImgUrl
         FROM ReadingRecord r
-            LEFT JOIN BookImgUrl B
-            on B.bookIdx = r.bookIdx
-        WHERE flowerPotIdx = ? AND status='ACTIVE'
+            LEFT JOIN Book B
+            on B.idx = r.bookIdx
+        WHERE flowerPotIdx = ? AND r.status='ACTIVE'
         LIMIT 1000;
         `;
     const [selectFlowerPotRecordsRows] = await connection.query(selectFlowerPotRecordsQuery, flowerPotIdx);
@@ -71,7 +97,7 @@ async function selectFlowerPotRecords(connection, flowerPotIdx){
 async function insertRecords(connection, createRecordsParams){
     const insertRecordsQuery = `
         INSERT INTO ReadingRecord
-        (bookIdx, userIdx, flowerPotIdx, starRating, quote, content, date)
+        (bookIdx, userIdx, starRating, quote, content, flowerPotIdx, date)
         VALUES (?, ?, ?, ?, ?, ?, now());
     `;
     const [insertRecordsRows] = await connection.query(insertRecordsQuery, createRecordsParams);
@@ -92,15 +118,33 @@ async function selectBookIdx(connection, bookName){
     return selectBookIdxRows;
 }
 
-// 책 추가 API
+// 2.31 책 추가 API
 async function insertBookIdx(connection, createBookParams){
     const insertBookIdxQuery = `
-        INSERT INTO Book
-        (name, author, publisher, publishedDate)
-        VALUES (?, ?, ?, ?);
+    INSERT INTO Book
+    (name, publisher, publishedDate, bookInstruction, bookImgUrl)
+    VALUES (?, ?, ?, ?, ?);
     `;
     const [insertBookIdx] = await connection.query(insertBookIdxQuery, createBookParams);
     return insertBookIdx;
+}
+/**
+ * 2.32 책 저자 추가 API
+ */
+async function insertBookAuthor(connection, createBookAuthorParams){
+    const bookIdx = createBookAuthorParams[0];
+    const authorArr = createBookAuthorParams[1];
+    const insertBookAuthorQuery = `
+        INSERT INTO BookAuthor
+        (bookIdx, authorName)
+        VALUES (?, ?);
+    `;
+    
+    authorArr.forEach(async function(author){
+        await connection.query(insertBookAuthorQuery, [bookIdx, author]);
+        
+    });
+    return;
 }
 
 /**
@@ -177,15 +221,24 @@ async function selectBookDB(connection){
     const [selectBookDBRows] = await connection.query(selectBookDBQuery);
     return selectBookDBRows;
 }
-// BookImgUrl table
-async function selectBookImgUrlDB(connection){
-    const selectBookImgUrlDBQuery = `
+// BookAuthor table
+async function selectBookAuthorDB(connection){
+    const selectBookAuthorDBQuery = `
         SELECT *
-        FROM BookImgUrl;
+        FROM BookAuthor;
     `;
-    const [selectBookImgUrlRows] = await connection.query(selectBookImgUrlDBQuery);
-    return selectBookImgUrlRows;
+    const [selectBookAuthorDBRows] = await connection.query(selectBookAuthorDBQuery);
+    return selectBookAuthorDBRows;
 }
+// BookImgUrl table
+// async function selectBookImgUrlDB(connection){
+//     const selectBookImgUrlDBQuery = `
+//         SELECT *
+//         FROM BookImgUrl;
+//     `;
+//     const [selectBookImgUrlRows] = await connection.query(selectBookImgUrlDBQuery);
+//     return selectBookImgUrlRows;
+// }
 // FlowerData table
 async function selectFlowerDataDB(connection){
     const selectFlowerDataDBQuery = `
@@ -245,19 +298,22 @@ async function selectUserFlowerListDB(connection){
 module.exports = {
     checkUserIdx,
     checkFlowerPot,
+    checkRecentFlowerPot,
     checkRecords,
     selectUserRecords,
     selectFlowerPotRecords,
     insertRecords,
     selectBookIdx,
     insertBookIdx,
+    insertBookAuthor,
 
     updateRecords,
     deleteRecords,
     selectStatistics,
     
     selectBookDB,
-    selectBookImgUrlDB,
+    selectBookAuthorDB,
+    // selectBookImgUrlDB,
     selectFlowerDataDB,
     selectFlowerPotDB,
     selectFollowDB,
