@@ -19,6 +19,9 @@ module.exports = function(app){
 
     app.delete('/flowerpots/flowerpotDelete/:flowerpotIdx',flowerpot.deleteFlowerpot);
 
+    //3.6 획득 화분 내에서 검색 API
+    app.get ('/flowerpots/:userIdx/searchAcqFlower',flowerpot.getSerachAcqFlowerpot);
+
  
     
 

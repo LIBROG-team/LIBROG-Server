@@ -18,7 +18,7 @@ async function selectUserFlowerpot(connection, userIdx) {
       FROM FlowerPot as p
             left join FlowerData as d on d.idx = p.flowerDataIdx and p.status='ACTIVE'
             left join ReadingRecord as r on r.flowerPotIdx = p.idx and r.userIdx=p.userIdx and r.status = 'ACTIVE'
-      WHERE p.userIdx = ? 
+      WHERE p.userIdx = ? ;
     `;
     const [userFlowerpotRow] = await connection.query(selectUserFlowerpotQuery, userIdx);
     return userFlowerpotRow;
@@ -34,7 +34,7 @@ async function selectUserAcquiredFlowerpot(connection, userIdx) {
             fd.flowerImgUrl
       FROM UserFlowerList as fl
       left join FlowerData as fd on fd.idx =fl.flowerDataIdx
-      WHERE fl.userIdx =?
+      WHERE fl.userIdx =?;
       `;
       const [userAcquiredFlowerpotRow] = await connection.query(selectUserAcquiredFlowerpotQuery, userIdx);
       return userAcquiredFlowerpotRow;
@@ -50,7 +50,7 @@ async function selectUserunAcquiredFlowerpot(connection, userIdx) {
             fd.condition
       FROM FlowerData as fd
       WHERE  fd.idx NOT IN (SELECT  fd.idx FROM UserFlowerList as fl left join FlowerData as fd on fd.idx =fl.flowerDataIdx
-      WHERE fl.userIdx =?)
+      WHERE fl.userIdx =?);
     
       `;
       const [userunAcquiredFlowerpotRow] = await connection.query(selectUserunAcquiredFlowerpotQuery, userIdx);
@@ -66,7 +66,7 @@ async function selectFlowerpotInfo(connection, flowerDataIdx) {
             fd.content,
             fd.flowerImgUrl
       FROM FlowerData as fd
-      WHERE fd.idx =?
+      WHERE fd.idx =?;
       `;
       const [userflowerpotInfoRow] = await connection.query(selectFlowerpotInfoQuery, flowerDataIdx);
       return userflowerpotInfoRow;
@@ -80,10 +80,26 @@ async function selectFlowerpotInfo(connection, flowerDataIdx) {
       FROM ReadingRecord a
       LEFT JOIN FlowerPot b
       ON a.flowerPotIdx = b.idx
-      WHERE b.idx=?
+      WHERE b.idx=?;
       `;
       const [deleteuserflowerpotInfoRow] = await connection.query(deleteFlowerpotInfoQuery, flowerpotIdx);
       return deleteuserflowerpotInfoRow;
+    }
+  //획득 화분내에서 검색
+  async function selectSerchAcqFlowerpot(connection, userIdx, flowerName) {
+      const selectSearchAcqFlowerpotQuery = `
+      SELECT fl.flowerDataIdx,
+            fd.name,
+            fd.type,
+            fd.bloomingPeriod,
+            fd.flowerImgUrl
+      FROM UserFlowerList as fl
+      left join FlowerData as fd on fd.idx =fl.flowerDataIdx
+      WHERE  (fl.userIdx =? and name Like concat('%', ?,'%'));
+      `;
+      const [searchAcqFlowerpotRow] = await connection.query(selectSearchAcqFlowerpotQuery, [userIdx,flowerName]);
+      console.log(searchAcqFlowerpotRow);
+      return searchAcqFlowerpotRow;
     }
 
 
@@ -93,5 +109,6 @@ async function selectFlowerpotInfo(connection, flowerDataIdx) {
     selectUserAcquiredFlowerpot,
     selectUserunAcquiredFlowerpot,
     selectFlowerpotInfo,
-    deleteFlowerPot
+    deleteFlowerPot,
+    selectSerchAcqFlowerpot
   };
