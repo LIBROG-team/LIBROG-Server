@@ -55,6 +55,12 @@ module.exports = {
     FLOWERDATA_EMPTY : { "isSuccess": false, "code": 2060, "message": "flowerDataIdx를 입력해주세요." },
     FLOWERDATA_LENGTH : { "isSuccess": false, "code": 2061, "message": "flowerDataIdx는 0보다 큰 값으로 입력해주세요." },
 
+    FLOWERPOT_EMPTY : { "isSuccess": false, "code": 2071, "message": "flowerpotIdx를 입력해주세요." },
+    FLOWERPOT_LENGTH : { "isSuccess": false, "code": 2072, "message": "flowerpotIdx는 0보다 큰 값으로 입력해주세요." },
+
+    FLOWERNAME_EMPTY : { "isSuccess": false, "code": 2081, "message": "flowerName을 입력해주세요." },
+
+
     // 3000 : 의미적 Validation Error
     USER_NO_RECORDS : { "isSuccess": false, "code": 3001, "message":"해당 유저에 독서 기록이 존재하지 않습니다." },
     FLOWERPOT_NO_FLOWERPOTS : { "isSuccess": false, "code": 3005, "message":"지워졌거나 존재하지 않는 화분입니다." },

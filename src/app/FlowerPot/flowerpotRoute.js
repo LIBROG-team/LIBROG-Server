@@ -15,6 +15,17 @@ module.exports = function(app){
 
     app.get('/flowerpots/flowerPotInfo/:flowerDataIdx',flowerpot.getflowerPotInfo);
 
+    //3.5 유저 화분 삭제 API
+
+    app.delete('/flowerpots/flowerpotDelete/:flowerpotIdx',flowerpot.deleteFlowerpot);
+
+ 
+    
+
+   
+
+
+
 
 
 };

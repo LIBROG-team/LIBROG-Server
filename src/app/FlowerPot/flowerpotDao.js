@@ -1,23 +1,24 @@
 // 화분 조회
 async function selectUserFlowerpot(connection, userIdx) {
     const selectUserFlowerpotQuery = `
-    SELECT d.idx as flowerDataIdx,
-          p.idx as flowerPotIdx,
-          d.name,
-          d.engName,
-          d.flowerImgUrl,
-          d.flowerPotImgUrl,
-          d.maxExp,
-          d.bloomingPeriod,
-          d.content,
-          d.type,
-          p.startDate,
-          p.lastDate,
-          p.exp,
-          p.recordCount
-    FROM FlowerPot as p
-          left join FlowerData as d on d.idx = p.flowerDataIdx and p.status='ACTIVE'
-    WHERE p.userIdx = ?
+    SELECT  d.idx as flowerDataIdx,
+            p.idx as flowerPotIdx,
+            d.name,
+            d.engName,
+            d.flowerImgUrl,
+            d.flowerPotImgUrl,
+            d.maxExp,
+            d.bloomingPeriod,
+            d.content,
+            d.type,
+            p.startDate,
+            p.lastDate,
+            p.exp,
+            COUNT(r.idx)as recordCount
+      FROM FlowerPot as p
+            left join FlowerData as d on d.idx = p.flowerDataIdx and p.status='ACTIVE'
+            left join ReadingRecord as r on r.flowerPotIdx = p.idx and r.userIdx=p.userIdx and r.status = 'ACTIVE'
+      WHERE p.userIdx = ? 
     `;
     const [userFlowerpotRow] = await connection.query(selectUserFlowerpotQuery, userIdx);
     return userFlowerpotRow;
@@ -71,9 +72,26 @@ async function selectFlowerpotInfo(connection, flowerDataIdx) {
       return userflowerpotInfoRow;
     }
 
+    
+//유저의 화분 삭제
+    async function deleteFlowerPot(connection, flowerpotIdx) {
+      const deleteFlowerpotInfoQuery = `
+      DELETE  a, b
+      FROM ReadingRecord a
+      LEFT JOIN FlowerPot b
+      ON a.flowerPotIdx = b.idx
+      WHERE b.idx=?
+      `;
+      const [deleteuserflowerpotInfoRow] = await connection.query(deleteFlowerpotInfoQuery, flowerpotIdx);
+      return deleteuserflowerpotInfoRow;
+    }
+
+
+
   module.exports ={
     selectUserFlowerpot,
     selectUserAcquiredFlowerpot,
     selectUserunAcquiredFlowerpot,
-    selectFlowerpotInfo
+    selectFlowerpotInfo,
+    deleteFlowerPot
   };
