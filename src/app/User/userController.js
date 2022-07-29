@@ -7,6 +7,7 @@ const {response, errResponse} = require("../../../config/response");
 const regexEmail = require("regex-email");
 const {emit} = require("nodemon");
 const axios = require("axios");
+const nodemailer = require("nodemailer");
 
 
 /**
@@ -155,3 +156,98 @@ exports.editIntroduce = async function (req, res) {
     const editIntroduceResult = await userService.editIntroduce(patchIntroductionParams);
     return res.send(editIntroduceResult);
 }
+
+/**
+ * API No. 1.22
+ * API Name : 이메일 주소로 임시 비밀번호 발급 API
+ * [PATCH] /users/findMyPassword/
+ */
+ exports.findPassword = async function (req, res) {
+    let { email } = req.body;
+    console.log(email);
+
+    // e-mail validation
+    if (!email)
+        return res.send(response(baseResponse.SIGNUP_EMAIL_EMPTY));
+    if (email.length > 30)
+        return res.send(response(baseResponse.SIGNUP_EMAIL_LENGTH));
+    if (!regexEmail.test(email))
+        return res.send(response(baseResponse.SIGNUP_EMAIL_ERROR_TYPE));
+
+        function getNewPassword() {
+            let first = Math.floor(Math.random() * 12 ** 4);
+            let second = numToStr(Math.floor(Math.random() * 10 ** 1));
+            let third = numToStr(Math.floor(Math.random() * 10 ** 1));
+            let fourth = Math.floor(Math.random() * 12 ** 4);
+            let fifth = numToStr(Math.floor(Math.random() * 10 ** 1));
+            let sixth = numToStr(Math.floor(Math.random() * 10 ** 1));
+            
+            function numToStr(num) {
+              if (num == '1') {
+                return 'A';
+              } else if (num == '2') {
+                return 'B';
+              } else if (num == '3') {
+                return 'D';
+              } else if (num == '4') {
+                return 'E';
+              } else if (num == '5') {
+                return 'G';
+              } else if (num == '6') {
+                return 'H';
+              } else if (num == '7') {
+                return 'J';
+              } else if (num == '8') {
+                return 'K';
+              } else if (num == '9') {
+                return 'M';
+              } else if (num == '0') {
+                return 'N';
+              }
+            }
+
+            const newPass = first + second + third + fourth + fifth + sixth;
+            console.log(
+                newPass
+                );
+            return newPass;
+        }    
+
+    const findPasswordParams = [getNewPassword(), email];
+    console.log(findPasswordParams);
+    const findPasswordResult = await userService.findPassword(findPasswordParams);
+    
+const textContent = `
+임시 발급된 비밀번호를 전달드리오니, 임시 비밀번호로 로그인 후 안전한 비밀번호로 변경해주시길 바랍니다.
+만일 비밀번호 재설정 요청을 하신 적이 없는 경우 해당 이메일 주소로 회신하여 주시기 바랍니다.
+임시발급 된 비밀번호는 다음과 같습니다.
+
+`
+
+    const transport = nodemailer.createTransport({
+        service: "Gmail",
+        auth: {
+          user: "librogmanager",
+          pass: "/* google key here */",
+        },
+      });
+
+    const message = {
+        from: "librogmanager",
+        to: email,
+        subject: "[리브로그 알림] 비밀번호가 재설정 되었습니다.",
+        text: textContent + findPasswordParams[0],
+      };
+
+      transport.sendMail(message, (err, info) => {
+        if (err) {
+          console.error("err", err);
+          return;
+        }
+       
+        console.log("ok", info);
+      });
+
+    return res.send(findPasswordResult);
+}
+

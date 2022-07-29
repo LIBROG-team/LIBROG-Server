@@ -98,3 +98,18 @@ exports.editIntroduce = async function(patchIntroductionParams) {
         connection.release();
     }
 }
+
+exports.findPassword = async function (findPasswordParams) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    try {
+        const findPassword = await userDao.findPassword(connection, findPasswordParams);
+        return response(baseResponse.SUCCESS, findPassword);
+
+    } catch(err) {
+        logger.error(`App - find password Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+
+    } finally {
+        connection.release();
+    }
+}
