@@ -39,6 +39,9 @@ module.exports = {
     RECORDS_PUBLISHER_LENGTH : { "isSuccess": false, "code": 2035, "message":"publisher값은 45자보다 짧게 입력해주세요." },
     RECORDS_PUBLISHED_DATE_LENGTH : { "isSuccess": false, "code": 2037, "message":"publishedDate값은 45자보다 짧게 입력해주세요." },
 
+    RECORDS_READING_RECORD_EMPTY : { "isSuccess": false, "code": 2038, "message":"readingRecordIdx값을 입력해주세요." },
+    RECORDS_READING_RECORD_LENGTH : { "isSuccess": false, "code": 2039, "message":"readingRecordIdx값을 0보다 큰 값으로 입력해주세요." },
+
     SIGNUP_EMAIL_EMPTY : { "isSuccess": false, "code": 2040, "message":"이메일을 입력해주세요" },
     SIGNUP_EMAIL_LENGTH : { "isSuccess": false, "code": 2041, "message":"이메일은 30자리 미만으로 입력해주세요." },
     SIGNUP_EMAIL_ERROR_TYPE : { "isSuccess": false, "code": 2042, "message":"이메일을 형식을 정확하게 입력해주세요." },
@@ -76,6 +79,7 @@ module.exports = {
 
 
     RECORDS_NO_RECORDS : { "isSuccess": false, "code": 3015, "message":"지워졌거나 존재하지 않는 독서기록입니다." },
+    RECORDS_NO_AUTHOR : { "isSuccess": false, "code": 3016, "message":"해당 독서기록에서 저자가 null값입니다." },
 
     // Response error
     SIGNIN_EMAIL_WRONG : { "isSuccess": false, "code": 3020, "message": "아이디가 잘못 되었습니다." },

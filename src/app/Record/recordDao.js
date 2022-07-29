@@ -97,8 +97,8 @@ async function selectFlowerPotRecords(connection, flowerPotIdx){
 async function insertRecords(connection, createRecordsParams){
     const insertRecordsQuery = `
         INSERT INTO ReadingRecord
-        (bookIdx, userIdx, starRating, quote, content, flowerPotIdx, date)
-        VALUES (?, ?, ?, ?, ?, ?, now());
+        (bookIdx, starRating, quote, content, flowerPotIdx, date)
+        VALUES (?, ?, ?, ?, ?, now());
     `;
     const [insertRecordsRows] = await connection.query(insertRecordsQuery, createRecordsParams);
     return insertRecordsRows;
@@ -122,8 +122,8 @@ async function selectBookIdx(connection, bookName){
 async function insertBookIdx(connection, createBookParams){
     const insertBookIdxQuery = `
     INSERT INTO Book
-    (name, publisher, publishedDate, bookInstruction, bookImgUrl)
-    VALUES (?, ?, ?, ?, ?);
+    (name, author, publisher, publishedDate, bookInstruction, bookImgUrl)
+    VALUES (?, ?, ?, ?, ?, ?);
     `;
     const [insertBookIdx] = await connection.query(insertBookIdxQuery, createBookParams);
     return insertBookIdx;
@@ -211,6 +211,43 @@ async function selectStatistics(connection, userIdx){
     const [selectStatisticsRows] = await connection.query(selectStatisticsQuery, userIdx);
     return selectStatisticsRows;
 }
+
+/**
+ * API No. 2.7
+ * API Name: 유저별 최근 읽은 책 조회 API
+ * [GET] /records/bookRecords/:userIdx
+ */
+async function selectRecentBookRecords(connection, userIdx){
+    const selectRecentBookRecordsQuery = `
+        SELECT u.idx as userIdx, rr.idx as readingRecordIdx, B.name as bookName, B.author, B.publishedDate, B.bookImgUrl, rr.createdAt as recordedDate
+        FROM ReadingRecord rr
+        LEFT JOIN Book B on B.idx = rr.bookIdx
+        LEFT JOIN FlowerPot FP on rr.flowerPotIdx = FP.idx
+        LEFT JOIN User u on FP.userIdx = u.idx
+        WHERE u.idx = ? AND rr.status = 'ACTIVE'
+        ORDER BY rr.idx DESC
+        LIMIT 50;
+    `;
+    const [selectRecentBookRecordsRows] = await connection.query(selectRecentBookRecordsQuery, userIdx);
+    return selectRecentBookRecordsRows;
+}
+
+/**
+ * API No. 2.8
+ * API Name: 독서기록 상세조회 API
+ * [GET] /records/:readingRecordIdx
+ */
+async function selectReadingRecord(connection, readingRecordIdx){
+    const selectReadingRecordQuery = `
+        SELECT rr.idx as readingRecordIdx, B.bookImgUrl, B.name, B.author, B.bookInstruction, starRating, quote, content
+        FROM ReadingRecord rr
+        LEFT JOIN Book B on B.idx = rr.bookIdx
+        WHERE rr.idx = ? AND rr.status = 'ACTIVE';
+    `;
+    const [selectReadingRecordRows] = await connection.query(selectReadingRecordQuery, readingRecordIdx);
+    return selectReadingRecordRows;
+}
+
 // DB 전체 return 하는 API
 // Book table
 async function selectBookDB(connection){
@@ -310,6 +347,8 @@ module.exports = {
     updateRecords,
     deleteRecords,
     selectStatistics,
+    selectRecentBookRecords,
+    selectReadingRecord,
     
     selectBookDB,
     selectBookAuthorDB,
