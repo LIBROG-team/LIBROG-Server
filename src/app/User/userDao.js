@@ -118,6 +118,40 @@ async function editUserIntroduction(connection, patchIntroductionParams) {
     return patchUserIntroduceQueryRow;
 }
 
+async function findPassword(connection, findPasswordParams) {
+  // 소셜 로그인 된 계정인지 확인
+  const checkSocialLoginQuery = `
+  SELECT type
+  FROM User
+  WHERE email = ?`
+  const [checkSocialLoginQueryRow] = await connection.query(
+    checkSocialLoginQuery,
+    findPasswordParams[1]
+    );
+  
+  // 소셜 로그인 된 계정이 아니라면
+  if (checkSocialLoginQueryRow[0].type == null) {
+    const findPasswordQuery = `
+    UPDATE User
+    SET password = ?
+    WHERE email = ?;`;
+    const [findPasswordQueryRow] = await connection.query(
+      findPasswordQuery,
+      findPasswordParams
+      );
+    return findPasswordQueryRow;
+  } else {
+  // 소셜 로그인 된 계정이라면
+  const response = {
+    "isSocialLogined": true,
+    "message": "소셜 로그인으로 등록되어 있는 계정은 비밀번호 재설정이 불가능 합니다."
+  }
+  return response;
+  }
+
+
+}
+
 
   module.exports = {
     selectUserEmail,
@@ -129,4 +163,5 @@ async function editUserIntroduction(connection, patchIntroductionParams) {
     kakaoUserAccountInfo,
     getUserIntroduce,
     editUserIntroduction,
+    findPassword,
   };
