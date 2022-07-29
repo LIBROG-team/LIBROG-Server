@@ -113,5 +113,45 @@ exports.KakaoLogin = async function (req, res) {
         }
         return res.send(response(baseResponse.KAKAO_LOGIN_ERROR));
     });
+}
 
-};
+/**
+ * API No. 1.20
+ * API Name : 자기 소개 조회 API
+ * [GET] /users/introduce/:userIdx
+ */
+exports.getIntroduce = async function (req, res) {
+    const userIdx = req.params.userIdx;
+    if(!userIdx){
+        return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
+    }else if(userIdx <= 0){
+        return res.send(errResponse(baseResponse.USER_USERIDX_LENGTH));
+    }
+    const userIntroduceResult = await userProvider.userIntroduce(userIdx);
+    return res.send(userIntroduceResult);
+}
+
+/**
+ * API No. 1.21
+ * API Name : 자기 소개 수정 API
+ * [PATCH] /users/introduce/edit/
+ */
+exports.editIntroduce = async function (req, res) {
+    let {introduction, idx} = req.body;
+    console.log(introduction, idx);
+
+
+    if(!idx){
+        return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
+    }else if(idx <= 0){
+        return res.send(errResponse(baseResponse.USER_USERIDX_LENGTH));
+    }else if(!introduction) {
+        introduction = "자기 소개가 없습니다.";
+    }else if(introduction.lenght > 300) {
+        return res.send(errResponse(baseResponse.INTRODUCE_QUOTE_LENGTH));
+    }
+
+    const patchIntroductionParams = [introduction, idx];
+    const editIntroduceResult = await userService.editIntroduce(patchIntroductionParams);
+    return res.send(editIntroduceResult);
+}

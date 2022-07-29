@@ -83,3 +83,18 @@ exports.kakaoLogin = async function (kakaoResult) {
     }
 
 }
+
+exports.editIntroduce = async function(patchIntroductionParams) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    try {
+        const editIntroduction = await userDao.editUserIntroduction(connection, patchIntroductionParams);
+        return response(baseResponse.SUCCESS, editIntroduction);
+
+    } catch(err) {
+        logger.error(`App - editUserIntroduction Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+
+    } finally {
+        connection.release();
+    }
+}
