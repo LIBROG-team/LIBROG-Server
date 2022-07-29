@@ -90,6 +90,15 @@ exports.readStatistics = async function(userIdx){
  */
 exports.readRecentBookRecords = async function(userIdx){
     const connection = await pool.getConnection(async (conn) => conn);
+    const checkUserResult = await recordDao.checkUserIdx(connection, userIdx);
+    console.log(checkUserResult);
+    if(checkUserResult.length < 1){
+        return errResponse(baseResponse.USER_NOT_EXIST);
+    }else if(checkUserResult[0].status === "INACTIVE"){
+        return errResponse(baseResponse.USER_INACTIVE_USER);
+    }else if(checkUserResult[0].status === "DELETED"){
+        return errResponse(baseResponse.USER_DELETED_USER);
+    }
     const readRecentBookRecordsResults = await recordDao.selectRecentBookRecords(connection, userIdx);
     // 작가 null값이 아니면 split 해줌.
     readRecentBookRecordsResults.forEach((ele) => {
