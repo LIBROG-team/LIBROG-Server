@@ -87,6 +87,7 @@ module.exports = {
     SIGNIN_INACTIVE_ACCOUNT : { "isSuccess": false, "code": 3022, "message": "비활성화 된 계정입니다." },
     SIGNIN_WITHDRAWAL_ACCOUNT : { "isSuccess": false, "code": 3023, "message": "탈퇴 처리된 계정입니다." },
     SIGNUP_REDUNDANT_EMAIL : { "isSuccess": false, "code": 3024, "message":"중복된 이메일입니다." },
+    CANT_CHANGE_PASSWORD_SOCIAL_ACCOUNT : { "isSuccess": false, "code": 3025, "message":"소셜 로그인 된 계정은 비밀번호를 변경할 수 없습니다." },
 
 
     // 4000 : DB Error

@@ -164,7 +164,6 @@ exports.editIntroduce = async function (req, res) {
  */
  exports.findPassword = async function (req, res) {
     let { email } = req.body;
-    console.log(email);
 
     // e-mail validation
     if (!email)
@@ -174,6 +173,7 @@ exports.editIntroduce = async function (req, res) {
     if (!regexEmail.test(email))
         return res.send(response(baseResponse.SIGNUP_EMAIL_ERROR_TYPE));
 
+        // 임시 비밀번호를 발급받는 함수
         function getNewPassword() {
             let first = Math.floor(Math.random() * 12 ** 4);
             let second = numToStr(Math.floor(Math.random() * 10 ** 1));
@@ -207,16 +207,18 @@ exports.editIntroduce = async function (req, res) {
             }
 
             const newPass = first + second + third + fourth + fifth + sixth;
-            console.log(
-                newPass
-                );
             return newPass;
         }    
 
     const findPasswordParams = [getNewPassword(), email];
-    console.log(findPasswordParams);
     const findPasswordResult = await userService.findPassword(findPasswordParams);
     
+    // 실패했다면 이메일 전송하지 않음
+    if (findPasswordResult.isSuccess == false) {
+        return res.send(findPasswordResult);
+    }
+
+    // email 전송 부분
 const textContent = `
 임시 발급된 비밀번호를 전달드리오니, 임시 비밀번호로 로그인 후 안전한 비밀번호로 변경해주시길 바랍니다.
 만일 비밀번호 재설정 요청을 하신 적이 없는 경우 해당 이메일 주소로 회신하여 주시기 바랍니다.

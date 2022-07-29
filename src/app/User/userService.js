@@ -103,6 +103,10 @@ exports.findPassword = async function (findPasswordParams) {
     const connection = await pool.getConnection(async (conn) => conn);
     try {
         const findPassword = await userDao.findPassword(connection, findPasswordParams);
+        if (findPassword.isSocialLogined) {
+            return errResponse(baseResponse.CANT_CHANGE_PASSWORD_SOCIAL_ACCOUNT, findPassword);
+        }
+        
         return response(baseResponse.SUCCESS, findPassword);
 
     } catch(err) {
