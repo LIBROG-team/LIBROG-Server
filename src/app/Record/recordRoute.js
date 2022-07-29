@@ -10,8 +10,7 @@ module.exports = function(app){
     
     // 0.2 Book table 조회 API
     // app.get('/BookDB', record.getBookDB);
-    // 0.3 BookImgUrl table 조회 API
-    // app.get('/BookImgUrlDB', record.getBookImgUrlDB);
+    
     // 0.4 FlowerData table 조회 API
     // app.get('/FlowerDataDB', record.getFlowerDataDB);
     // 0.5 FlowerPot table 조회 API

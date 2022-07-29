@@ -91,7 +91,7 @@ exports.readStatistics = async function(userIdx){
 exports.readRecentBookRecords = async function(userIdx){
     const connection = await pool.getConnection(async (conn) => conn);
     const checkUserResult = await recordDao.checkUserIdx(connection, userIdx);
-    console.log(checkUserResult);
+    // console.log(checkUserResult);
     if(checkUserResult.length < 1){
         return errResponse(baseResponse.USER_NOT_EXIST);
     }else if(checkUserResult[0].status === "INACTIVE"){

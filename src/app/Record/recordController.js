@@ -126,7 +126,7 @@ exports.postRecords = async function(req, res){
  */
 exports.patchRecords = async function(req, res){
     const {starRating, quote, content, idx} = req.body;
-    console.log(starRating, quote, content, idx);
+    // console.log(starRating, quote, content, idx);
     // 여기서도 starRating Validation만 해줌.
     if(starRating < 0 || starRating > 5){
         return res.send(errResponse(baseResponse.RECORDS_RATING_LENGTH));
