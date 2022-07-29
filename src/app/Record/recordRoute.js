@@ -1,3 +1,6 @@
+const { pool } = require("../../../config/database");
+const { response, errResponse } = require("../../../config/response");
+const baseResponse = require("../../../config/baseResponseStatus");
 module.exports = function(app){
     const record = require('./recordController');
 
@@ -40,4 +43,11 @@ module.exports = function(app){
 
     // 2.6 유저별 독서 기록 통계 조회 API
     app.get('/records/statistics/:userIdx', record.getStatistics);
+
+    // 2.7 유저별 최근 읽은 책 조회 API
+    app.get('/records/bookRecords/:userIdx', record.getRecentBookRecords);
+
+    // 2.8 독서기록 상세조회 API
+    app.get('/records/:readingRecordIdx', record.getReadingRecord);
+    // 책 정보 출력 api
 }

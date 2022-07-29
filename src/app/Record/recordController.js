@@ -51,6 +51,8 @@ exports.postRecords = async function(req, res){
     const {
         bookName, authorArr, publisher, publishedDate, bookInstruction, 
         bookImgUrl, userIdx, starRating, quote, content} = req.body;
+    // 작가 배열은 따로 저장, ','로 구분해서 문자열로 저장!
+    const authorString = authorArr.toString();
     
     // validation
     if(!bookName){
@@ -94,29 +96,26 @@ exports.postRecords = async function(req, res){
         // console.log('exist', bookIdxResult);
     }else{
         // Book table에 책 존재하지 않는 경우 -> 책 새로 추가하기
-        const createBookParams = [bookName, publisher, publishedDate, bookInstruction, bookImgUrl];
+        const createBookParams = [bookName, authorString, publisher, publishedDate, bookInstruction, bookImgUrl];
         bookIdxResult = await recordService.createBook(createBookParams);
         bookIdx = bookIdxResult.result.insertId;
-        // 책 먼저 추가후, 추가된 bookIdx 가지고 bookAuthor 추가
-        
-        const createBookAuthorParams = [bookIdx, authorArr];
-        const bookAuthorResult = await recordService.createBookAuthor(createBookAuthorParams);
-        
     }
-    // console.log(bookIdx);
-    
-    const createRecordsParams = [bookIdx, userIdx, starRating, quote, content];
-    const postRecordsResult = await recordService.createRecords(createRecordsParams);
+    const createRecordsParams = [bookIdx, starRating, quote, content];
+    const postRecordsResult = await recordService.createRecords(createRecordsParams, userIdx);
     return res.send(postRecordsResult);
 }
 /** 더미 데이터
 {
-    "bookIdx":1,
-    "userIdx":1,
-    "flowerPotIdx":1,
-    "starRating":5,
-    "quote":"quote_test",
-    "content":"content_test"
+    "bookName":"책4",
+    "authorArr":["자저자", "차저자"],
+    "publisher":"한국출판사", 
+    "publishedDate":"2022-07-27",
+    "bookInstruction":"책설명",
+    "bookImgUrl":"bookimg.url", 
+    "userIdx":2,
+    "starRating":4,
+    "quote":"한줄평", 
+    "content":"독서 기록 내용"
 }
  */
 
@@ -190,6 +189,37 @@ exports.getStatistics = async function(req, res){
     }
     const getStatisticsResult = await recordProvider.readStatistics(userIdx);
     return res.send(getStatisticsResult);
+}
+/**
+ * API No. 2.7
+ * API Name: 유저별 최근 읽은 책 조회 API
+ * [GET] /records/bookRecords/:userIdx
+ */
+exports.getRecentBookRecords = async function(req, res){
+    const userIdx = req.params.userIdx;
+    if(!userIdx){
+        return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
+    }else if(userIdx <= 0){
+        return res.send(errResponse(baseResponse.USER_USERIDX_LENGTH));
+    }
+    const getRecentBookRecordsResult = await recordProvider.readRecentBookRecords(userIdx);
+    return res.send(getRecentBookRecordsResult);
+}
+
+/**
+ * API No. 2.8
+ * API Name: 독서기록 상세조회 API
+ * [GET] /records/:readingRecordIdx
+ */
+exports.getReadingRecord = async function(req, res){
+    const readingRecordIdx = req.params.readingRecordIdx;
+    if(!readingRecordIdx){
+        return res.send(errResponse(baseResponse.RECORDS_READING_RECORD_EMPTY));
+    }else if(readingRecordIdx <= 0){
+        return res.send(errResponse(baseResponse.RECORDS_READING_RECORD_LENGTH));
+    }
+    const getReadingRecordResult = await recordProvider.retriveReadingRecord(readingRecordIdx);
+    return res.send(getReadingRecordResult);
 }
 
 // DB 조회 쿼리
