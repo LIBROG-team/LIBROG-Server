@@ -94,6 +94,30 @@ async function kakaoUserAccountInfo(connection, email, type) {
       return kakaoUserAccountInfoRow;
 }
 
+async function getUserIntroduce(connection, userIdx) {
+    const selectuserIntroduceQuery = `
+    SELECT idx, name, introduction
+    FROM User
+    WHERE idx = ?;`;
+    const [selectuserIntroduceQueryRow] = await connection.query(
+      selectuserIntroduceQuery,
+      userIdx
+      );
+  return selectuserIntroduceQueryRow;
+}
+
+async function editUserIntroduction(connection, patchIntroductionParams) {
+    const patchUserIntroduceQuery = `
+    UPDATE User
+    SET introduction = ?
+    WHERE idx = ?`;
+    const [patchUserIntroduceQueryRow] = await connection.query(
+      patchUserIntroduceQuery,
+      patchIntroductionParams
+      );
+    return patchUserIntroduceQueryRow;
+}
+
 
   module.exports = {
     selectUserEmail,
@@ -103,4 +127,6 @@ async function kakaoUserAccountInfo(connection, email, type) {
     kakaoUserAccountCheck,
     kakaoUserAccountInsert,
     kakaoUserAccountInfo,
+    getUserIntroduce,
+    editUserIntroduction,
   };

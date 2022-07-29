@@ -24,4 +24,10 @@ module.exports = function(app){
 
     // 1.10 Kakao Login 및 인증
     app.post('/users/kakao/certificate/', user.KakaoLogin);
+
+    //1.20 자기소개 조회 api
+    app.get('/users/introduce/:userIdx', user.getIntroduce);
+
+    //1.21 자기소개 수정 api 
+    app.patch('/users/introduce/edit', user.editIntroduce);
 }
