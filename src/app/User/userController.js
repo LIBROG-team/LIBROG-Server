@@ -220,17 +220,38 @@ exports.editIntroduce = async function (req, res) {
 
     // email 전송 부분
 const textContent = `
-임시 발급된 비밀번호를 전달드리오니, 임시 비밀번호로 로그인 후 안전한 비밀번호로 변경해주시길 바랍니다.
-만일 비밀번호 재설정 요청을 하신 적이 없는 경우 해당 이메일 주소로 회신하여 주시기 바랍니다.
-임시발급 된 비밀번호는 다음과 같습니다.
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+</style>
+<body>
+    <div style="width: 100%; max-width: 680px; background-color:#64BE78; border-radius: 10px; padding: 8px;"> 
+      <img src="https://sadad64.shop/LIBROG-logo.png" style="width: 70px;"/>
+    </div>
+    <div style="margin-left: 4px;">
+      <div style="font-family: Pretendard; font-size: 20px; margin-top: 10px;">리브로그 비밀번호 재설정 알림</div>
+      <div style="font-family: Pretendard; font-size: 16px; margin-top: 10px;"> 임시 발급된 비밀번호를 전달드리오니, 임시 비밀번호로 로그인 후 안전한 비밀번호로 변경해주시길 바랍니다. <br>
+      <br>
+          만일 비밀번호 재설정 요청을 하신 적이 없는 경우 해당 이메일 주소로 회신하여 주시기 바랍니다. <br>
+      <br>
+          임시발급 된 비밀번호는 다음과 같습니다.</div>
+      <div style="margin-top: 20px; width: 40vw; font-family: Pretendard; font-size: 20px;">${findPasswordParams[0]}</div>
+    </div>
+</body>
+</html>
 `
-
     const transport = nodemailer.createTransport({
         service: "Gmail",
         auth: {
           user: "librogmanager",
-          pass: "/* google key here */",
+          pass: "sjvbncbrxuaylgeo",
         },
       });
 
@@ -238,7 +259,7 @@ const textContent = `
         from: "librogmanager",
         to: email,
         subject: "[리브로그 알림] 비밀번호가 재설정 되었습니다.",
-        text: textContent + findPasswordParams[0],
+        html: textContent,
       };
 
       transport.sendMail(message, (err, info) => {
