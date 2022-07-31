@@ -37,3 +37,15 @@ exports.countUser = async function(req, res){
     const countBookResult = await dashboardProvider.retrieveBookCount();
     return res.send(response(baseResponse.SUCCESS, countBookResult));
 }
+
+
+/**
+ * API No.10.3
+ * API Name : 책 수 조회 API
+ * [GET] /dashboard/flower/getAllFlower
+ * 
+ */
+ exports.getAllFlower = async function(req, res){
+    const getAllFlowerResult = await dashboardProvider.retrieveGetAllFlower();
+    return res.send(response(baseResponse.SUCCESS, getAllFlowerResult));
+}
