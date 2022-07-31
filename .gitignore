@@ -6,3 +6,4 @@ node_modules
 config/secret.js
 log
 기타 파일들/*
+src/app/User/userController.js

@@ -197,16 +197,16 @@ async function selectStatistics(connection, userIdx){
             GROUP BY userIdx
         ) fp on fp.userIdx = User.idx
         LEFT JOIN(
-            SELECT ReadingRecord.idx, userIdx, starRating, quote, content,
+            SELECT ReadingRecord.idx, starRating, quote, content, flowerPotIdx,
                     COUNT(ReadingRecord.idx) as readingCnt,
                     COUNT(starRating) as starRatingCnt,
                     COUNT(quote) as quoteCnt,
                     COUNT(content) as contentCnt
             FROM ReadingRecord
             WHERE ReadingRecord.status = 'ACTIVE'
-            GROUP BY userIdx
-        ) rr on rr.userIdx = User.idx
-        HAVING User.idx = ?;
+            GROUP BY flowerPotIdx
+        ) rr on rr.flowerPotIdx = fp.idx
+        HAVING User.idx = 1;
     `;
     const [selectStatisticsRows] = await connection.query(selectStatisticsQuery, userIdx);
     return selectStatisticsRows;
