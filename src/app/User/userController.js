@@ -63,9 +63,20 @@ const nodemailer = require("nodemailer");
 /**
  * API No. 1.2
  * API Name : 유저 탈퇴 API
- * [PATCH] /app/users
+ * [DELETE] /users/:userIdx
  */
+exports.deleteUsers = async function (req, res) {
+        /*
+            Path Variable : userIdx
+        */    
+        const userIdx = req.params.userIdx;
 
+        if(!userIdx) //userIdx == "undefined"
+            return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
+
+    const withdrawalResponse = await userService.deleteUserInfo(userIdx);
+    return res.send(response(baseResponse.SUCCESS, withdrawalResponse));
+}
 
 /**
  * API No. 1.10
