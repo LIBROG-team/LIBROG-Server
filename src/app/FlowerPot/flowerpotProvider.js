@@ -6,16 +6,26 @@ const flowerpotDao = require("./flowerpotDao");
 
 exports.retrieveFlowerpot = async function (userIdx) {
     const connection = await pool.getConnection(async (conn) => conn);
-    const userFlowerpotResult = await flowerpotDao.selectUserFlowerpot(connection, userIdx);
-
-    if(userFlowerpotResult.length < 1){
+    /** 일단은 오류 해결하기 위해 try문 안에 전체 코드 넣었습니다.
+     * 나중에 수정하실때 참고해주세요!
+     */
+    try{
+      const userFlowerpotResult = await flowerpotDao.selectUserFlowerpot(connection, userIdx);
+      if(userFlowerpotResult.length < 1){
+        connection.release();
+        return errResponse(baseResponse.USER_NOT_EXIST);
+      }
+    
       connection.release();
-      return errResponse(baseResponse.USER_NOT_EXIST);
-  }
-  
-    connection.release();
-  
-    return userFlowerpotResult;
+    
+      return userFlowerpotResult;
+
+    }catch(err){
+      console.log(`App - retrieveFlowerpot Provider error\n: ${err.message}`);
+      connection.release();
+      return errResponse(baseResponse.DB_ERROR);
+    }
+    
   };
 
   exports.retrieveAcquiredFlowerpot = async function (userIdx) {

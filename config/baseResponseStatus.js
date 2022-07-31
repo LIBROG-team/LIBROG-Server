@@ -17,6 +17,7 @@ module.exports = {
     USER_USERIDX_EMPTY : { "isSuccess": false, "code": 2001, "message": "userIdx를 입력해주세요." },
     USER_USERIDX_LENGTH : { "isSuccess": false, "code": 2002, "message": "userIdx는 0보다 큰 값으로 입력해주세요." },
     USER_USERIDX_WRONG : { "isSuccess": false, "code": 2003, "message":"유저 인덱스값이 유효한 값이 아닙니다." },
+    INTRODUCE_QUOTE_LENGTH : { "isSuccess": false, "code": 2004, "message":"유저 자기소개는 300자를 넘길 수 없습니다." },
 
     RECORDS_FLOWERPOTIDX_EMPTY : { "isSuccess": false, "code": 2011, "message":"화분 인덱스값을 입력해주세요." },
     RECORDS_FLOWERPOTIDX_LENGTH : { "isSuccess": false, "code": 2012, "message":"화분 인덱스값은 0보다 큰 값으로 입력해주세요." },
@@ -37,6 +38,9 @@ module.exports = {
     RECORDS_AUTHOR_LENGTH : { "isSuccess": false, "code": 2033, "message":"author값은 45자보다 짧게 입력해주세요." },
     RECORDS_PUBLISHER_LENGTH : { "isSuccess": false, "code": 2035, "message":"publisher값은 45자보다 짧게 입력해주세요." },
     RECORDS_PUBLISHED_DATE_LENGTH : { "isSuccess": false, "code": 2037, "message":"publishedDate값은 45자보다 짧게 입력해주세요." },
+
+    RECORDS_READING_RECORD_EMPTY : { "isSuccess": false, "code": 2038, "message":"readingRecordIdx값을 입력해주세요." },
+    RECORDS_READING_RECORD_LENGTH : { "isSuccess": false, "code": 2039, "message":"readingRecordIdx값을 0보다 큰 값으로 입력해주세요." },
 
     SIGNUP_EMAIL_EMPTY : { "isSuccess": false, "code": 2040, "message":"이메일을 입력해주세요" },
     SIGNUP_EMAIL_LENGTH : { "isSuccess": false, "code": 2041, "message":"이메일은 30자리 미만으로 입력해주세요." },
@@ -75,6 +79,7 @@ module.exports = {
 
 
     RECORDS_NO_RECORDS : { "isSuccess": false, "code": 3015, "message":"지워졌거나 존재하지 않는 독서기록입니다." },
+    RECORDS_NO_AUTHOR : { "isSuccess": false, "code": 3016, "message":"해당 독서기록에서 저자가 null값입니다." },
 
     // Response error
     SIGNIN_EMAIL_WRONG : { "isSuccess": false, "code": 3020, "message": "아이디가 잘못 되었습니다." },
@@ -82,6 +87,7 @@ module.exports = {
     SIGNIN_INACTIVE_ACCOUNT : { "isSuccess": false, "code": 3022, "message": "비활성화 된 계정입니다." },
     SIGNIN_WITHDRAWAL_ACCOUNT : { "isSuccess": false, "code": 3023, "message": "탈퇴 처리된 계정입니다." },
     SIGNUP_REDUNDANT_EMAIL : { "isSuccess": false, "code": 3024, "message":"중복된 이메일입니다." },
+    CANT_CHANGE_PASSWORD_SOCIAL_ACCOUNT : { "isSuccess": false, "code": 3025, "message":"소셜 로그인 된 계정은 비밀번호를 변경할 수 없습니다." },
 
 
     // 4000 : DB Error

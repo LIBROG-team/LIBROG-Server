@@ -94,6 +94,64 @@ async function kakaoUserAccountInfo(connection, email, type) {
       return kakaoUserAccountInfoRow;
 }
 
+async function getUserIntroduce(connection, userIdx) {
+    const selectuserIntroduceQuery = `
+    SELECT idx, name, introduction
+    FROM User
+    WHERE idx = ?;`;
+    const [selectuserIntroduceQueryRow] = await connection.query(
+      selectuserIntroduceQuery,
+      userIdx
+      );
+  return selectuserIntroduceQueryRow;
+}
+
+async function editUserIntroduction(connection, patchIntroductionParams) {
+    const patchUserIntroduceQuery = `
+    UPDATE User
+    SET introduction = ?
+    WHERE idx = ?`;
+    const [patchUserIntroduceQueryRow] = await connection.query(
+      patchUserIntroduceQuery,
+      patchIntroductionParams
+      );
+    return patchUserIntroduceQueryRow;
+}
+
+async function findPassword(connection, findPasswordParams) {
+  // 소셜 로그인 된 계정인지 확인
+  const checkSocialLoginQuery = `
+  SELECT type
+  FROM User
+  WHERE email = ?`
+  const [checkSocialLoginQueryRow] = await connection.query(
+    checkSocialLoginQuery,
+    findPasswordParams[1]
+    );
+  
+  // 소셜 로그인 된 계정이 아니라면
+  if (checkSocialLoginQueryRow[0].type == null) {
+    const findPasswordQuery = `
+    UPDATE User
+    SET password = ?
+    WHERE email = ?;`;
+    const [findPasswordQueryRow] = await connection.query(
+      findPasswordQuery,
+      findPasswordParams
+      );
+    return findPasswordQueryRow;
+  } else {
+  // 소셜 로그인 된 계정이라면
+  const response = {
+    "isSocialLogined": true,
+    "message": "소셜 로그인으로 등록되어 있는 계정은 비밀번호 재설정이 불가능 합니다."
+  }
+  return response;
+  }
+
+
+}
+
 
   module.exports = {
     selectUserEmail,
@@ -103,4 +161,7 @@ async function kakaoUserAccountInfo(connection, email, type) {
     kakaoUserAccountCheck,
     kakaoUserAccountInsert,
     kakaoUserAccountInfo,
+    getUserIntroduce,
+    editUserIntroduction,
+    findPassword,
   };

@@ -1,3 +1,6 @@
+const { pool } = require("../../../config/database");
+const { response, errResponse } = require("../../../config/response");
+const baseResponse = require("../../../config/baseResponseStatus");
 module.exports = function(app){
     const record = require('./recordController');
 
@@ -6,21 +9,20 @@ module.exports = function(app){
     // DB 조회 쿼리
     
     // 0.2 Book table 조회 API
-    app.get('/BookDB', record.getBookDB);
-    // 0.3 BookImgUrl table 조회 API
-    app.get('/BookImgUrlDB', record.getBookImgUrlDB);
+    // app.get('/BookDB', record.getBookDB);
+    
     // 0.4 FlowerData table 조회 API
-    app.get('/FlowerDataDB', record.getFlowerDataDB);
+    // app.get('/FlowerDataDB', record.getFlowerDataDB);
     // 0.5 FlowerPot table 조회 API
-    app.get('/FlowerPotDB', record.getFlowerPotDB);
+    // app.get('/FlowerPotDB', record.getFlowerPotDB);
     // 0.6 Follow table 조회 API
-    app.get('/FollowDB', record.getFollowDB);
+    // app.get('/FollowDB', record.getFollowDB);
     // 0.7 ReadingRecord 조회 API
-    app.get('/ReadingRecordDB', record.getReadingRecordDB);
+    // app.get('/ReadingRecordDB', record.getReadingRecordDB);
     // 0.8 User table 조회 API
-    app.get('/UserDB', record.getUserDB);
+    // app.get('/UserDB', record.getUserDB);
     // 0.9 UserFlowerList table 조회 API
-    app.get('/UserFlowerListDB', record.getUserFlowerListDB);
+    // app.get('/UserFlowerListDB', record.getUserFlowerListDB);
 
 
     // 2.1 유저별 독서 기록 조회 API
@@ -40,4 +42,11 @@ module.exports = function(app){
 
     // 2.6 유저별 독서 기록 통계 조회 API
     app.get('/records/statistics/:userIdx', record.getStatistics);
+
+    // 2.7 유저별 최근 읽은 책 조회 API
+    app.get('/records/bookRecords/:userIdx', record.getRecentBookRecords);
+
+    // 2.8 독서기록 상세조회 API
+    app.get('/records/:readingRecordIdx', record.getReadingRecord);
+    // 책 정보 출력 api
 }

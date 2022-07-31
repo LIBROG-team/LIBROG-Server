@@ -83,3 +83,37 @@ exports.kakaoLogin = async function (kakaoResult) {
     }
 
 }
+
+exports.editIntroduce = async function(patchIntroductionParams) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    try {
+        const editIntroduction = await userDao.editUserIntroduction(connection, patchIntroductionParams);
+        return response(baseResponse.SUCCESS, editIntroduction);
+
+    } catch(err) {
+        logger.error(`App - editUserIntroduction Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+
+    } finally {
+        connection.release();
+    }
+}
+
+exports.findPassword = async function (findPasswordParams) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    try {
+        const findPassword = await userDao.findPassword(connection, findPasswordParams);
+        if (findPassword.isSocialLogined) {
+            return errResponse(baseResponse.CANT_CHANGE_PASSWORD_SOCIAL_ACCOUNT, findPassword);
+        }
+        
+        return response(baseResponse.SUCCESS, findPassword);
+
+    } catch(err) {
+        logger.error(`App - find password Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+
+    } finally {
+        connection.release();
+    }
+}
