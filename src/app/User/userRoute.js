@@ -6,6 +6,12 @@ module.exports = function(app){
     // 1.1 유저 생성 (회원가입) API
     app.post('/users', user.postUsers);
 
+    // 1.4 유저 탈퇴 API
+    app.delete('/users/:userIdx', user.deleteUsers);
+
+    // // 1.5 자기소개 수정 API
+    // app.patch('/users/introduction', user.patchUserIntroduction);
+
     // // 1.2 마이페이지 유저정보 조회 API
     // app.get('/users/:idx', user.getUserPage);
 
@@ -15,7 +21,6 @@ module.exports = function(app){
 
     // // 회원 정보 수정 API (JWT 검증 및 Validation - 메소드 체이닝 방식으로 jwtMiddleware 사용)
     // app.patch('/app/users/:userId', jwtMiddleware, user.patchUsers)
-
 
     // TODO: 자동로그인 API (JWT 검증 및 Payload 내뱉기)
     // JWT 검증 API
