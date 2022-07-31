@@ -17,7 +17,7 @@ async function selectUserFlowerpot(connection, userIdx) {
             COUNT(r.idx)as recordCount
       FROM FlowerPot as p
             left join FlowerData as d on d.idx = p.flowerDataIdx and p.status='ACTIVE'
-            left join ReadingRecord as r on r.flowerPotIdx = p.idx and r.userIdx=p.userIdx and r.status = 'ACTIVE'
+            left join ReadingRecord as r on r.flowerPotIdx = p.idx and r.status = 'ACTIVE'
       WHERE p.userIdx = ? ;
     `;
     const [userFlowerpotRow] = await connection.query(selectUserFlowerpotQuery, userIdx);
