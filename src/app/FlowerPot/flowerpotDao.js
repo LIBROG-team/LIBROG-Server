@@ -98,7 +98,7 @@ async function selectFlowerpotInfo(connection, flowerDataIdx) {
       WHERE  (fl.userIdx =? and name Like concat('%', ?,'%'));
       `;
       const [searchAcqFlowerpotRow] = await connection.query(selectSearchAcqFlowerpotQuery, [userIdx,flowerName]);
-      console.log(searchAcqFlowerpotRow);
+      // console.log(searchAcqFlowerpotRow);
       return searchAcqFlowerpotRow;
     }
 
@@ -116,7 +116,7 @@ async function selectSerchUnacqFlowerpot(connection, userIdx, flowerName) {
       WHERE fl.userIdx =?)and name Like concat('%',?,'%'));
       `;
       const [searchUnacqFlowerpotRow] = await connection.query(selectSearchUnacqFlowerpotQuery, [userIdx,flowerName]);
-      console.log(searchUnacqFlowerpotRow);
+      // console.log(searchUnacqFlowerpotRow);
       return searchUnacqFlowerpotRow;
     }
 
