@@ -18,6 +18,7 @@ module.exports = function () {
     require('../src/app/Auth/authRoute')(app);
     require('../src/app/FlowerPot/flowerpotRoute')(app);
     require('../src/app/Dashboard/dashboardRoute')(app);
+    require('../src/app/Contents/contentsRoute')(app);
 
     return app;
 };

@@ -29,3 +29,12 @@ exports.retrieveBookCount = async function () {
 
   return bookCountResult[0];
 };
+
+exports.retrieveGetAllFlower = async function () {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const getAllFlowerResult = await dashboardDao.selectGetAllFlower(connection);
+
+  connection.release();
+
+  return getAllFlowerResult;
+}
