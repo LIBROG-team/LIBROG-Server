@@ -6,6 +6,7 @@ module.exports = function(app){
 
     // 0.1 test API
     app.get('/app/test', record.getTest);
+    app.get('/app/test/consolelog', record.getConsolelog);
     // DB 조회 쿼리
     
     // 0.2 Book table 조회 API
