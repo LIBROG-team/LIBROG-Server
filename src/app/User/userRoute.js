@@ -26,11 +26,14 @@ module.exports = function(app){
     app.post('/users/kakao/certificate/', user.KakaoLogin);
 
     // 1.20 자기소개 조회 api
-    app.get('/users/introduce/:userIdx', user.getIntroduce);
+    app.get('/users/profile/:userIdx', user.getProfile);
 
     // 1.21 자기소개 수정 api 
     app.patch('/users/introduce/edit', user.editIntroduce);
 
     // 1.22 비밀번호 찾기 / 임시 비밀번호를 이메일 주소로 발송
+    app.patch('/users/findMyPassword', user.findPassword);
+
+    // 1.23 이메일 중복확인 api
     app.patch('/users/findMyPassword', user.findPassword);
 }
