@@ -2,7 +2,7 @@ const baseResponse = require("../../../config/baseResponseStatus")
 const recordProvider = require('./recordProvider');
 const recordService = require('./recordService');
 const {response, errResponse} = require("../../../config/response");
-
+const { logger } = require("../../../config/winston");
 /**
  * API No. 0.1
  * API Name: Test API
@@ -12,7 +12,7 @@ exports.getTest = async function(req, res){
     return res.send(baseResponse.SUCCESS);
 }
 exports.getConsolelog = async function(req, res){
-    console.log(`console.log test`);
+    logger.info(`${process.env.NODE_ENV} console.log test`);
     return res.send(baseResponse.SUCCESS);
 
 }
@@ -73,7 +73,7 @@ exports.postRecords = async function(req, res){
         }
     });
     
-    if(publisher.length > 45){
+    if(publisher && publisher.length > 45){
         return res.send(errResponse(baseResponse.RECORDS_PUBLISHER_LENGTH));
     }else if(publishedDate.length > 45){
         return res.send(errResponse(baseResponse.RECORDS_PUBLISHED_DATE_LENGTH));
@@ -81,9 +81,9 @@ exports.postRecords = async function(req, res){
         return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
     }else if(userIdx <= 0){
         return res.send(errResponse(baseResponse.USER_USERIDX_LENGTH));
-    }else if(quote.length > 1000){
+    }else if(quote && quote.length > 1000){
         return res.send(errResponse(baseResponse.RECORDS_QUOTE_LENGTH));
-    }else if(content.length > 10000){
+    }else if(content && content.length > 10000){
         return res.send(errResponse(baseResponse.RECORDS_CONTENT_LENGTH));
     }
     // starRating - 0~5 사이의 값인지만 validation
@@ -132,7 +132,6 @@ exports.postRecords = async function(req, res){
  */
 exports.patchRecords = async function(req, res){
     const {starRating, quote, content, idx} = req.body;
-    // console.log(starRating, quote, content, idx);
     // 여기서도 starRating Validation만 해줌.
     if(starRating < 0 || starRating > 5){
         return res.send(errResponse(baseResponse.RECORDS_RATING_LENGTH));
@@ -140,9 +139,9 @@ exports.patchRecords = async function(req, res){
         return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
     }else if(idx <= 0){
         return res.send(errResponse(baseResponse.RECORDS_RECORDSIDX_LENGTH));
-    }else if(quote.length > 1000){
+    }else if(quote && quote.length > 1000){
         return res.send(errResponse(baseResponse.RECORDS_QUOTE_LENGTH));
-    }else if(content.length > 10000){
+    }else if(content && content.length > 10000){
         return res.send(errResponse(baseResponse.RECORDS_CONTENT_LENGTH));
     }
     // 정규식 검사로 특수문자 등 못넣게(SQL injection 방지) 해야함.
