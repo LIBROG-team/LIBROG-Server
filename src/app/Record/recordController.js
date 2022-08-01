@@ -11,6 +11,12 @@ const {response, errResponse} = require("../../../config/response");
 exports.getTest = async function(req, res){
     return res.send(baseResponse.SUCCESS);
 }
+exports.getConsolelog = async function(req, res){
+    console.log(`console.log test`);
+    return res.send(baseResponse.SUCCESS);
+
+}
+
 /**
  * API No.2.1
  * API Name: 유저별 독서 기록 조회 API
