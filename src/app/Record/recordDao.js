@@ -131,21 +131,21 @@ async function insertBookIdx(connection, createBookParams){
 /**
  * 2.32 책 저자 추가 API
  */
-async function insertBookAuthor(connection, createBookAuthorParams){
-    const bookIdx = createBookAuthorParams[0];
-    const authorArr = createBookAuthorParams[1];
-    const insertBookAuthorQuery = `
-        INSERT INTO BookAuthor
-        (bookIdx, authorName)
-        VALUES (?, ?);
-    `;
+// async function insertBookAuthor(connection, createBookAuthorParams){
+//     const bookIdx = createBookAuthorParams[0];
+//     const authorArr = createBookAuthorParams[1];
+//     const insertBookAuthorQuery = `
+//         INSERT INTO BookAuthor
+//         (bookIdx, authorName)
+//         VALUES (?, ?);
+//     `;
     
-    authorArr.forEach(async function(author){
-        await connection.query(insertBookAuthorQuery, [bookIdx, author]);
+//     authorArr.forEach(async function(author){
+//         await connection.query(insertBookAuthorQuery, [bookIdx, author]);
         
-    });
-    return;
-}
+//     });
+//     return;
+// }
 
 /**
  * API No. 2.4
@@ -259,14 +259,14 @@ async function selectBookDB(connection){
     return selectBookDBRows;
 }
 // BookAuthor table
-async function selectBookAuthorDB(connection){
-    const selectBookAuthorDBQuery = `
-        SELECT *
-        FROM BookAuthor;
-    `;
-    const [selectBookAuthorDBRows] = await connection.query(selectBookAuthorDBQuery);
-    return selectBookAuthorDBRows;
-}
+// async function selectBookAuthorDB(connection){
+//     const selectBookAuthorDBQuery = `
+//         SELECT *
+//         FROM BookAuthor;
+//     `;
+//     const [selectBookAuthorDBRows] = await connection.query(selectBookAuthorDBQuery);
+//     return selectBookAuthorDBRows;
+// }
 // BookImgUrl table
 // async function selectBookImgUrlDB(connection){
 //     const selectBookImgUrlDBQuery = `
@@ -342,7 +342,7 @@ module.exports = {
     insertRecords,
     selectBookIdx,
     insertBookIdx,
-    insertBookAuthor,
+    // insertBookAuthor,
 
     updateRecords,
     deleteRecords,
@@ -351,7 +351,7 @@ module.exports = {
     selectReadingRecord,
     
     selectBookDB,
-    selectBookAuthorDB,
+    // selectBookAuthorDB,
     // selectBookImgUrlDB,
     selectFlowerDataDB,
     selectFlowerPotDB,
