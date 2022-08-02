@@ -100,10 +100,12 @@ exports.readRecentBookRecords = async function(userIdx){
         return errResponse(baseResponse.USER_DELETED_USER);
     }
     const readRecentBookRecordsResults = await recordDao.selectRecentBookRecords(connection, userIdx);
-    // 작가 null값이 아니면 split 해줌.
+    // 작가 null값이 아니면 split 해줌. null이면 []으로 보내는 부분 추가.
     readRecentBookRecordsResults.forEach((ele) => {
         if(ele.author){
             ele.author = ele.author.split(',');
+        }else{
+            ele.author = [];
         }
     });
     connection.release();
@@ -125,6 +127,8 @@ exports.retriveReadingRecord = async function(readingRecordIdx){
     try{
         if(retriveReadingRecordList[0].author){
             retriveReadingRecordList[0].author = retriveReadingRecordList[0].author.split(',');
+        }else{
+            retriveReadingRecordList[0].author = [];
         }
     }catch(err){
         logger.error(`App - retriveReadingRecord Provider error\n: ${err.message}`);
