@@ -206,7 +206,7 @@ async function selectStatistics(connection, userIdx){
             WHERE ReadingRecord.status = 'ACTIVE'
             GROUP BY flowerPotIdx
         ) rr on rr.flowerPotIdx = fp.idx
-        HAVING User.idx = 1;
+        HAVING User.idx = ?;
     `;
     const [selectStatisticsRows] = await connection.query(selectStatisticsQuery, userIdx);
     return selectStatisticsRows;
