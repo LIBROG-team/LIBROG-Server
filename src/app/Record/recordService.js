@@ -105,7 +105,3 @@ exports.removeRecords = async function(recordsIdx){
         connection.release();
     }
 }
-
-exports.readRecentBookRecords = async function(userIdx){
-    const connection = await pool.getConnection(async (conn) => conn);   
-}
