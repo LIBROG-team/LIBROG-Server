@@ -106,6 +106,7 @@ exports.readRecentBookRecords = async function(userIdx){
             ele.author = ele.author.split(',');
         }
     });
+    connection.release();
     return readRecentBookRecordsResults;
 }
 /**
@@ -139,40 +140,48 @@ exports.retriveReadingRecord = async function(readingRecordIdx){
 exports.readBookDB = async function(){
     const connection = await pool.getConnection(async (conn) => conn);
     const readBookDBList = await recordDao.selectBookDB(connection);
+    connection.release();
     return response(baseResponse.SUCCESS, readBookDBList);
 }
 exports.readBookImgUrlDB = async function(){
     const connection = await pool.getConnection(async (conn) => conn);
     const readBookImgUrlDBList = await recordDao.selectBookImgUrlDB(connection);
+    connection.release();
     return response(baseResponse.SUCCESS, readBookImgUrlDBList);
 }
 exports.readFlowerData = async function(){
     const connection = await pool.getConnection(async (conn) => conn);
     const readFlowerDataList = await recordDao.selectFlowerDataDB(connection);
+    connection.release();
     return response(baseResponse.SUCCESS, readFlowerDataList);
 }
 exports.readFlowerPot = async function(){
     const connection = await pool.getConnection(async (conn) => conn);
     const readFlowerPotList = await recordDao.selectFlowerPotDB(connection);
+    connection.release();
     return response(baseResponse.SUCCESS, readFlowerPotList);
 }
 exports.readFollow = async function(){
     const connection = await pool.getConnection(async (conn) => conn);
     const readFollowList = await recordDao.selectFollowDB(connection);
+    connection.release();
     return response(baseResponse.SUCCESS, readFollowList);
 }
 exports.readReadingRecord = async function(){
     const connection = await pool.getConnection(async (conn) => conn);
     const readReadingRecordList = await recordDao.selectReadingRecordDB(connection);
+    connection.release();
     return response(baseResponse.SUCCESS, readReadingRecordList);
 }
 exports.readUser = async function(){
     const connection = await pool.getConnection(async (conn) => conn);
     const readUserList = await recordDao.selectUserDB(connection);
+    connection.release();
     return response(baseResponse.SUCCESS, readUserList);
 }
 exports.UserFlowerList = async function(){
     const connection = await pool.getConnection(async (conn) => conn);
     const UserFlowerListList = await recordDao.selectBookDB(connection);
+    connection.release();
     return response(baseResponse.SUCCESS, UserFlowerListList);
 }
