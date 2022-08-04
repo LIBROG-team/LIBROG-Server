@@ -49,3 +49,21 @@ exports.countUser = async function(req, res){
     const getAllFlowerResult = await dashboardProvider.retrieveGetAllFlower();
     return res.send(response(baseResponse.SUCCESS, getAllFlowerResult));
 }
+
+
+/**
+ * API No.10.10
+ * API Name : 식물 정보 수정 API
+ * [PATCH] /dashboard/flower/edit
+ * 
+ */
+ exports.patchFlowerData = async function(req, res){
+    console.log(req.body);
+    const {idx, name, engName, flowerImgUrl, flowerPotImgUrl, maxExp, bloomingPeriod, content, type} = req.body;
+    console.log(idx, name, engName, flowerImgUrl, flowerPotImgUrl, maxExp, bloomingPeriod, content, type);
+
+    const patchFlowerDataparams = [name, engName, flowerImgUrl, flowerPotImgUrl, maxExp, bloomingPeriod, content, type, idx];
+    const patchFlowerDataResult = await dashboardService.patchFlowerData(patchFlowerDataparams);
+    return res.send(response(baseResponse.SUCCESS, patchFlowerDataResult));
+}
+
