@@ -6,9 +6,6 @@ const flowerpotDao = require("./flowerpotDao");
 
 exports.retrieveFlowerpot = async function (userIdx) {
     const connection = await pool.getConnection(async (conn) => conn);
-    /** 일단은 오류 해결하기 위해 try문 안에 전체 코드 넣었습니다.
-     * 나중에 수정하실때 참고해주세요!
-     */
     try{
       const userFlowerpotResult = await flowerpotDao.selectUserFlowerpot(connection, userIdx);
       if(userFlowerpotResult.length < 1){

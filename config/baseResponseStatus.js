@@ -18,6 +18,7 @@ module.exports = {
     USER_USERIDX_LENGTH : { "isSuccess": false, "code": 2002, "message": "userIdx는 0보다 큰 값으로 입력해주세요." },
     USER_USERIDX_WRONG : { "isSuccess": false, "code": 2003, "message":"유저 인덱스값이 유효한 값이 아닙니다." },
     INTRODUCE_QUOTE_LENGTH : { "isSuccess": false, "code": 2004, "message":"유저 자기소개는 300자를 넘길 수 없습니다." },
+    USER_ID_NOT_MATCH : { "isSuccess": false, "code": 2005, "message": "유저 아이디 값을 확인해주세요" },
 
     RECORDS_FLOWERPOTIDX_EMPTY : { "isSuccess": false, "code": 2011, "message":"화분 인덱스값을 입력해주세요." },
     RECORDS_FLOWERPOTIDX_LENGTH : { "isSuccess": false, "code": 2012, "message":"화분 인덱스값은 0보다 큰 값으로 입력해주세요." },
@@ -64,6 +65,10 @@ module.exports = {
 
     FLOWERNAME_EMPTY : { "isSuccess": false, "code": 2081, "message": "flowerName을 입력해주세요." },
 
+    FLOWERLIST_EMPTY : { "isSuccess": false, "code": 2091, "message": "flowerListIdx를 입력해주세요." },
+    FLOWERLIST_LENGTH : { "isSuccess": false, "code": 2092, "message": "flowerListIdx는 0보다 큰 값으로 입력해주세요." },
+
+
 
 
 
@@ -72,6 +77,7 @@ module.exports = {
     FLOWERPOT_NO_FLOWERPOTS : { "isSuccess": false, "code": 3005, "message":"지워졌거나 존재하지 않는 화분입니다." },
     FLOWERPOT_NO_RECORDS : { "isSuccess": false, "code": 3006, "message":"해당 화분에 독서 기록이 존재하지 않습니다." },
     USER_NO_AVAILABLE_FLOWERPOTS : { "isSuccess": false, "code": 3007, "message":"현재 유저가 추가할 수 있는 화분이 없습니다. 화분을 만들고 기록을 추가해주세요" },
+    FLOWERLIST_NO_FLOWERPOTS : { "isSuccess": false, "code": 3008, "message":"획득화분에서 지워졌거나 존재하지 않는 화분입니다." },
 
     USER_NOT_EXIST : { "isSuccess": false, "code": 3010, "message":"해당 idx의 유저가 존재하지 않습니다." },
     USER_INACTIVE_USER : { "isSuccess": false, "code": 3011, "message":"비활성화된 계정입니다." },

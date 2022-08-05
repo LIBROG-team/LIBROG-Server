@@ -24,3 +24,34 @@ exports.deleteFlowerPotInfo = async function (flowerpotIdx) {
     }
    
   };
+
+  
+
+  exports.addUserFlowerpot = async function (userFlowerListIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+
+    try {
+        await connection.beginTransaction();
+        const addFlowerpotResult = await flowerpotDao.insertFlowerpot(connection, userFlowerListIdx);
+        if(addFlowerpotResult.length < 1){
+            connection.release();
+            return errResponse(baseResponse.FLOWERLIST_NO_FLOWERPOTS);
+          }
+
+       
+        await connection.commit();
+
+        return response(baseResponse.SUCCESS, addFlowerpotResult);
+    } catch (err) {
+        console.log(`App - addFlowerpot Service Error\n: ${err.message}`);
+
+        await connection.rollback();
+
+        return errResponse(baseResponse.DB_ERROR);
+    } finally {
+        connection.release();
+    }
+
+    
+    
+  };
