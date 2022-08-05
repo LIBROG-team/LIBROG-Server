@@ -227,6 +227,61 @@ exports.getReadingRecord = async function(req, res){
     return res.send(getReadingRecordResult);
 }
 
+/**
+ * API No. 2.9
+ * API Name: 유저 전체 독서기록 필터 (최근 순) api
+ * [GET] /records/readingRecord/filter/recent/:userIdx
+ */
+ exports.getFilterRecent = async function(req, res){
+    const userIdx = req.params.userIdx;
+    if(!userIdx){
+        return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
+    }else if(userIdx <= 0){
+        return res.send(errResponse(baseResponse.USER_USERIDX_LENGTH));
+    }
+
+    const getFilterRecentResult = await recordProvider.retriveFilterRecent(userIdx);
+    
+    return res.send(getFilterRecentResult);
+}
+
+/**
+ * API No. 2.10
+ * API Name: 유저 전체 독서기록 필터 (별점 순) api
+ * [GET] /records/readingRecord/filter/rating/:userIdx
+ */
+ exports.getFilterRating = async function(req, res){
+    const userIdx = req.params.userIdx;
+    if(!userIdx){
+        return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
+    }else if(userIdx <= 0){
+        return res.send(errResponse(baseResponse.USER_USERIDX_LENGTH));
+    }
+
+    const getFilterRatingResult = await recordProvider.retriveFilterRating(userIdx);
+    
+    return res.send(getFilterRatingResult);
+}
+
+/**
+ * API No. 2.11
+ * API Name: 유저 전체 독서기록 필터 (제목 순) api
+ * [GET] /records/readingRecord/filter/title/:userIdx
+ */
+ exports.getFilterTitle = async function(req, res){
+    const userIdx = req.params.userIdx;
+    if(!userIdx){
+        return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
+    }else if(userIdx <= 0){
+        return res.send(errResponse(baseResponse.USER_USERIDX_LENGTH));
+    }
+
+    const getFilterTitleResult = await recordProvider.retriveFilterTitle(userIdx);
+    
+    return res.send(getFilterTitleResult);
+}
+
+
 // DB 조회 쿼리
 exports.getBookDB = async function(req, res){
     const getBookDBResult = await recordProvider.readBookDB();

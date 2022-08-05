@@ -248,6 +248,83 @@ async function selectReadingRecord(connection, readingRecordIdx){
     return selectReadingRecordRows;
 }
 
+/**
+ * API No. 2.9
+ * API Name: 유저 전체 독서기록 필터 (최근 순) api
+ * [GET] /records/readingRecord/filter/recent/:userIdx
+ */
+async function selectFilterRecent(connection, userIdx){
+    const selectFilterRecentQuery = `
+    SELECT r.idx readingRecordIdx, r.bookIdx, r.flowerPotIdx, r.date, r.starRating, r.status, b.name, b.bookImgUrl
+    FROM ReadingRecord r
+        LEFT JOIN (
+            SELECT idx, bookImgUrl, name
+            FROM Book
+        ) b on b.idx = r.bookIdx
+        LEFT JOIN(
+            SELECT idx, userIdx
+            FROM FlowerPot
+        ) f on f.idx = r.flowerPotIdx
+    WHERE f.userIdx = ? AND r.status = 'ACTIVE'
+    ORDER BY date DESC
+    LIMIT 1000;
+    `;
+    const [selectFilterRecentRows] = await connection.query(selectFilterRecentQuery, userIdx);
+    return selectFilterRecentRows;
+}
+
+/**
+ * API No. 2.10
+ * API Name: 유저 전체 독서기록 필터 (별점 순) api
+ * [GET] /records/readingRecord/filter/rating/:userIdx
+ */
+ async function selectFilterRating(connection, userIdx){
+    const selectFilterRatingQuery = `
+    SELECT r.idx readingRecordIdx, r.bookIdx, r.flowerPotIdx, r.date, r.starRating, r.status, b.name, b.bookImgUrl
+    FROM ReadingRecord r
+        LEFT JOIN (
+            SELECT idx, bookImgUrl, name
+            FROM Book
+        ) b on b.idx = r.bookIdx
+        LEFT JOIN(
+            SELECT idx, userIdx
+            FROM FlowerPot
+        ) f on f.idx = r.flowerPotIdx
+    WHERE f.userIdx = ? AND r.status = 'ACTIVE'
+    ORDER BY starRating DESC
+    LIMIT 1000;
+    `;
+    const [selectFilterRatingRows] = await connection.query(selectFilterRatingQuery, userIdx);
+    return selectFilterRatingRows;
+}
+
+
+/**
+ * API No. 2.11
+ * API Name: 유저 전체 독서기록 필터 (제목 순) api
+ * [GET] /records/readingRecord/filter/title/:userIdx
+ */
+ async function selectFilterTitle(connection, userIdx){
+    const selectFilterTitleQuery = `
+    SELECT r.idx readingRecordIdx, r.bookIdx, r.flowerPotIdx, r.date, r.starRating, r.status, b.name, b.bookImgUrl
+    FROM ReadingRecord r
+        LEFT JOIN (
+            SELECT idx, bookImgUrl, name
+            FROM Book
+        ) b on b.idx = r.bookIdx
+        LEFT JOIN(
+            SELECT idx, userIdx
+            FROM FlowerPot
+        ) f on f.idx = r.flowerPotIdx
+    WHERE f.userIdx = ? AND r.status = 'ACTIVE'
+    ORDER BY name DESC
+    LIMIT 1000;
+    `;
+    const [selectFilterTitleRows] = await connection.query(selectFilterTitleQuery, userIdx);
+    return selectFilterTitleRows;
+}
+
+
 // DB 전체 return 하는 API
 // Book table
 async function selectBookDB(connection){
@@ -349,6 +426,10 @@ module.exports = {
     selectStatistics,
     selectRecentBookRecords,
     selectReadingRecord,
+
+    selectFilterRecent,
+    selectFilterRating,
+    selectFilterTitle,
     
     selectBookDB,
     // selectBookAuthorDB,
