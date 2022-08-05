@@ -25,8 +25,18 @@ async function selectBookCount(connection) {
     return bookCountRow;
   }
 
+async function selectGetAllFlower(connection) {
+  const selectAllFlowerQuery = `
+  SELECT *
+  FROM FlowerData;
+  `;
+  const [getAllFlowerRow] = await connection.query(selectAllFlowerQuery)
+  return getAllFlowerRow;
+}
+
   module.exports = {
     selectUserCount,
     selectFlowerpotCount,
     selectBookCount,
+    selectGetAllFlower,
   }

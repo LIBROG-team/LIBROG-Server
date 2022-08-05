@@ -100,12 +100,15 @@ exports.readRecentBookRecords = async function(userIdx){
         return errResponse(baseResponse.USER_DELETED_USER);
     }
     const readRecentBookRecordsResults = await recordDao.selectRecentBookRecords(connection, userIdx);
-    // 작가 null값이 아니면 split 해줌.
+    // 작가 null값이 아니면 split 해줌. null이면 []으로 보내는 부분 추가.
     readRecentBookRecordsResults.forEach((ele) => {
         if(ele.author){
             ele.author = ele.author.split(',');
+        }else{
+            ele.author = [];
         }
     });
+    connection.release();
     return readRecentBookRecordsResults;
 }
 /**
@@ -124,6 +127,8 @@ exports.retriveReadingRecord = async function(readingRecordIdx){
     try{
         if(retriveReadingRecordList[0].author){
             retriveReadingRecordList[0].author = retriveReadingRecordList[0].author.split(',');
+        }else{
+            retriveReadingRecordList[0].author = [];
         }
     }catch(err){
         logger.error(`App - retriveReadingRecord Provider error\n: ${err.message}`);
@@ -139,40 +144,48 @@ exports.retriveReadingRecord = async function(readingRecordIdx){
 exports.readBookDB = async function(){
     const connection = await pool.getConnection(async (conn) => conn);
     const readBookDBList = await recordDao.selectBookDB(connection);
+    connection.release();
     return response(baseResponse.SUCCESS, readBookDBList);
 }
 exports.readBookImgUrlDB = async function(){
     const connection = await pool.getConnection(async (conn) => conn);
     const readBookImgUrlDBList = await recordDao.selectBookImgUrlDB(connection);
+    connection.release();
     return response(baseResponse.SUCCESS, readBookImgUrlDBList);
 }
 exports.readFlowerData = async function(){
     const connection = await pool.getConnection(async (conn) => conn);
     const readFlowerDataList = await recordDao.selectFlowerDataDB(connection);
+    connection.release();
     return response(baseResponse.SUCCESS, readFlowerDataList);
 }
 exports.readFlowerPot = async function(){
     const connection = await pool.getConnection(async (conn) => conn);
     const readFlowerPotList = await recordDao.selectFlowerPotDB(connection);
+    connection.release();
     return response(baseResponse.SUCCESS, readFlowerPotList);
 }
 exports.readFollow = async function(){
     const connection = await pool.getConnection(async (conn) => conn);
     const readFollowList = await recordDao.selectFollowDB(connection);
+    connection.release();
     return response(baseResponse.SUCCESS, readFollowList);
 }
 exports.readReadingRecord = async function(){
     const connection = await pool.getConnection(async (conn) => conn);
     const readReadingRecordList = await recordDao.selectReadingRecordDB(connection);
+    connection.release();
     return response(baseResponse.SUCCESS, readReadingRecordList);
 }
 exports.readUser = async function(){
     const connection = await pool.getConnection(async (conn) => conn);
     const readUserList = await recordDao.selectUserDB(connection);
+    connection.release();
     return response(baseResponse.SUCCESS, readUserList);
 }
 exports.UserFlowerList = async function(){
     const connection = await pool.getConnection(async (conn) => conn);
     const UserFlowerListList = await recordDao.selectBookDB(connection);
+    connection.release();
     return response(baseResponse.SUCCESS, UserFlowerListList);
 }

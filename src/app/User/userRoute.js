@@ -6,6 +6,12 @@ module.exports = function(app){
     // 1.1 유저 생성 (회원가입) API
     app.post('/users', user.postUsers);
 
+    // 1.4 유저 탈퇴 API
+    app.delete('/users/:userIdx', user.deleteUsers);
+
+    // // 1.5 자기소개 수정 API
+    // app.patch('/users/introduction', user.patchUserIntroduction);
+
     // // 1.2 마이페이지 유저정보 조회 API
     // app.get('/users/:idx', user.getUserPage);
 
@@ -16,7 +22,6 @@ module.exports = function(app){
     // // 회원 정보 수정 API (JWT 검증 및 Validation - 메소드 체이닝 방식으로 jwtMiddleware 사용)
     // app.patch('/app/users/:userId', jwtMiddleware, user.patchUsers)
 
-
     // TODO: 자동로그인 API (JWT 검증 및 Payload 내뱉기)
     // JWT 검증 API
     // app.get('/app/auto-login', jwtMiddleware, user.check);
@@ -26,11 +31,14 @@ module.exports = function(app){
     app.post('/users/kakao/certificate/', user.KakaoLogin);
 
     // 1.20 자기소개 조회 api
-    app.get('/users/introduce/:userIdx', user.getIntroduce);
+    app.get('/users/profile/:userIdx', user.getProfile);
 
     // 1.21 자기소개 수정 api 
     app.patch('/users/introduce/edit', user.editIntroduce);
 
     // 1.22 비밀번호 찾기 / 임시 비밀번호를 이메일 주소로 발송
+    app.patch('/users/findMyPassword', user.findPassword);
+
+    // 1.23 이메일 중복확인 api
     app.patch('/users/findMyPassword', user.findPassword);
 }

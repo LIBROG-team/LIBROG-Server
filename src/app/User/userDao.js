@@ -52,6 +52,29 @@ async function selectUserAccount(connection, email) {
   return selectUserAccountRow[0];
 }
 
+// // 유저 탈퇴 시 존재하는 유저인지 확인()
+// async function IsItActiveUser(connection, userIdx) {
+//   const IsItActiveUserQuery = `
+//     SELECT idx
+//     FROM User
+//     WHERE idx = ?;
+//   `;
+//   const [IsItActiveUserRows] = await connection.query(IsItActiveUserQuery, userIdx);
+//   return IsItActiveUserRows;
+// }
+
+//유저 삭제
+async function deleteUser(connection, userIdx) {
+  const deleteUserInfoQuery = `
+  DELETE u.*
+  FROM User as u
+  WHERE u.idx=?; 
+  `;
+  const [deleteUserInfoRow] = await connection.query(deleteUserInfoQuery, userIdx);
+  return deleteUserInfoRow;
+}
+
+
 // 카카오계정 이메일이 존재하는지 확인
 async function kakaoUserAccountCheck(connection, email, type) {
   const selectkakaoUserAccountQuery = `
@@ -94,16 +117,16 @@ async function kakaoUserAccountInfo(connection, email, type) {
       return kakaoUserAccountInfoRow;
 }
 
-async function getUserIntroduce(connection, userIdx) {
-    const selectuserIntroduceQuery = `
-    SELECT idx, name, introduction
+async function getUserProfile(connection, userIdx) {
+    const selectuserProfileQuery = `
+    SELECT idx, profileImgUrl, name, introduction, type
     FROM User
     WHERE idx = ?;`;
-    const [selectuserIntroduceQueryRow] = await connection.query(
-      selectuserIntroduceQuery,
+    const [selectuserProfileQueryRow] = await connection.query(
+      selectuserProfileQuery,
       userIdx
       );
-  return selectuserIntroduceQueryRow;
+  return selectuserProfileQueryRow;
 }
 
 async function editUserIntroduction(connection, patchIntroductionParams) {
@@ -158,10 +181,11 @@ async function findPassword(connection, findPasswordParams) {
     insertUserInfo,
     selectUserPassword,
     selectUserAccount,
+    deleteUser,
     kakaoUserAccountCheck,
     kakaoUserAccountInsert,
     kakaoUserAccountInfo,
-    getUserIntroduce,
+    getUserProfile,
     editUserIntroduction,
     findPassword,
   };

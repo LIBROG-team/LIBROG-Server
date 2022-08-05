@@ -49,7 +49,9 @@ exports.postSignIn = async function (email, password) {
         }
         )
 
-        return response(baseResponse.SUCCESS, { 'jwt': token});
+        return response(baseResponse.SUCCESS, { 'jwt': token, 'userIdx': userAccountRows[0].idx});
+
+        
     } catch (err) {
         console.log(`App - postSignIn Service error\n: ${err.message}`);
 

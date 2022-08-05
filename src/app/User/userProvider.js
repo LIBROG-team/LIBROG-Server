@@ -45,19 +45,20 @@ exports.emailCheck = async function (email) {
     return kakaoUserAccountInfoResult;
   }
 
-  exports.userIntroduce = async function(userIdx) {
+  exports.userProfile = async function(userIdx) {
     const connection = await pool.getConnection(async (conn) => conn);
-    const userIntroduceInfoResult = await userDao.getUserIntroduce(connection, userIdx);
+    const userProfileInfoResult = await userDao.getUserProfile(connection, userIdx);
+    connection.release();
+
     try {
-      userIntroduceInfoResult[0].idx;
+      userProfileInfoResult[0].idx;
     } catch(err) {
-      userIntroduceInfoResult[0] = {
+      userProfileInfoResult[0] = {
         "message": "",
       }
-      userIntroduceInfoResult[0].message = '존재하지 않는 유저 번호입니다.';
-      return userIntroduceInfoResult;
+      userProfileInfoResult[0].message = '존재하지 않는 유저 번호입니다.';
+      return userProfileInfoResult[0];
     }
-    connection.release();
   
-    return userIntroduceInfoResult;
+    return userProfileInfoResult[0];
   }

@@ -31,7 +31,7 @@ exports.createUser = async function (email, password, name) {
         const connection = await pool.getConnection(async (conn) => conn);
 
         const userIdResult = await userDao.insertUserInfo(connection, insertUserInfoParams);
-        console.log(`추가된 회원 : ${userIdResult[0].insertId}`)
+        // console.log(`추가된 회원 : ${userIdResult[0].insertId}`)
         connection.release();
         return response(baseResponse.SUCCESS);
 
@@ -40,6 +40,31 @@ exports.createUser = async function (email, password, name) {
         return errResponse(baseResponse.DB_ERROR);
     }
 };
+
+/*
+API Name: 유저 삭제 API
+*/
+
+exports.deleteUserInfo = async function (userIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    try {
+        const withdrawalResponse = await userDao.deleteUser(connection, userIdx);
+        return response(baseResponse.SUCCESS);
+
+        // // validation 이미 탈퇴한 유저일 때
+        // const IsItActiveUserList = await userDao.IsItActiveUser(connection, userIdx);
+        // if(IsItActiveUserList.length < 1 || IsItActiveUserList[0].status == 'DELETED'){
+        //     connection /*여기서부터 나중에*/
+        // }
+    } catch (err) {
+        console.log(`App - deleteUserInfo Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    } finally {
+        connection.release();
+    }
+};
+
+
 
 exports.kakaoLogin = async function (kakaoResult) {
     try {

@@ -63,9 +63,20 @@ const nodemailer = require("nodemailer");
 /**
  * API No. 1.2
  * API Name : 유저 탈퇴 API
- * [PATCH] /app/users
+ * [DELETE] /users/:userIdx
  */
+exports.deleteUsers = async function (req, res) {
+        /*
+            Path Variable : userIdx
+        */    
+        const userIdx = req.params.userIdx;
 
+        if(!userIdx) //userIdx == "undefined"
+            return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
+
+    const withdrawalResponse = await userService.deleteUserInfo(userIdx);
+    return res.send(response(baseResponse.SUCCESS, withdrawalResponse));
+}
 
 /**
  * API No. 1.10
@@ -118,18 +129,18 @@ exports.KakaoLogin = async function (req, res) {
 
 /**
  * API No. 1.20
- * API Name : 자기 소개 조회 API
- * [GET] /users/introduce/:userIdx
+ * API Name : 프로필 조회 API
+ * [GET] /users/profile/:userIdx
  */
-exports.getIntroduce = async function (req, res) {
+exports.getProfile = async function (req, res) {
     const userIdx = req.params.userIdx;
     if(!userIdx){
         return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
     }else if(userIdx <= 0){
         return res.send(errResponse(baseResponse.USER_USERIDX_LENGTH));
     }
-    const userIntroduceResult = await userProvider.userIntroduce(userIdx);
-    return res.send(userIntroduceResult);
+    const userProfileResult = await userProvider.userProfile(userIdx);
+    return res.send(userProfileResult);
 }
 
 /**

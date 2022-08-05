@@ -10,4 +10,7 @@ module.exports = function(app){
     
     // 10.3 책 수 조회 API
     app.get('/dashboard/countBook', dashboard.countBook);
+
+    // 10.7 DB 상의 모든 식물 정보 조회 API
+    app.get('/dashboard/getAllFlower', dashboard.getAllFlower);
 }

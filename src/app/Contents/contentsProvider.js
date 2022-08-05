@@ -9,5 +9,5 @@ exports.retrieveNotice = async function () {
   
     connection.release();
 
-    return noticeResult[0];
+    return noticeResult;
   };

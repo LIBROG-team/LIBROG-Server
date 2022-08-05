@@ -131,21 +131,21 @@ async function insertBookIdx(connection, createBookParams){
 /**
  * 2.32 책 저자 추가 API
  */
-async function insertBookAuthor(connection, createBookAuthorParams){
-    const bookIdx = createBookAuthorParams[0];
-    const authorArr = createBookAuthorParams[1];
-    const insertBookAuthorQuery = `
-        INSERT INTO BookAuthor
-        (bookIdx, authorName)
-        VALUES (?, ?);
-    `;
+// async function insertBookAuthor(connection, createBookAuthorParams){
+//     const bookIdx = createBookAuthorParams[0];
+//     const authorArr = createBookAuthorParams[1];
+//     const insertBookAuthorQuery = `
+//         INSERT INTO BookAuthor
+//         (bookIdx, authorName)
+//         VALUES (?, ?);
+//     `;
     
-    authorArr.forEach(async function(author){
-        await connection.query(insertBookAuthorQuery, [bookIdx, author]);
+//     authorArr.forEach(async function(author){
+//         await connection.query(insertBookAuthorQuery, [bookIdx, author]);
         
-    });
-    return;
-}
+//     });
+//     return;
+// }
 
 /**
  * API No. 2.4
@@ -197,15 +197,15 @@ async function selectStatistics(connection, userIdx){
             GROUP BY userIdx
         ) fp on fp.userIdx = User.idx
         LEFT JOIN(
-            SELECT ReadingRecord.idx, userIdx, starRating, quote, content,
+            SELECT ReadingRecord.idx, starRating, quote, content, flowerPotIdx,
                     COUNT(ReadingRecord.idx) as readingCnt,
                     COUNT(starRating) as starRatingCnt,
                     COUNT(quote) as quoteCnt,
                     COUNT(content) as contentCnt
             FROM ReadingRecord
             WHERE ReadingRecord.status = 'ACTIVE'
-            GROUP BY userIdx
-        ) rr on rr.userIdx = User.idx
+            GROUP BY flowerPotIdx
+        ) rr on rr.flowerPotIdx = fp.idx
         HAVING User.idx = ?;
     `;
     const [selectStatisticsRows] = await connection.query(selectStatisticsQuery, userIdx);
@@ -259,14 +259,14 @@ async function selectBookDB(connection){
     return selectBookDBRows;
 }
 // BookAuthor table
-async function selectBookAuthorDB(connection){
-    const selectBookAuthorDBQuery = `
-        SELECT *
-        FROM BookAuthor;
-    `;
-    const [selectBookAuthorDBRows] = await connection.query(selectBookAuthorDBQuery);
-    return selectBookAuthorDBRows;
-}
+// async function selectBookAuthorDB(connection){
+//     const selectBookAuthorDBQuery = `
+//         SELECT *
+//         FROM BookAuthor;
+//     `;
+//     const [selectBookAuthorDBRows] = await connection.query(selectBookAuthorDBQuery);
+//     return selectBookAuthorDBRows;
+// }
 // BookImgUrl table
 // async function selectBookImgUrlDB(connection){
 //     const selectBookImgUrlDBQuery = `
@@ -342,7 +342,7 @@ module.exports = {
     insertRecords,
     selectBookIdx,
     insertBookIdx,
-    insertBookAuthor,
+    // insertBookAuthor,
 
     updateRecords,
     deleteRecords,
@@ -351,7 +351,7 @@ module.exports = {
     selectReadingRecord,
     
     selectBookDB,
-    selectBookAuthorDB,
+    // selectBookAuthorDB,
     // selectBookImgUrlDB,
     selectFlowerDataDB,
     selectFlowerPotDB,

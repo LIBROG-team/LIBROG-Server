@@ -1,5 +1,6 @@
 const { createLogger, format, transports } = require('winston');
-require('winston-daily-rotate-file');
+const winstonDaily = require('winston-daily-rotate-file');
+const moment = require('moment');
 const fs = require('fs');
 
 const env = process.env.NODE_ENV || 'development';
