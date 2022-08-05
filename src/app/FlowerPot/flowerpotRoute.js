@@ -1,5 +1,6 @@
 module.exports = function(app){
     const flowerpot = require('./flowerpotController');
+    const jwtMiddleware = require("../../../config/jwtMiddleware");
   
 
     // 3.1 화분 조회 API
@@ -24,6 +25,10 @@ module.exports = function(app){
 
     //3.7 미획득 화분 내에서 검색 API 
     app.get ('/flowerpots/:userIdx/searchUnacqFlower', flowerpot.getSerachUnacqFlowerpot);
+
+    //3.8 획득 화분에서 유저화분으로 추가 API
+
+    app.post('/flowerpots/flowerpotAdd/:userFlowerListIdx',flowerpot.addFlowerpot);
  
     
 

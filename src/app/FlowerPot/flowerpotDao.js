@@ -31,7 +31,8 @@ async function selectUserAcquiredFlowerpot(connection, userIdx) {
             fd.name,
             fd.type,
             fd.bloomingPeriod,
-            fd.flowerImgUrl
+            fd.flowerImgUrl,
+            fl.idx as userFlowerListIdx
       FROM UserFlowerList as fl
       left join FlowerData as fd on fd.idx =fl.flowerDataIdx
       WHERE fl.userIdx =?;
@@ -120,6 +121,19 @@ async function selectSerchUnacqFlowerpot(connection, userIdx, flowerName) {
       return searchUnacqFlowerpotRow;
     }
 
+    //획득화분에서 유저의 화분으로 추가
+    
+    async function insertFlowerpot(connection, userFlowerListIdx) {
+      const insertFlowerpotQuery = `
+      INSERT INTO  FlowerPot(userIdx,flowerDataIdx)
+      SELECT userIdx,flowerDataIdx
+      FROM UserFlowerList
+      where UserFlowerList.idx= ?
+      `;
+      const [insertFlowerpotRow] = await connection.query(insertFlowerpotQuery,userFlowerListIdx);
+      return insertFlowerpotRow;
+    }
+
 
   module.exports ={
     selectUserFlowerpot,
@@ -128,5 +142,6 @@ async function selectSerchUnacqFlowerpot(connection, userIdx, flowerName) {
     selectFlowerpotInfo,
     deleteFlowerPot,
     selectSerchAcqFlowerpot,
-    selectSerchUnacqFlowerpot
+    selectSerchUnacqFlowerpot,
+    insertFlowerpot
   };
