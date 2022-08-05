@@ -31,7 +31,8 @@ async function selectUserAcquiredFlowerpot(connection, userIdx) {
             fd.name,
             fd.type,
             fd.bloomingPeriod,
-            fd.flowerImgUrl
+            fd.flowerImgUrl,
+            fl.idx as userFlowerListIdx
       FROM UserFlowerList as fl
       left join FlowerData as fd on fd.idx =fl.flowerDataIdx
       WHERE fl.userIdx =?;
