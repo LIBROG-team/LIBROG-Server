@@ -11,3 +11,12 @@ exports.retrieveNotice = async function () {
 
     return noticeResult;
   };
+
+exports.retrieveRecommendBooks = async function () {
+  const connection = await pool.getConnection(async (conn) => conn);
+  const RecommendBooksResult = await contentsDao.selectRecommendBooks(connection);
+
+  connection.release();
+
+  return RecommendBooksResult;
+};
