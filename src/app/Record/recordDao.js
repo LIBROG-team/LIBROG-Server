@@ -317,7 +317,7 @@ async function selectFilterRecent(connection, userIdx){
             FROM FlowerPot
         ) f on f.idx = r.flowerPotIdx
     WHERE f.userIdx = ? AND r.status = 'ACTIVE'
-    ORDER BY name DESC
+    ORDER BY name
     LIMIT 1000;
     `;
     const [selectFilterTitleRows] = await connection.query(selectFilterTitleQuery, userIdx);
