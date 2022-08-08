@@ -17,6 +17,7 @@ async function insertUserInfo(connection, insertUserInfoParams) {
           INSERT INTO User(email, password, name, profileImgUrl, introduction)
           VALUES (?, ?, ?, ?, ?);
       `;
+      
     const insertUserInfoRow = await connection.query(
       insertUserInfoQuery,
       insertUserInfoParams

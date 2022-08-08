@@ -58,7 +58,6 @@ const nodemailer = require("nodemailer");
     if (!introduction)
         return res.send(response(baseResponse.SIGNUP_INTRODUCTION_EMPTY));
 
-
     const signUpResponse = await userService.createUser(
         email,
         password,
