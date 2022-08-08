@@ -34,9 +34,20 @@ async function selectGetAllFlower(connection) {
   return getAllFlowerRow;
 }
 
+async function patchFlowerData(connection, patchFlowerDataparams) {
+  const patchFlowerDataQuery = `
+  UPDATE FlowerData
+  SET name = ?, engName = ?, flowerImgUrl = ?, flowerPotImgUrl = ?, maxExp = ?, bloomingPeriod = ?, content = ?, type = ?
+  WHERE idx = ?;
+  `;
+  const [patchFlowerDataRow] = await connection.query(patchFlowerDataQuery, patchFlowerDataparams);
+  return patchFlowerDataRow;
+}
+
   module.exports = {
     selectUserCount,
     selectFlowerpotCount,
     selectBookCount,
     selectGetAllFlower,
+    patchFlowerData,
   }

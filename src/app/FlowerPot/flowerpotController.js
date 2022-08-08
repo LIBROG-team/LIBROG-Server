@@ -197,3 +197,34 @@ exports.getflowerpots = async function(req, res){
         
         return res.send(response(baseResponse.SUCCESS, searchUnacqResult))
     }
+
+    
+         /**
+ * API No.8
+ * API Name : 획득 화분에서 유저화분으로 추가 API
+ * [GET] /app/flowerpots/flowerpotAdd/:userFlowerListIdx
+ * 
+ */
+          exports.addFlowerpot = async function(req, res){
+            /*
+                Path Variable : userFlowerListIdx
+    
+            */
+                //const userFlowerListIdxFromJWT = req.verifiedToken.userFlowerListIdx;
+                const userFlowerListIdx=req.params.userFlowerListIdx;
+    
+            // validation
+            /*if (userIdxFromJWT != userIdx) {
+                return res.send(errResponse(baseResponse.USER_ID_NOT_MATCH));
+            }*/
+            if (!userFlowerListIdx) {
+                return res.send(errResponse(baseResponse.FLOWERLIST_EMPTY));
+            } 
+            if (userFlowerListIdx <= 0) {
+                return res.send(errResponse(baseResponse.FLOWERLIST_LENGTH));
+            }
+        
+            const addFlowerpotResponse = await flowerpotService.addUserFlowerpot(userFlowerListIdx);
+            return res.send(response(baseResponse.SUCCESS, addFlowerpotResponse))
+        }
+    

@@ -13,3 +13,14 @@ const {response, errResponse} = require("../../../config/response");
     const noticeResult = await contentsProvider.retrieveNotice();
     return res.send(response(baseResponse.SUCCESS, noticeResult));
 }
+
+/**
+ * API No. 4.2
+ * API Name : 추천 책 조회 API
+ * [GET] /contents/recommendBooks/',
+ * 
+ */
+ exports.getRecommendBooks = async function(req, res){
+    const RecommendBooksResult = await contentsProvider.retrieveRecommendBooks();
+    return res.send(response(baseResponse.SUCCESS, RecommendBooksResult));
+}
