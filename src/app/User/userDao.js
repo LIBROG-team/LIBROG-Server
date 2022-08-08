@@ -14,8 +14,8 @@ async function selectUserEmail(connection, email) {
 // 유저 생성
 async function insertUserInfo(connection, insertUserInfoParams) {
     const insertUserInfoQuery = `
-          INSERT INTO User(email, password, name)
-          VALUES (?, ?, ?);
+          INSERT INTO User(email, password, name, profileImgUrl, introduction)
+          VALUES (?, ?, ?, ?, ?);
       `;
     const insertUserInfoRow = await connection.query(
       insertUserInfoQuery,
@@ -67,9 +67,9 @@ async function selectUserAccount(connection, email) {
 async function deleteUser(connection, userIdx) {
   const deleteUserInfoQuery = `
   DELETE u.*
-  FROM User as u
+    FROM User as u
   WHERE u.idx=?; 
-  `;
+    `;
   const [deleteUserInfoRow] = await connection.query(deleteUserInfoQuery, userIdx);
   return deleteUserInfoRow;
 }

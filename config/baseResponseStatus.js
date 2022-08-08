@@ -82,7 +82,7 @@ module.exports = {
     RECORDS_NO_AUTHOR : { "isSuccess": false, "code": 3016, "message":"해당 독서기록에서 저자가 null값입니다." },
 
     // Response error
-    SIGNIN_EMAIL_WRONG : { "isSuccess": false, "code": 3020, "message": "아이디가 잘못 되었습니다." },
+    SIGNIN_EMAIL_WRONG : { "isSuccess": false, "code": 3020, "message": "이메일이 잘못 되었습니다." },
     SIGNIN_PASSWORD_WRONG : { "isSuccess": false, "code": 3021, "message": "비밀번호가 잘못 되었습니다." },
     SIGNIN_INACTIVE_ACCOUNT : { "isSuccess": false, "code": 3022, "message": "비활성화 된 계정입니다." },
     SIGNIN_WITHDRAWAL_ACCOUNT : { "isSuccess": false, "code": 3023, "message": "탈퇴 처리된 계정입니다." },

@@ -18,9 +18,9 @@ const nodemailer = require("nodemailer");
  exports.postUsers = async function (req, res) {
 
     /**
-     * Body: email, password, name
+     * Body: email, password, name, profileImgUrl, introduction
      */
-    const {email, password, name} = req.body;
+    const {email, password, name, profileImgUrl, introduction} = req.body;
 
     // 이메일 빈 값 체크
     if (!email)
@@ -50,11 +50,21 @@ const nodemailer = require("nodemailer");
     if (name.length > 20)
         return res.send(response(baseResponse.SIGNUP_NAME_LENGTH));
 
+    // 프로필 사진 빈 값 체크
+    if (!profileImgUrl)
+        return res.send(response(baseResponse.SIGNUP_PROFILEIMGURL_EMPTY));
+
+    // 자기소개 빈 값 체크
+    if (!introduction)
+        return res.send(response(baseResponse.SIGNUP_INTRODUCTION_EMPTY));
+
 
     const signUpResponse = await userService.createUser(
         email,
         password,
-        name
+        name,
+        profileImgUrl,
+        introduction
     );
     
     return res.send(signUpResponse);
@@ -66,13 +76,13 @@ const nodemailer = require("nodemailer");
  * [DELETE] /users/:userIdx
  */
 exports.deleteUsers = async function (req, res) {
-        /*
-            Path Variable : userIdx
-        */    
-        const userIdx = req.params.userIdx;
+    /*
+        Path Variable : userIdx
+    */    
+    const userIdx = req.params.userIdx;
 
-        if(!userIdx) //userIdx == "undefined"
-            return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
+    if(!userIdx) //userIdx == "undefined"
+        return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
 
     const withdrawalResponse = await userService.deleteUserInfo(userIdx);
     return res.send(response(baseResponse.SUCCESS, withdrawalResponse));
