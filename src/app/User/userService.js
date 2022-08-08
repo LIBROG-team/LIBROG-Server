@@ -13,7 +13,7 @@ const {connect} = require("http2");
 
 // Service: Create, Update, Delete 비즈니스 로직 처리
 
-exports.createUser = async function (email, password, name) {
+exports.createUser = async function (email, password, name, profileImgUrl, introduction) {
     try {
         // 이메일 중복 확인
         const emailRows = await userProvider.emailCheck(email);
@@ -26,7 +26,7 @@ exports.createUser = async function (email, password, name) {
             .update(password)
             .digest("hex");
 
-        const insertUserInfoParams = [email, hashedPassword, name];
+        const insertUserInfoParams = [email, hashedPassword, name, profileImgUrl, introduction];
 
         const connection = await pool.getConnection(async (conn) => conn);
 
@@ -34,6 +34,7 @@ exports.createUser = async function (email, password, name) {
         // console.log(`추가된 회원 : ${userIdResult[0].insertId}`)
         connection.release();
         return response(baseResponse.SUCCESS);
+        
 
     } catch (err) {
         logger.error(`App - createUser Service error\n: ${err.message}`);

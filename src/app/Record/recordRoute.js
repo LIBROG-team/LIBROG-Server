@@ -50,4 +50,13 @@ module.exports = function(app){
     // 2.8 독서기록 상세조회 API
     app.get('/records/:readingRecordIdx', record.getReadingRecord);
     // 책 정보 출력 api
+
+    // 2.9 유저 전체 독서기록 필터 (최근 순) api
+    app.get('/records/readingRecord/filter/recent/:userIdx', record.getFilterRecent);
+
+    // 2.10 유저 전체 독서기록 필터 (별점 순) api
+    app.get('/records/readingRecord/filter/rating/:userIdx', record.getFilterRating);
+    
+    // 2.11 유저 전체 독서기록 필터 (제목 순) api
+    app.get('/records/readingRecord/filter/title/:userIdx', record.getFilterTitle);
 }

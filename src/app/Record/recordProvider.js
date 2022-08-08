@@ -139,6 +139,78 @@ exports.retriveReadingRecord = async function(readingRecordIdx){
     return response(baseResponse.SUCCESS, retriveReadingRecordList[0]);
 }
 
+
+/**
+ * API No. 2.9
+ * API Name: 유저 전체 독서기록 필터 (최근 순) api
+ * [GET] /records/readingRecord/filter/recent/:userIdx
+ */
+
+exports.retriveFilterRecent = async function (userIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const retriveFilterRecent = await recordDao.selectFilterRecent(connection, userIdx);
+    
+    try{
+        if(retriveFilterRecent.length < 1){
+            connection.release();
+            return errResponse(baseResponse.USER_NO_RECORDS);
+        }
+    }catch(err){
+        logger.error(`App - retriveReadingRecord Provider error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+
+    connection.release();
+    return response(baseResponse.SUCCESS, retriveFilterRecent);
+}
+
+/**
+ * API No. 2.10
+ * API Name: 유저 전체 독서기록 필터 (별점 순) api
+ * [GET] /records/readingRecord/filter/rating/:userIdx
+ */
+ exports.retriveFilterRating = async function (userIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const retriveFilterRating = await recordDao.selectFilterRating(connection, userIdx);
+    
+    try{
+        if(retriveFilterRating.length < 1){
+            connection.release();
+            return errResponse(baseResponse.USER_NO_RECORDS);
+        }
+    }catch(err){
+        logger.error(`App - retriveReadingRecord Provider error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+
+    connection.release();
+    return response(baseResponse.SUCCESS, retriveFilterRating);
+}
+
+/**
+ * API No. 2.11
+ * API Name: 유저 전체 독서기록 필터 (제목 순) api
+ * [GET] /records/readingRecord/filter/title/:userIdx
+ */
+ exports.retriveFilterTitle = async function (userIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const retriveFilterTitle = await recordDao.selectFilterTitle(connection, userIdx);
+    
+    try{
+        if(retriveFilterTitle.length < 1){
+            connection.release();
+            return errResponse(baseResponse.USER_NO_RECORDS);
+        }
+    }catch(err){
+        logger.error(`App - retriveReadingRecord Provider error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+
+    connection.release();
+    return response(baseResponse.SUCCESS, retriveFilterTitle);
+}
+
+
 // DB 조회 API
 
 exports.readBookDB = async function(){
