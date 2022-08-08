@@ -34,6 +34,7 @@ exports.createUser = async function (email, password, name, profileImgUrl, intro
         // console.log(`추가된 회원 : ${userIdResult[0].insertId}`)
         connection.release();
         return response(baseResponse.SUCCESS);
+        
 
     } catch (err) {
         logger.error(`App - createUser Service error\n: ${err.message}`);
