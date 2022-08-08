@@ -50,6 +50,9 @@ module.exports = {
     SIGNUP_PASSWORD_LENGTH : { "isSuccess": false, "code": 2044, "message":"비밀번호는 8~20자리를 입력해주세요." },
     SIGNUP_NAME_EMPTY : { "isSuccess": false, "code": 2045, "message":"이름을 입력 해주세요." },
     SIGNUP_NAME_LENGTH : { "isSuccess": false,"code": 2046,"message":"이름은 20자보다 짧게 입력해주세요." },
+    SIGNUP_PROFILEIMGURL_EMPTY : { "isSuccess": false,"code": 2047,"message":"프로필 사진을 첨부해주세요." },
+    SIGNUP_INTRODUCTION_EMPTY : { "isSuccess": false,"code": 2048,"message":"자기소개를 입력해주세요." },
+
 
     SIGNIN_EMAIL_EMPTY : { "isSuccess": false, "code": 2050, "message":"email을 입력해주세요." },
     SIGNIN_EMAIL_LENGTH : { "isSuccess": false, "code": 2051, "message":"email은 255글자 이하의 길이로 입력해주세요." },
@@ -88,7 +91,7 @@ module.exports = {
     RECORDS_NO_AUTHOR : { "isSuccess": false, "code": 3016, "message":"해당 독서기록에서 저자가 null값입니다." },
 
     // Response error
-    SIGNIN_EMAIL_WRONG : { "isSuccess": false, "code": 3020, "message": "아이디가 잘못 되었습니다." },
+    SIGNIN_EMAIL_WRONG : { "isSuccess": false, "code": 3020, "message": "이메일이 잘못 되었습니다." },
     SIGNIN_PASSWORD_WRONG : { "isSuccess": false, "code": 3021, "message": "비밀번호가 잘못 되었습니다." },
     SIGNIN_INACTIVE_ACCOUNT : { "isSuccess": false, "code": 3022, "message": "비활성화 된 계정입니다." },
     SIGNIN_WITHDRAWAL_ACCOUNT : { "isSuccess": false, "code": 3023, "message": "탈퇴 처리된 계정입니다." },
