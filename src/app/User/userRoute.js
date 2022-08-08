@@ -12,9 +12,6 @@ module.exports = function(app){
     // // 1.5 자기소개 수정 API
     // app.patch('/users/introduction', user.patchUserIntroduction);
 
-    // // 1.2 마이페이지 유저정보 조회 API
-    // app.get('/users/:idx', user.getUserPage);
-
     // // TODO: After 로그인 인증 방법 (JWT)
     // // 로그인 하기 API (JWT 생성)
     // app.post('/app/login', user.login);
