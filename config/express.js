@@ -7,11 +7,16 @@ var cors = require('cors');
 module.exports = function () {
     const app = express();
 
+    const corsOption = {
+        origin: 'https://sadad64.shop',
+        credentials: true
+    }
+
     app.use(compression());
     app.use(express.json());
     app.use(express.urlencoded({extended: true}));
     app.use(methodOverride());
-    app.use(cors());
+    app.use(cors(corsOption));
     app.use(morgan(':date[iso] | HTTP/:http-version | [:method] :url | From :remote-addr'));  // log 남기는 것
     // app.use(express.static(process.cwd() + '/public'));
 

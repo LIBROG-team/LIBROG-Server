@@ -9,7 +9,6 @@ const { logger } = require("../../../config/winston");
  * [GET] /app/test
  */
 exports.getTest = async function(req, res){
-    res.setHeader('Access-Control-Allow-Origin', 'https://sadad64.shop');
     return res.send(baseResponse.SUCCESS);
 }
 exports.getConsolelog = async function(req, res){
