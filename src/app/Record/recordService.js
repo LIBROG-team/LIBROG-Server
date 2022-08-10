@@ -33,6 +33,10 @@ exports.createRecords = async function(createRecordsParams, userIdx){
         createRecordsParams.push(flowerPotIdx);
         const createRecordsList = await recordDao.insertRecords(connection, createRecordsParams);
         
+        // 추가된 recordIdx에 exp 재산정해주는 코드
+        const recordIdx = createRecordsList.insertId;
+        rewriteExp(connection, recordIdx, flowerPotIdx, 0);
+
         return response(baseResponse.SUCCESS, {'createdRecordId':createRecordsList.insertId});
     }catch(err){
         logger.error(`App - createRecords Service error\n: ${err.message}`);
@@ -66,14 +70,22 @@ exports.createBook = async function(createBookParams){
  */
 exports.editRecords = async function(patchRecordsParams){
     const connection = await pool.getConnection(async (conn) => conn);
+    const recordIdx = patchRecordsParams[3];
     try{
         // validation - records 삭제되고 없을때
         const checkRecordsList = await recordDao.checkRecords(connection, patchRecordsParams[3]);
-        if(checkRecordsList.length < 1 || checkRecordsList[0].status == 'DELETED'){
+        if(checkRecordsList.length < 1 || checkRecordsList[0].status === 'DELETED'){
             connection.release();
             return errResponse(baseResponse.RECORDS_NO_RECORDS);
         }
         const editRecordsList = await recordDao.updateRecords(connection, patchRecordsParams);
+        
+        // 수정된 recordIdx에 exp 재산정해주는 코드
+        const [checkRecordsRows] = await recordDao.checkRecords(connection, recordIdx);
+        const flowerPotIdx = checkRecordsRows.flowerPotIdx;
+        rewriteExp(connection, recordIdx, flowerPotIdx, 0);
+        
+        // 결과 return
         return response(baseResponse.SUCCESS, editRecordsList);
     }catch(err){
         logger.error(`App - editRecords Service error\n: ${err.message}`);
@@ -92,10 +104,14 @@ exports.removeRecords = async function(recordsIdx){
     try{
         // validation - records 삭제되고 없을때
         const checkRecordsList = await recordDao.checkRecords(connection, recordsIdx);
-        if(checkRecordsList.length < 1 || checkRecordsList[0].status == 'DELETED'){
+        if(checkRecordsList.length < 1 || checkRecordsList[0].status === 'DELETED'){
             connection.release();
             return errResponse(baseResponse.RECORDS_NO_RECORDS);
         }
+        // 삭제될 recordIdx에 exp 재산정해주는 코드
+        const flowerPotIdx = checkRecordsList[0].flowerPotIdx;
+        rewriteExp(connection, recordsIdx, flowerPotIdx, 1);
+        // readingRecord 삭제
         const removeRecordsList = await recordDao.deleteRecords(connection, recordsIdx);
         return response(baseResponse.SUCCESS, removeRecordsList);
     }catch(err){
@@ -104,4 +120,29 @@ exports.removeRecords = async function(recordsIdx){
     }finally{
         connection.release();
     }
+}
+
+// exp 재산정해서 화분이랑 독서기록에 반영해주는 함수
+async function rewriteExp(connection, recordIdx, flowerPotIdx, ifDel) {
+    // const recordIdx = 87;
+    const [readingRecordStatus] = await recordDao.selectReadingRecord(connection, recordIdx);
+    const {starRating, quote, content, exp} = readingRecordStatus;
+    
+    let postExp = 0;
+    if(!ifDel){ // 지우지 않을때만. 지울때는 postExp == 0으로 산정 -> ReadingRecord, FlowerPot table에 반영.
+        if(starRating !== null){
+            postExp += 500;
+        }
+        if(quote !== null){
+            postExp += 1500;
+        }
+        if(content !== null){
+            postExp += 3000;
+        }
+    }
+
+    // 화분 및 독서기록 exp 재산정해주는 코드
+    const rewtireRRExpResult = await recordDao.updateReadingRecordExp(connection, postExp, recordIdx);
+    const rewriteExpResult = await recordDao.updateFlowerpotExp(connection, postExp - exp, flowerPotIdx);
+    return;
 }

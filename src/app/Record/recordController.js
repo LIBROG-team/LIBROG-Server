@@ -56,7 +56,8 @@ exports.getFlowerPotRecords = async function(req, res){
 exports.postRecords = async function(req, res){
     const {
         bookName, authorArr, publisher, publishedDate, bookInstruction, 
-        bookImgUrl, userIdx, starRating, quote, content} = req.body;
+        bookImgUrl, userIdx } = req.body;
+    let {starRating, quote, content} = req.body;
     // 작가 배열은 따로 저장, ','로 구분해서 문자열로 저장!
     const authorString = authorArr.toString();
     
@@ -77,13 +78,13 @@ exports.postRecords = async function(req, res){
         return res.send(errResponse(baseResponse.RECORDS_PUBLISHER_LENGTH));
     }else if(publishedDate.length > 45){
         return res.send(errResponse(baseResponse.RECORDS_PUBLISHED_DATE_LENGTH));
-    }else if(!userIdx){
+    }if(!userIdx){
         return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
     }else if(userIdx <= 0){
         return res.send(errResponse(baseResponse.USER_USERIDX_LENGTH));
-    }else if(quote && quote.length > 1000){
+    }if(quote && quote.length > 1000){
         return res.send(errResponse(baseResponse.RECORDS_QUOTE_LENGTH));
-    }else if(content && content.length > 10000){
+    }if(content && content.length > 10000){
         return res.send(errResponse(baseResponse.RECORDS_CONTENT_LENGTH));
     }
     // starRating - 0~5 사이의 값인지만 validation
@@ -91,9 +92,19 @@ exports.postRecords = async function(req, res){
         return res.send(errResponse(baseResponse.RECORDS_RATING_LENGTH));
     }
 
+    // starRating, quote, content 값이 없으면 null로 설정
+    if(!starRating){
+        starRating = null;
+    }
+    if(!quote){
+        quote = null;
+    }
+    if(!content){
+        content = null;
+    }
+
     // 일단 bookName으로 bookIdx 존재하는지 검색
     let bookIdxResult = await recordProvider.readBookIdx(bookName);
-    
     let bookIdx;
     
     // Book table에 책 존재하는 경우 -> idx 받아옴
@@ -131,20 +142,32 @@ exports.postRecords = async function(req, res){
  * [PATCH] /records/fix
  */
 exports.patchRecords = async function(req, res){
-    const {starRating, quote, content, idx} = req.body;
+    const {idx} = req.body;
+    let {starRating, quote, content} = req.body;
     // 여기서도 starRating Validation만 해줌.
     if(starRating < 0 || starRating > 5){
         return res.send(errResponse(baseResponse.RECORDS_RATING_LENGTH));
-    }else if(!idx){
+    }if(!idx){
         return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
     }else if(idx <= 0){
         return res.send(errResponse(baseResponse.RECORDS_RECORDSIDX_LENGTH));
-    }else if(quote && quote.length > 1000){
+    }if(quote && quote.length > 1000){
         return res.send(errResponse(baseResponse.RECORDS_QUOTE_LENGTH));
-    }else if(content && content.length > 10000){
+    }if(content && content.length > 10000){
         return res.send(errResponse(baseResponse.RECORDS_CONTENT_LENGTH));
     }
     // 정규식 검사로 특수문자 등 못넣게(SQL injection 방지) 해야함.
+    // 값 없으면 null로 설정
+    if(!starRating){
+        starRating = null;
+    }
+    if(!quote){
+        quote = null;
+    }
+    if(!content){
+        content = null;
+    }
+
     const patchRecordsParams = [starRating, quote, content, idx];
     const patchRecordsResult = await recordService.editRecords(patchRecordsParams);
     return res.send(patchRecordsResult);
