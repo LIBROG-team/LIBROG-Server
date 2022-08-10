@@ -27,14 +27,15 @@ async function insertUserInfo(connection, insertUserInfoParams) {
   }
 
 // 패스워드 체크
-async function selectUserPassword(connection, email) {
+async function selectUserPassword(connection, email, password) {
   const selectUserPasswordQuery = `
-        SELECT idx, password
+        SELECT password, idx
         FROM User
         WHERE email = ?`;
   const selectUserPasswordRow = await connection.query(
       selectUserPasswordQuery,
-      email
+      email,
+      password
   );
 
   return selectUserPasswordRow;

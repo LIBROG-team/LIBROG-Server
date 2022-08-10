@@ -6,12 +6,14 @@ const authProvider = require("./authProvider");
 const userProvider = require("../User/userProvider");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
+const cookieParser = require('cookie-parser');
 const secret_config = require("../../../config/secret.js");
 
 exports.postSignIn = async function (email, password) {
+    const connection = await pool.getConnection(async (conn) => conn);
     try {
         const emailRows = await userProvider.emailCheck(email);
-        
+
         if (emailRows.length < 1) {
             return errResponse(baseResponse.SIGNIN_EMAIL_WRONG);
         }
@@ -21,7 +23,7 @@ exports.postSignIn = async function (email, password) {
         .update(password)
         .digest("hex");
 
-        const passwordRows = await userProvider.passwordCheck(email);
+        const passwordRows = await userProvider.passwordCheck(email, password);
 
         if (passwordRows[0].password != hashedPassword) {
             return errResponse(baseResponse.SIGNIN_PASSWORD_WRONG);
@@ -44,17 +46,28 @@ exports.postSignIn = async function (email, password) {
         secret_config.jwtsecret,
         //유효기간
         {
-            expiresIn: "365d",
+            expiresIn: "180m",
             subject: "User",
         }
-        )
+        );
 
         return response(baseResponse.SUCCESS, { 'jwt': token, 'userIdx': userAccountRows[0].idx});
 
         
     } catch (err) {
         console.log(`App - postSignIn Service error\n: ${err.message}`);
-
         return errResponse(baseResponse.DB_ERROR);
+    } finally {
+        connection.release();
     }
 }
+
+// exports.postSignOut = async function (req, res) {
+//     try {
+//         return res.clearCookie('User').end();
+//     } catch (err) {
+//         console.log(`App - postSignOut Service error\n: ${err.message}`);
+//         return errResponse(baseResponse.DB_ERROR);
+//     }
+
+// }
