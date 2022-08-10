@@ -25,7 +25,6 @@ module.exports = function(app){
     // 0.9 UserFlowerList table 조회 API
     // app.get('/UserFlowerListDB', record.getUserFlowerListDB);
 
-
     // 2.1 유저별 독서 기록 조회 API
     app.get('/records/user/:userIdx', record.getUserRecords);
     
@@ -39,7 +38,7 @@ module.exports = function(app){
     app.patch('/records/fix', record.patchRecords);
 
     // 2.5 독서 기록 삭제 API
-    app.patch('/records/removal', record.deleteRecords);
+    app.delete('/records/removal', record.deleteRecords);
 
     // 2.6 유저별 독서 기록 통계 조회 API
     app.get('/records/statistics/:userIdx', record.getStatistics);

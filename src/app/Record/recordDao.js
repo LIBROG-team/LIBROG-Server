@@ -1,3 +1,4 @@
+// 유저 조회 api
 async function checkUserIdx(connection, userIdx){
     const checkUserIdxQuery = `
         SELECT u.idx, u.email, u.status
@@ -17,6 +18,20 @@ async function checkFlowerPot(connection, flowerPotIdx){
     const [checkFlowerPotRows] = await connection.query(checkFlowerPotQuery, flowerPotIdx);
     return checkFlowerPotRows;
 }
+
+/**
+ * API Name: 책 인덱스 조회 API
+ */
+ async function selectBookIdx(connection, bookName){
+    const selectBookIdxQuery = `
+        SELECT idx, name
+        FROM Book
+        WHERE name = ?;
+    `;
+    const [selectBookIdxRows] = await connection.query(selectBookIdxQuery, bookName);
+    return selectBookIdxRows;
+}
+
 async function checkRecentFlowerPot(connection, userIdx){
     // 0725 유저 최근 화분 조회 쿼리
     /**
@@ -37,10 +52,10 @@ async function checkRecentFlowerPot(connection, userIdx){
     const [checkFlowerPotRows] = await connection.query(checkFlowerPotQuery, userIdx);
     return checkFlowerPotRows;
 }
-
+// 독서기록 조회 api
 async function checkRecords(connection, recordsIdx){
     const checkRecordsQuery = `
-        SELECT idx, status
+        SELECT idx, status, flowerPotIdx
         FROM ReadingRecord
         WHERE idx = ?;
     `;
@@ -91,7 +106,7 @@ async function selectFlowerPotRecords(connection, flowerPotIdx){
 
 /**
  * API No.2.3
- * API Name: 독서 기록 추가 API
+ * API Name: 독서 기록 삭제 API
  * [POST] /records/addition
  */
 async function insertRecords(connection, createRecordsParams){
@@ -104,19 +119,6 @@ async function insertRecords(connection, createRecordsParams){
     return insertRecordsRows;
 }
 
-/**
- * API No. 2.35
- * API Name: 책 인덱스 조회 API
- */
-async function selectBookIdx(connection, bookName){
-    const selectBookIdxQuery = `
-        SELECT idx, name
-        FROM Book
-        WHERE name = ?;
-    `;
-    const [selectBookIdxRows] = await connection.query(selectBookIdxQuery, bookName);
-    return selectBookIdxRows;
-}
 
 // 2.31 책 추가 API
 async function insertBookIdx(connection, createBookParams){
@@ -128,24 +130,6 @@ async function insertBookIdx(connection, createBookParams){
     const [insertBookIdx] = await connection.query(insertBookIdxQuery, createBookParams);
     return insertBookIdx;
 }
-/**
- * 2.32 책 저자 추가 API
- */
-// async function insertBookAuthor(connection, createBookAuthorParams){
-//     const bookIdx = createBookAuthorParams[0];
-//     const authorArr = createBookAuthorParams[1];
-//     const insertBookAuthorQuery = `
-//         INSERT INTO BookAuthor
-//         (bookIdx, authorName)
-//         VALUES (?, ?);
-//     `;
-    
-//     authorArr.forEach(async function(author){
-//         await connection.query(insertBookAuthorQuery, [bookIdx, author]);
-        
-//     });
-//     return;
-// }
 
 /**
  * API No. 2.4
@@ -168,9 +152,7 @@ async function updateRecords(connection, patchRecordsParams){
  */
 async function deleteRecords(connection, recordIdx){
     const deleteRecordsQuery = `
-    UPDATE ReadingRecord
-    SET status = 'DELETED'
-    WHERE idx = ?;
+        DELETE FROM ReadingRecord WHERE idx = ?;
     `;
     const [deleteRecordsRows] = await connection.query(deleteRecordsQuery, recordIdx);
     return deleteRecordsRows;
@@ -239,7 +221,7 @@ async function selectRecentBookRecords(connection, userIdx){
  */
 async function selectReadingRecord(connection, readingRecordIdx){
     const selectReadingRecordQuery = `
-        SELECT rr.idx as readingRecordIdx, B.bookImgUrl, B.name, B.author, B.bookInstruction, starRating, quote, content
+        SELECT rr.idx as readingRecordIdx, B.bookImgUrl, B.name, B.author, B.bookInstruction, starRating, quote, content, exp
         FROM ReadingRecord rr
         LEFT JOIN Book B on B.idx = rr.bookIdx
         WHERE rr.idx = ? AND rr.status = 'ACTIVE';
@@ -250,7 +232,7 @@ async function selectReadingRecord(connection, readingRecordIdx){
 
 /**
  * API No. 2.9
- * API Name: 유저 전체 독서기록 필터 (최근 순) api
+ * API Name: �쑀��� �쟾泥� �룆�꽌湲곕줉 �븘�꽣 (理쒓렐 �닚) api
  * [GET] /records/readingRecord/filter/recent/:userIdx
  */
 async function selectFilterRecent(connection, userIdx){
@@ -275,7 +257,7 @@ async function selectFilterRecent(connection, userIdx){
 
 /**
  * API No. 2.10
- * API Name: 유저 전체 독서기록 필터 (별점 순) api
+ * API Name: �쑀��� �쟾泥� �룆�꽌湲곕줉 �븘�꽣 (蹂꾩젏 �닚) api
  * [GET] /records/readingRecord/filter/rating/:userIdx
  */
  async function selectFilterRating(connection, userIdx){
@@ -301,7 +283,7 @@ async function selectFilterRecent(connection, userIdx){
 
 /**
  * API No. 2.11
- * API Name: 유저 전체 독서기록 필터 (제목 순) api
+ * API Name: �쑀��� �쟾泥� �룆�꽌湲곕줉 �븘�꽣 (�젣紐� �닚) api
  * [GET] /records/readingRecord/filter/title/:userIdx
  */
  async function selectFilterTitle(connection, userIdx){
@@ -324,8 +306,27 @@ async function selectFilterRecent(connection, userIdx){
     return selectFilterTitleRows;
 }
 
+// 독서기록 exp 재설정 함수
+// postExp에는 수정하는 exp값을 입력
+async function updateReadingRecordExp(connection, postExp, recordIdx){
+    const updateQuery = `
+        UPDATE ReadingRecord SET exp = ? WHERE idx = ?;
+    `;
+    const [updateRRExpRows] = await connection.query(updateQuery, [postExp, recordIdx]);
+    return updateRRExpRows;
+}
 
-// DB 전체 return 하는 API
+// 화분 exp 재설정 함수
+// expChangeValue에는 바꿀 값을 입력
+async function updateFlowerpotExp(connection, expChangeValue, flowerPotIdx){
+    const updateExpQuery = `
+        UPDATE FlowerPot SET exp = exp + ? WHERE idx = ?;
+    `;
+    const [updateFlowerpotExpRows] = await connection.query(updateExpQuery, [expChangeValue, flowerPotIdx]);
+    return updateFlowerpotExpRows;
+}
+
+// DB �쟾泥� return �븯�뒗 API
 // Book table
 async function selectBookDB(connection){
     const selectBookDBQuery = `
@@ -335,24 +336,7 @@ async function selectBookDB(connection){
     const [selectBookDBRows] = await connection.query(selectBookDBQuery);
     return selectBookDBRows;
 }
-// BookAuthor table
-// async function selectBookAuthorDB(connection){
-//     const selectBookAuthorDBQuery = `
-//         SELECT *
-//         FROM BookAuthor;
-//     `;
-//     const [selectBookAuthorDBRows] = await connection.query(selectBookAuthorDBQuery);
-//     return selectBookAuthorDBRows;
-// }
-// BookImgUrl table
-// async function selectBookImgUrlDB(connection){
-//     const selectBookImgUrlDBQuery = `
-//         SELECT *
-//         FROM BookImgUrl;
-//     `;
-//     const [selectBookImgUrlRows] = await connection.query(selectBookImgUrlDBQuery);
-//     return selectBookImgUrlRows;
-// }
+
 // FlowerData table
 async function selectFlowerDataDB(connection){
     const selectFlowerDataDBQuery = `
@@ -430,6 +414,9 @@ module.exports = {
     selectFilterRecent,
     selectFilterRating,
     selectFilterTitle,
+
+    updateFlowerpotExp,
+    updateReadingRecordExp,
     
     selectBookDB,
     // selectBookAuthorDB,
