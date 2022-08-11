@@ -31,11 +31,10 @@ exports.createUser = async function (email, password, name, profileImgUrl, intro
         const connection = await pool.getConnection(async (conn) => conn);
 
         const userIdResult = await userDao.insertUserInfo(connection, insertUserInfoParams);
-        // console.log(`추가된 회원 : ${userIdResult[0].insertId}`)
+        // console.log(userIdResult[0].insertId);
         connection.release();
-        return response(baseResponse.SUCCESS);
+        return response(baseResponse.SUCCESS, {'createdUserIdx':userIdResult.insertId});
         
-
     } catch (err) {
         logger.error(`App - createUser Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
