@@ -18,7 +18,7 @@ async function insertUserInfo(connection, insertUserInfoParams) {
           VALUES (?, ?, ?, ?, ?);
       `;
       
-    const insertUserInfoRow = await connection.query(
+    const [insertUserInfoRow] = await connection.query(
       insertUserInfoQuery,
       insertUserInfoParams
     );
@@ -65,8 +65,14 @@ async function selectUserAccount(connection, email) {
 //   return IsItActiveUserRows;
 // }
 
-//유저 삭제
+//유저 및 관련 데이터(화분, 독서기록, 화분획득여부) 삭제
 async function deleteUser(connection, userIdx) {
+  //UserFlowerList 삭제 쿼리
+
+  //독서 기록 삭제 쿼리(이미 존재하면 다른 파일에서 가져오기)
+
+  //화분 삭제 쿼리(이미 존재하면 다른 파일에서 가져오기)
+
   const deleteUserInfoQuery = `
   DELETE u.*
     FROM User as u
