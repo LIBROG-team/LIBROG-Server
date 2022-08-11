@@ -183,6 +183,18 @@ async function findPassword(connection, findPasswordParams) {
 
 }
 
+ // 초기 화분 획득
+    
+ async function acquireFlowerpot(connection, createdUserIdx) {
+  const acquireFlowerpotQuery = `
+  INSERT INTO  UserFlowerList(userIdx,flowerDataIdx)
+  VALUES (?,3)
+  `;
+  const [acquireFlowerpotRow] = await connection.query(acquireFlowerpotQuery,createdUserIdx);
+  return acquireFlowerpotRow;
+}
+
+
 
   module.exports = {
     selectUserEmail,
@@ -196,4 +208,5 @@ async function findPassword(connection, findPasswordParams) {
     getUserProfile,
     editUserIntroduction,
     findPassword,
+    acquireFlowerpot
   };

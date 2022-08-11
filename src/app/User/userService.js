@@ -31,9 +31,23 @@ exports.createUser = async function (email, password, name, profileImgUrl, intro
         const connection = await pool.getConnection(async (conn) => conn);
 
         const userIdResult = await userDao.insertUserInfo(connection, insertUserInfoParams);
+
+        ///초기 화분 추가 api
+
+        const createdUserIdx= userIdResult.insertId;
+
+        const acqFlowerpotResult = await userDao.acquireFlowerpot(connection, createdUserIdx);
+        if(acqFlowerpotResult.length < 1){
+            connection.release();
+            return errResponse(baseResponse.USER_NOT_EXIST);
+        }
+
+        ///
+
+
         // console.log(userIdResult[0].insertId);
         connection.release();
-        return response(baseResponse.SUCCESS, {'createdUserIdx':userIdResult.insertId});
+        return response(baseResponse.SUCCESS);
         
     } catch (err) {
         logger.error(`App - createUser Service error\n: ${err.message}`);

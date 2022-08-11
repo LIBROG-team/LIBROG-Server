@@ -3,6 +3,7 @@ const userProvider = require("../../app/User/userProvider");
 const userService = require("../../app/User/userService");
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response, errResponse} = require("../../../config/response");
+const userDao = require("./userDao");
 
 const regexEmail = require("regex-email");
 const {emit} = require("nodemon");
@@ -39,7 +40,7 @@ const nodemailer = require("nodemailer");
     return res.send(response(baseResponse.SIGNUP_PASSWORD_EMPTY));
 
     // 비밀번호 길이 체크
-    if (email.length < 8 || email.length > 20)
+    if (password.length < 8 || password.length > 20)
         return res.send(response(baseResponse.SIGNUP_PASSWORD_LENGTH));
 
     // 이름 빈 값 체크
@@ -67,6 +68,7 @@ const nodemailer = require("nodemailer");
     );
     
     return res.send(signUpResponse);
+
 };
 
 /**
