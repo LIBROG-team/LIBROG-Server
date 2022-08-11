@@ -29,7 +29,9 @@ module.exports = function(app){
     //3.8 획득 화분에서 유저화분으로 추가 API
 
     app.post('/flowerpots/flowerpotAdd/:userFlowerListIdx',flowerpot.addFlowerpot);
- 
+
+    //3.9 초기 화분 획득 API
+    app.post('/flowerpots/acqFlowerpot/:createdUserIdx',flowerpot.getAcqFlowerpot);
     
 
    
