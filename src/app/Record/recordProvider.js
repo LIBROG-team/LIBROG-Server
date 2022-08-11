@@ -109,7 +109,7 @@ exports.readRecentBookRecords = async function(userIdx){
         }
     });
     connection.release();
-    return readRecentBookRecordsResults;
+    return response(baseResponse.SUCCESS, readRecentBookRecordsResults);
 }
 /**
  * API No. 2.8
@@ -261,3 +261,9 @@ exports.UserFlowerList = async function(){
     connection.release();
     return response(baseResponse.SUCCESS, UserFlowerListList);
 }
+
+// exports.rewriteAllFlowerPotsExp = async function(){
+//     const connection = await pool.getConnection(async (conn) => conn);
+//     const updateResult = await recordDao.updateAllFlowerPotsExp(connection);
+//     return response(baseResponse.SUCCESS, updateResult);
+// }
