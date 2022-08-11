@@ -228,8 +228,8 @@ exports.editIntroduce = async function (req, res) {
             }
 
             const newPass = first + second + third + fourth + fifth + sixth;
-            newpass = crypto.createHash('sha512').update(newPass).digest('hex');
-            return newPass;
+            const hashed = crypto.createHash('sha512').update(newPass).digest('hex');
+            return hashed;
         }    
 
     const findPasswordParams = [getNewPassword(), email];
