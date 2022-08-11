@@ -3,6 +3,7 @@ const userProvider = require("../../app/User/userProvider");
 const userService = require("../../app/User/userService");
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response, errResponse} = require("../../../config/response");
+const userDao = require("./userDao");
 
 const regexEmail = require("regex-email");
 const {emit} = require("nodemon");
@@ -67,6 +68,7 @@ const nodemailer = require("nodemailer");
     );
     
     return res.send(signUpResponse);
+
 };
 
 /**

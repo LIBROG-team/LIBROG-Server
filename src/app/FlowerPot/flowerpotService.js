@@ -51,7 +51,4 @@ exports.deleteFlowerPotInfo = async function (flowerpotIdx) {
     } finally {
         connection.release();
     }
-
-    
-    
   };
