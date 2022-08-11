@@ -20,7 +20,13 @@ const nodemailer = require("nodemailer");
     /**
      * Body: email, password, name, profileImgUrl, introduction
      */
-    const {email, password, name, profileImgUrl, introduction} = req.body;
+    const email = req.body.email;
+    const password = req.body.password;
+    const name = req.body.name;
+    const introduction = req.body.introduction;
+
+    const profileImgUrl = `https://librog.shop/source/profileImg/${req.file.filename}`;
+    console.log(profileImgUrl);
 
     // 이메일 빈 값 체크
     if (!email)
@@ -39,7 +45,7 @@ const nodemailer = require("nodemailer");
     return res.send(response(baseResponse.SIGNUP_PASSWORD_EMPTY));
 
     // 비밀번호 길이 체크
-    if (email.length < 8 || email.length > 20)
+    if (password.length < 8 || password.length > 20)
         return res.send(response(baseResponse.SIGNUP_PASSWORD_LENGTH));
 
     // 이름 빈 값 체크
@@ -67,6 +73,7 @@ const nodemailer = require("nodemailer");
     );
     
     return res.send(signUpResponse);
+
 };
 
 /**

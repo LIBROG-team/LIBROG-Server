@@ -1,10 +1,35 @@
 module.exports = function(app){
     const user = require('./userController');
     const jwtMiddleware = require('../../../config/jwtMiddleware');
-
+    const multer = require('multer');
 
     // 1.1 유저 생성 (회원가입) API
-    app.post('/users', user.postUsers);
+    // 확장자 알아내는 함수
+    function getExt(fileName) {
+        if (fileName.indexOf(".") == -1) {
+          let fileExt = "Directory";
+          return fileExt;
+        }
+    
+        let fileLength = fileName.length;
+        let lastDot = fileName.lastIndexOf(".");
+        let fileExt = fileName.substring(lastDot, fileLength).toLowerCase().replace(".", "");
+    
+        return fileExt;
+      }
+    
+    const storage = multer.diskStorage({
+        destination: '/home/ubuntu/source/profileImg',
+        filename: (req, file, cb) => {
+            return cb (null, `${file.fieldname}_${Date.now()}.${getExt(file.originalname)}`);
+        }
+    })
+
+    const upload = multer({
+        storage: storage,
+    });
+    
+    app.post('/users', upload.single('profileImg'), user.postUsers);
 
     // 1.4 유저 탈퇴 API
     app.delete('/users/:userIdx', user.deleteUsers);
