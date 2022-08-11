@@ -39,7 +39,7 @@ const nodemailer = require("nodemailer");
     return res.send(response(baseResponse.SIGNUP_PASSWORD_EMPTY));
 
     // 비밀번호 길이 체크
-    if (email.length < 8 || email.length > 20)
+    if (password.length < 8 || password.length > 20)
         return res.send(response(baseResponse.SIGNUP_PASSWORD_LENGTH));
 
     // 이름 빈 값 체크
@@ -77,7 +77,7 @@ const nodemailer = require("nodemailer");
 exports.deleteUsers = async function (req, res) {
     /*
         Path Variable : userIdx
-    */    
+    */
     const userIdx = req.params.userIdx;
 
     if(!userIdx) //userIdx == "undefined"
@@ -86,6 +86,9 @@ exports.deleteUsers = async function (req, res) {
     const withdrawalResponse = await userService.deleteUserInfo(userIdx);
     return res.send(response(baseResponse.SUCCESS, withdrawalResponse));
 }
+
+
+
 
 /**
  * API No. 1.10
