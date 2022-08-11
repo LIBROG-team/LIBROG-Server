@@ -53,5 +53,35 @@ exports.deleteFlowerPotInfo = async function (flowerpotIdx) {
     }
 
     
+
+    
+    
+  };
+  
+  exports.acqUserFlowerpot = async function (createdUserIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+
+    try {
+        await connection.beginTransaction();
+
+        const acqFlowerpotResult = await flowerpotDao.acquireFlowerpot(connection, createdUserIdx);
+
+       
+        await connection.commit();
+
+        return response(baseResponse.SUCCESS, acqFlowerpotResult);
+    } catch (err) {
+        console.log(`App - acqFlowerpot Service Error\n: ${err.message}`);
+
+        await connection.rollback();
+
+        return errResponse(baseResponse.DB_ERROR);
+    } finally {
+        connection.release();
+    }
+
+    
+
+    
     
   };

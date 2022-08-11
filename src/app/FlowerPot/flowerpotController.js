@@ -227,4 +227,32 @@ exports.getflowerpots = async function(req, res){
             const addFlowerpotResponse = await flowerpotService.addUserFlowerpot(userFlowerListIdx);
             return res.send(response(baseResponse.SUCCESS, addFlowerpotResponse))
         }
+
+
+        
+      
+         /**
+ * API No.9
+ * API Name : 초기 화분 획득 API
+ * [GET] /app/flowerpots/acqFlowerpot/:createdUserIdx
+ * 
+ */
+          exports.getAcqFlowerpot = async function(req, res){
+            /*
+                Path Variable : createdUserIdx
+    
+            */
+            const createdUserIdx=req.params.createdUserIdx;
+            if (!createdUserIdx) {
+                return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
+            } 
+            if (createdUserIdx <= 0) {
+                return res.send(errResponse(baseResponse.USER_USERIDX_LENGTH));
+            }
+        
+            const acqFlowerpotResponse = await flowerpotService.acqUserFlowerpot(createdUserIdx);
+            return res.send(response(baseResponse.SUCCESS, acqFlowerpotResponse))
+        }
+
+
     
