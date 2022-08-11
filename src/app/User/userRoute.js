@@ -5,6 +5,7 @@ module.exports = function(app){
 
     // 1.1 유저 생성 (회원가입) API
     // 확장자 알아내는 함수
+
     function getExt(fileName) {
         if (fileName.indexOf(".") == -1) {
           let fileExt = "Directory";
@@ -29,7 +30,30 @@ module.exports = function(app){
         storage: storage,
     });
     
-    app.post('/users', upload.single('profileImg'), user.postUsers);
+    app.post('/users', upload.single('profileImg'), (req, res) => {
+        if (req.file === undefined) {
+            console.log(`req.file is undefined`);
+            let body = {
+                "email": req.body.email,
+                "name": req.body.name,
+                "password": req.body.password,
+                "introduction": req.body.introduction,
+                "profileImgUrl": 'https://librog.shop/source/profileImg/defaultImg.png',
+            }
+            user.postUsers(body, res)
+        } else {
+            let body = {
+                "email": req.body.email,
+                "name": req.body.name,
+                "password": req.body.password,
+                "introduction": req.body.introduction,
+                "profileImgUrl": `https://librog.shop/source/profileImg/${req.file.filename}`,
+            }
+            user.postUsers(body, res)
+        }
+
+
+    });
 
     // 1.4 유저 탈퇴 API
     app.delete('/users/:userIdx', user.deleteUsers);

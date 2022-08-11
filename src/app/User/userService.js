@@ -33,7 +33,9 @@ exports.createUser = async function (email, password, name, profileImgUrl, intro
         const userIdResult = await userDao.insertUserInfo(connection, insertUserInfoParams);
         // console.log(`추가된 회원 : ${userIdResult[0].insertId}`)
         connection.release();
-        return response(baseResponse.SUCCESS);
+
+        const resultObj = { "createdUserIdx" : userIdResult[0].insertId };
+        return response(baseResponse.SUCCESS, resultObj);
         
 
     } catch (err) {
