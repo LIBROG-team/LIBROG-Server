@@ -8,6 +8,7 @@ const regexEmail = require("regex-email");
 const {emit} = require("nodemon");
 const axios = require("axios");
 const nodemailer = require("nodemailer");
+const crypto = require("crypto");
 
 
 /**
@@ -227,6 +228,7 @@ exports.editIntroduce = async function (req, res) {
             }
 
             const newPass = first + second + third + fourth + fifth + sixth;
+            newpass = crypto.createHash('sha512').update(newPass).digest('hex');
             return newPass;
         }    
 
