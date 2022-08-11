@@ -79,7 +79,7 @@ const nodemailer = require("nodemailer");
 exports.deleteUsers = async function (req, res) {
     /*
         Path Variable : userIdx
-    */    
+    */
     const userIdx = req.params.userIdx;
 
     if(!userIdx) //userIdx == "undefined"
@@ -88,6 +88,9 @@ exports.deleteUsers = async function (req, res) {
     const withdrawalResponse = await userService.deleteUserInfo(userIdx);
     return res.send(response(baseResponse.SUCCESS, withdrawalResponse));
 }
+
+
+
 
 /**
  * API No. 1.10
