@@ -14,6 +14,12 @@ exports.deleteFlowerPotInfo = async function (flowerpotIdx) {
     try {
         const deleteFlowerPotInfoResult = await flowerpotDao.deleteFlowerPot(connection, flowerpotIdx);
 
+         //유저의 화분이 없을때
+      if(deleteFlowerPotInfoResult.length < 1){
+        connection.release();
+        return errResponse(baseResponse.USER_NO_FLOWERPOTS);
+      }
+
         return response(baseResponse.SUCCESS);
     } catch (err) {
         console.log(`App - deleteFlowerPotInfo Service error\n: ${err.message}`);
