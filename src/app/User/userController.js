@@ -9,6 +9,7 @@ const regexEmail = require("regex-email");
 const {emit} = require("nodemon");
 const axios = require("axios");
 const nodemailer = require("nodemailer");
+const crypto = require("crypto");
 
 
 /**
@@ -79,7 +80,7 @@ const nodemailer = require("nodemailer");
 exports.deleteUsers = async function (req, res) {
     /*
         Path Variable : userIdx
-    */    
+    */
     const userIdx = req.params.userIdx;
 
     if(!userIdx) //userIdx == "undefined"
@@ -88,6 +89,9 @@ exports.deleteUsers = async function (req, res) {
     const withdrawalResponse = await userService.deleteUserInfo(userIdx);
     return res.send(response(baseResponse.SUCCESS, withdrawalResponse));
 }
+
+
+
 
 /**
  * API No. 1.10
@@ -229,7 +233,8 @@ exports.editIntroduce = async function (req, res) {
             }
 
             const newPass = first + second + third + fourth + fifth + sixth;
-            return newPass;
+            const hashed = crypto.createHash('sha512').update(newPass).digest('hex');
+            return hashed;
         }    
 
     const findPasswordParams = [getNewPassword(), email];
