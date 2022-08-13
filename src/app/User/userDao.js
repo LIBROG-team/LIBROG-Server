@@ -229,6 +229,45 @@ async function findPassword(connection, findPasswordParams) {
 
 }
 
+ // 초기 화분 획득
+ async function acquireFlowerpot(connection, createdUserIdx) {
+  const acquireFlowerpotQuery = `
+  INSERT INTO  UserFlowerList(userIdx,flowerDataIdx)
+  VALUES (?,3)
+  `;
+  const [acquireFlowerpotRow] = await connection.query(acquireFlowerpotQuery,createdUserIdx);
+  return acquireFlowerpotRow;
+}
+
+async function deletePreviousImage(connection, idx) {
+  const deleteImgQuery = `
+  UPDATE User
+  SET profileImgUrl = null
+  WHERE idx = ?;`;
+  const deleteImgQueryRow = await connection.query(deleteImgQuery, idx);
+  return deleteImgQueryRow[0];
+}
+
+async function editProfile(connection, editProfileParams) {
+  const editProfileQuery = `
+  UPDATE User
+  SET name = ?, introduction = ?, profileImgUrl = ?
+  WHERE idx = ?;
+  `
+  const [editProfileQueryRow] = await connection.query(editProfileQuery, editProfileParams);
+  return editProfileQueryRow[0];
+}
+
+async function getProfileImgUrl(connection, idx) {
+  const getProfileImgUrlQuery = `
+  SELECT profileImgUrl
+  FROM User
+  WHERE idx = ?;
+  `
+  const [getProfileImgUrlQueryRow] = await connection.query(getProfileImgUrlQuery, idx);
+  return getProfileImgUrlQueryRow;
+}
+
 
   module.exports = {
     selectUserEmail,
@@ -246,4 +285,8 @@ async function findPassword(connection, findPasswordParams) {
     getUserProfile,
     editUserIntroduction,
     findPassword,
+    acquireFlowerpot,
+    deletePreviousImage,
+    editProfile,
+    getProfileImgUrl,
   };
