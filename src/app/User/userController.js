@@ -10,6 +10,7 @@ const {emit} = require("nodemon");
 const axios = require("axios");
 const nodemailer = require("nodemailer");
 const crypto = require("crypto");
+const fs = require("fs");
 
 
 /**
@@ -310,3 +311,53 @@ const textContent = `
     return res.send(findPasswordResult);
 }
 
+/**
+ * API No. 1.24
+ * API Name : 프로필 수정 API
+ * [PATCH] /users/profile/edit/
+ */
+ exports.editProfile = async function (req, res) {
+    let {name, introduction, profileImgUrl, idx, newProfileImg} = req;
+
+    if(!idx){
+        return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
+    } else if(idx <= 0){
+        return res.send(errResponse(baseResponse.USER_USERIDX_LENGTH));
+    } else if(!introduction) {
+        introduction = "자기 소개가 없습니다.";
+    } else if(introduction.lenght > 300) {
+        return res.send(errResponse(baseResponse.INTRODUCE_QUOTE_LENGTH));
+    } else if(!profileImgUrl) {
+        profileImgUrl = 'https://librog.shop/source/profileImg/defaultImg.png';
+    } else if(!name) {
+        return res.send(errResponse(baseResponse.SIGNUP_NAME_EMPTY));
+    } else if (name > 20) {
+        return res.send(errResponse(baseResponse.SIGNUP_NAME_LENGTH));
+    }
+
+    const editProfileParams = [name, introduction, profileImgUrl, idx];
+    
+    if (newProfileImg == true) {
+        // 이미지 파일이 존재할 경우
+        const deletePreviousImageFile = await userProvider.getProfileImgUrl(idx);
+        console.log(deletePreviousImageFile.slice(38));
+        try {
+            fs.unlink(`/home/ubuntu/source/profileImg${deletePreviousImageFile.slice(38)}`, (err) => {
+                if (err != null) {
+                    console.log(err);
+                    return res.send(`File System Error - ${err}`);
+                }
+            });
+
+            const deletePreviousImage = await userService.deletePreviousImage(idx);
+            const editIntroduceResult = await userService.editProfile(editProfileParams);
+            return res.send(editIntroduceResult);
+        } catch(err) {
+            return res.send(`File System Error - ${err}`);
+        }
+    } else {
+        // 이미지 파일이 존재하지 않는 경우
+        const editIntroduceResult = await userService.editProfile(editProfileParams);
+        return res.send(editIntroduceResult);
+    }
+}

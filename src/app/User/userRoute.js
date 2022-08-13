@@ -87,4 +87,28 @@ module.exports = function(app){
 
     // 1.23 이메일 중복확인 api
     app.patch('/users/findMyPassword', user.findPassword);
+
+    // 1.24 자기소개 수정 api
+    app.patch('/users/profile/edit', upload.single('profileImg'), (req, res) => {
+        if (req.file === undefined) {
+            let body = {
+                "idx": req.body.idx,
+                "name": req.body.name,
+                "introduction": req.body.introduction,
+                "profileImgUrl": req.body.profileImg,
+                "newProfileImg": false,
+            }
+            user.editProfile(body, res);
+        } else {
+            let body = {
+                "idx": req.body.idx,
+                "name": req.body.name,
+                "introduction": req.body.introduction,
+                "profileImgUrl": `https://librog.shop/source/profileImg/${req.file.filename}`,
+                "newProfileImg": true,
+            }
+            user.editProfile(body, res);
+        }
+    });
+
 }
