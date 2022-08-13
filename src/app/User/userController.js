@@ -83,14 +83,21 @@ exports.deleteUsers = async function (req, res) {
     */
     const userIdx = req.params.userIdx;
 
-    if(!userIdx) //userIdx == "undefined"
+    if(!userIdx){
         return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
+    }else if(userIdx <= 0){
+        return res.send(errResponse(baseResponse.USER_USERIDX_LENGTH));
+    }
 
-    const withdrawalResponse = await userService.deleteUserInfo(userIdx);
-    return res.send(response(baseResponse.SUCCESS, withdrawalResponse));
+    const userIdxResult = await userService.deleteUserInfo(userIdx);
+    return res.send(response(baseResponse.SUCCESS, userIdxResult));
 }
 
-
+/**
+ * API No. 1.5
+ * API Name : 비밀번호 변경 API
+ * [PATCH] /users
+ */
 
 
 /**
