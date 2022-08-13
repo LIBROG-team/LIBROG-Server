@@ -184,7 +184,6 @@ async function findPassword(connection, findPasswordParams) {
 }
 
  // 초기 화분 획득
-    
  async function acquireFlowerpot(connection, createdUserIdx) {
   const acquireFlowerpotQuery = `
   INSERT INTO  UserFlowerList(userIdx,flowerDataIdx)
@@ -222,7 +221,6 @@ async function getProfileImgUrl(connection, idx) {
   const [getProfileImgUrlQueryRow] = await connection.query(getProfileImgUrlQuery, idx);
   return getProfileImgUrlQueryRow;
 }
-
 
 
   module.exports = {
