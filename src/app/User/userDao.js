@@ -54,6 +54,70 @@ async function selectUserAccount(connection, email) {
   return selectUserAccountRow[0];
 }
 
+// 유저 관련 데이터 삭제(ReadingRecord / FlowerPot / UserFlowerList / User 순서로 삭제)
+//성공 쿼리 - 유저 삭제 1. readingRecord 삭제
+async function deleteUserRRInfo(connection, userIdx) {
+  const deleteReadingRecordQuery = `
+    DELETE rr.*
+    FROM FlowerPot as fp
+    left join ReadingRecord as rr on rr.flowerPotIdx = fp.idx
+    WHERE fp.userIdx=?;
+  `;
+
+  const deleteReadingRecordRow = await connection.query(
+    deleteReadingRecordQuery,
+    userIdx
+  );
+  return deleteReadingRecordRow[0];
+}
+//성공 쿼리 - 유저 삭제 2. 화분
+async function deleteUserFPInfo(connection, userIdx) {
+  const deleteFlowerPotQuery = `
+    DELETE fp.*
+    FROM FlowerPot as fp
+    WHERE fp.userIdx=?;
+  `;
+
+  const deleteFPQueryRow = await connection.query(
+    deleteFlowerPotQuery,
+    userIdx
+  );
+  
+  return deleteFPQueryRow[0];
+}
+
+//성공 쿼리 - 3. 유저플라워리스트
+async function deleteUserUFLInfo(connection, userIdx) {
+  const deleteUFLQuery = `
+    DELETE ufl.*
+    FROM UserFlowerList as ufl
+    WHERE ufl.userIdx=?;
+  `;
+
+  const deleteUFLQueryRow = await connection.query(
+    deleteUFLQuery,
+    userIdx
+  );
+
+  return deleteUFLQueryRow[0];
+}
+
+//성공 쿼리 - 4. 유저테이블
+async function deleteUserUInfo(connection, userIdx) {
+  const deleteUQuery = `
+    DELETE u.*
+    FROM User as u
+    WHERE u.idx=?;
+  `;
+
+  const deleteUQueryRow = await connection.query(
+    deleteUQuery,
+    userIdx
+  );
+
+  return deleteUQueryRow[0];
+}
+
 // // 유저 탈퇴 시 존재하는 유저인지 확인()
 // async function IsItActiveUser(connection, userIdx) {
 //   const IsItActiveUserQuery = `
@@ -64,24 +128,6 @@ async function selectUserAccount(connection, email) {
 //   const [IsItActiveUserRows] = await connection.query(IsItActiveUserQuery, userIdx);
 //   return IsItActiveUserRows;
 // }
-
-//유저 및 관련 데이터(화분, 독서기록, 화분획득여부) 삭제
-async function deleteUser(connection, userIdx) {
-  //UserFlowerList 삭제 쿼리
-
-  //독서 기록 삭제 쿼리(이미 존재하면 다른 파일에서 가져오기)
-
-  //화분 삭제 쿼리(이미 존재하면 다른 파일에서 가져오기)
-
-  const deleteUserInfoQuery = `
-  DELETE u.*
-    FROM User as u
-  WHERE u.idx=?; 
-    `;
-  const [deleteUserInfoRow] = await connection.query(deleteUserInfoQuery, userIdx);
-  return deleteUserInfoRow;
-}
-
 
 // 카카오계정 이메일이 존재하는지 확인
 async function kakaoUserAccountCheck(connection, email, type) {
@@ -183,30 +229,21 @@ async function findPassword(connection, findPasswordParams) {
 
 }
 
- // 초기 화분 획득
-    
- async function acquireFlowerpot(connection, createdUserIdx) {
-  const acquireFlowerpotQuery = `
-  INSERT INTO  UserFlowerList(userIdx,flowerDataIdx)
-  VALUES (?,3)
-  `;
-  const [acquireFlowerpotRow] = await connection.query(acquireFlowerpotQuery,createdUserIdx);
-  return acquireFlowerpotRow;
-}
-
-
 
   module.exports = {
     selectUserEmail,
     insertUserInfo,
     selectUserPassword,
     selectUserAccount,
-    deleteUser,
+    // deleteUserRR,
+    deleteUserRRInfo,
+    deleteUserFPInfo,
+    deleteUserUFLInfo,
+    deleteUserUInfo,
     kakaoUserAccountCheck,
     kakaoUserAccountInsert,
     kakaoUserAccountInfo,
     getUserProfile,
     editUserIntroduction,
     findPassword,
-    acquireFlowerpot
   };

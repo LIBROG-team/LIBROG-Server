@@ -62,22 +62,45 @@ API Name: 유저 삭제 API
 exports.deleteUserInfo = async function (userIdx) {
     const connection = await pool.getConnection(async (conn) => conn);
     try {
-        const withdrawalResponse = await userDao.deleteUser(connection, userIdx);
-        return response(baseResponse.SUCCESS);
 
+        const deleteUserRRInfoResult = await userDao.deleteUserRRInfo(connection, userIdx);
+        // console.log('SUCCESS. You deleted 1. ReadingRecord.');
+        const deleteUserFPInfoResult = await userDao.deleteUserFPInfo(connection, userIdx);
+        // console.log('SUCCESS. You deleted 2. FlowerPot.');
+        const deleteUserUFLInfoResult = await userDao.deleteUserUFLInfo(connection, userIdx);
+        // console.log('SUCCESS. You deleted 3. UserFlowerList.');
+        const deleteUserUInfoResult = await userDao.deleteUserUInfo(connection, userIdx);
+        // console.log('SUCCESS. You deleted 4. User.');
+
+        return response(baseResponse.SUCCESS, { 'deletedUserIdx': userIdx });
         // // validation 이미 탈퇴한 유저일 때
         // const IsItActiveUserList = await userDao.IsItActiveUser(connection, userIdx);
         // if(IsItActiveUserList.length < 1 || IsItActiveUserList[0].status == 'DELETED'){
-        //     connection /*여기서부터 나중에*/
+        //     connection.release();
+        //     return errResponse(baseResponse.USER_NOT_EXIST);
         // }
+
+
+        // const deleteUsersList = await userDao.deleteUserRR(connection, userIdx);
+        // // const deleteUserFPList = await userDao.deleteUserFPInfoRow(connection, userIdx);
+        // // const deleteUserUFLList = await userDao.deleteUserUFLInfoRow(connection, userIdx);
+        // // const deleteUserUList = await userDao.deleteUserUInfoRow(connection, userIdx);
+
+        // console.log(deleteUsersList);
+        // return response(baseResponse.SUCCESS);
+        //     // deleteUserFPList,
+        //     // deleteUserUFLList,
+        //     // deleteUserUList
+           
+
+
     } catch (err) {
         console.log(`App - deleteUserInfo Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
     } finally {
         connection.release();
     }
-};
-
+}
 
 
 exports.kakaoLogin = async function (kakaoResult) {
