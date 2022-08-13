@@ -47,7 +47,9 @@ exports.createUser = async function (email, password, name, profileImgUrl, intro
 
         // console.log(userIdResult[0].insertId);
         connection.release();
-        return response(baseResponse.SUCCESS);
+
+        const resultObj = { "createdUserIdx" : userIdResult[0].insertId };
+        return response(baseResponse.SUCCESS, resultObj);
         
     } catch (err) {
         logger.error(`App - createUser Service error\n: ${err.message}`);
@@ -175,6 +177,34 @@ exports.findPassword = async function (findPasswordParams) {
         logger.error(`App - find password Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
 
+    } finally {
+        connection.release();
+    }
+}
+
+exports.deletePreviousImage = async function (idx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    
+    try {
+        const deletePreviousImage = await userDao.deletePreviousImage(connection, idx);    
+        return response(baseResponse.SUCCESS, deletePreviousImage);
+    } catch(err) {
+        logger.error(`App - Delete previous image url Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    } finally {
+        connection.release();
+    }
+}
+
+exports.editProfile = async function (editProfileParams) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    
+    try {
+        const editProfile = await userDao.editProfile(connection, editProfileParams);    
+        return response(baseResponse.SUCCESS, editProfile);
+    } catch(err) {
+        logger.error(`App - Edit Profile Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
     } finally {
         connection.release();
     }

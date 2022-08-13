@@ -1,10 +1,59 @@
 module.exports = function(app){
     const user = require('./userController');
     const jwtMiddleware = require('../../../config/jwtMiddleware');
-
+    const multer = require('multer');
 
     // 1.1 유저 생성 (회원가입) API
-    app.post('/users', user.postUsers);
+    // 확장자 알아내는 함수
+
+    function getExt(fileName) {
+        if (fileName.indexOf(".") == -1) {
+          let fileExt = "Directory";
+          return fileExt;
+        }
+    
+        let fileLength = fileName.length;
+        let lastDot = fileName.lastIndexOf(".");
+        let fileExt = fileName.substring(lastDot, fileLength).toLowerCase().replace(".", "");
+    
+        return fileExt;
+      }
+    
+    const storage = multer.diskStorage({
+        destination: '/home/ubuntu/source/profileImg',
+        filename: (req, file, cb) => {
+            return cb (null, `${file.fieldname}_${Date.now()}.${getExt(file.originalname)}`);
+        }
+    })
+
+    const upload = multer({
+        storage: storage,
+    });
+    
+    app.post('/users', upload.single('profileImg'), (req, res) => {
+        if (req.file === undefined) {
+            console.log(`req.file is undefined`);
+            let body = {
+                "email": req.body.email,
+                "name": req.body.name,
+                "password": req.body.password,
+                "introduction": req.body.introduction,
+                "profileImgUrl": 'https://librog.shop/source/profileImg/defaultImg.png',
+            }
+            user.postUsers(body, res)
+        } else {
+            let body = {
+                "email": req.body.email,
+                "name": req.body.name,
+                "password": req.body.password,
+                "introduction": req.body.introduction,
+                "profileImgUrl": `https://librog.shop/source/profileImg/${req.file.filename}`,
+            }
+            user.postUsers(body, res)
+        }
+
+
+    });
 
     // 1.4 유저 탈퇴 API
     app.delete('/users/userDelete/:userIdx', user.deleteUsers);
@@ -38,4 +87,28 @@ module.exports = function(app){
 
     // 1.23 이메일 중복확인 api
     app.patch('/users/findMyPassword', user.findPassword);
+
+    // 1.24 자기소개 수정 api
+    app.patch('/users/profile/edit', upload.single('profileImg'), (req, res) => {
+        if (req.file === undefined) {
+            let body = {
+                "idx": req.body.idx,
+                "name": req.body.name,
+                "introduction": req.body.introduction,
+                "profileImgUrl": req.body.profileImg,
+                "newProfileImg": false,
+            }
+            user.editProfile(body, res);
+        } else {
+            let body = {
+                "idx": req.body.idx,
+                "name": req.body.name,
+                "introduction": req.body.introduction,
+                "profileImgUrl": `https://librog.shop/source/profileImg/${req.file.filename}`,
+                "newProfileImg": true,
+            }
+            user.editProfile(body, res);
+        }
+    });
+
 }
