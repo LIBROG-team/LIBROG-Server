@@ -347,20 +347,31 @@ const textContent = `
     if (newProfileImg == true) {
         // 이미지 파일이 존재할 경우
         const deletePreviousImageFile = await userProvider.getProfileImgUrl(idx);
-        console.log(deletePreviousImageFile.slice(38));
+        console.log(deletePreviousImageFile.slice(38) + ' has deleted');
         try {
-            fs.unlink(`/home/ubuntu/source/profileImg${deletePreviousImageFile.slice(38)}`, (err) => {
-                if (err != null) {
-                    console.log(err);
-                    return res.send(`File System Error - ${err}`);
-                }
-            });
-
+            if (deletePreviousImageFile.slice(38) != 'default.png') {
+                fs.unlink(`/home/ubuntu/source/profileImg/${deletePreviousImageFile.slice(38)}`, (err) => {
+                    if (err != null) {
+                        console.log(err);
+                        const errorResponse = {
+                            "isSuccess": "Unable to determine",
+                            "code": "FS1001",
+                            "message": `File System Error during unlink file - ${err}`,
+                        }
+                        return res.send(errorResponse);
+                    }
+                });
+            }
             const deletePreviousImage = await userService.deletePreviousImage(idx);
             const editIntroduceResult = await userService.editProfile(editProfileParams);
             return res.send(editIntroduceResult);
         } catch(err) {
-            return res.send(`File System Error - ${err}`);
+            const errorResponse = {
+                "isSuccess": "False",
+                "code": "FS1000",
+                "message": `File System Error - ${err}`,
+            }
+            return res.send(errorResponse);
         }
     } else {
         // 이미지 파일이 존재하지 않는 경우
