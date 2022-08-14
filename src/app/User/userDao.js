@@ -229,16 +229,6 @@ async function findPassword(connection, findPasswordParams) {
 
 }
 
- // 초기 화분 획득
- async function acquireFlowerpot(connection, createdUserIdx) {
-  const acquireFlowerpotQuery = `
-  INSERT INTO  UserFlowerList(userIdx,flowerDataIdx)
-  VALUES (?,3)
-  `;
-  const [acquireFlowerpotRow] = await connection.query(acquireFlowerpotQuery,createdUserIdx);
-  return acquireFlowerpotRow;
-}
-
 async function deletePreviousImage(connection, idx) {
   const deleteImgQuery = `
   UPDATE User
@@ -285,7 +275,6 @@ async function getProfileImgUrl(connection, idx) {
     getUserProfile,
     editUserIntroduction,
     findPassword,
-    acquireFlowerpot,
     deletePreviousImage,
     editProfile,
     getProfileImgUrl,
