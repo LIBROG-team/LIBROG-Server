@@ -353,7 +353,12 @@ const textContent = `
                 fs.unlink(`/home/ubuntu/source/profileImg/${deletePreviousImageFile.slice(38)}`, (err) => {
                     if (err != null) {
                         console.log(err);
-                        return res.send(`File System Error - ${err}`);
+                        const errorResponse = {
+                            "isSuccess": "Unable to determine",
+                            "code": "FS1001",
+                            "message": `File System Error during unlink file - ${err}`,
+                        }
+                        return res.send(errorResponse);
                     }
                 });
             }
@@ -361,7 +366,12 @@ const textContent = `
             const editIntroduceResult = await userService.editProfile(editProfileParams);
             return res.send(editIntroduceResult);
         } catch(err) {
-            return res.send(`File System Error - ${err}`);
+            const errorResponse = {
+                "isSuccess": "False",
+                "code": "FS1000",
+                "message": `File System Error - ${err}`,
+            }
+            return res.send(errorResponse);
         }
     } else {
         // 이미지 파일이 존재하지 않는 경우
