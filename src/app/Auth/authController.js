@@ -41,27 +41,3 @@ exports.login = async function(req, res) {
     const signInResponse = await authService.postSignIn(email, password);
     return res.send(signInResponse);
 }
-
-// /*
-//     API No. 2.2
-//     API Name: 로그아웃 API
-//     [post] /auth/logout
-// */
-
-// exports.logout = async function(req, res) {
-//     res.cookie('token', null, {
-//         maxAge: 0, //쿠키 만료시간 0-> 클라이언트가 쿠키를 바로 만료시키도록
-//        });
-//     // const signOutResponse = await authService.postSignOut();
-//     // return res.send(signOutResponse);
-// }
-
-// /*
-//     API No. 2.3
-//     API Name: 디코더 된 값 확인 API
-//     [get] /auth/token
-// */
-
-// exports.token = async function(req, res) {
-//     res.send(req.decoded);
-// }
