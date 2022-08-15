@@ -135,6 +135,20 @@ async function selectSerchUnacqFlowerpot(connection, userIdx, flowerName) {
     }
 
 
+    // 유저 조회 api
+async function checkUserIdx(connection, userIdx){
+      const checkUserIdxQuery = `
+          SELECT u.idx, u.email, u.status
+          FROM User u
+          WHERE idx = ?;
+      `;
+      const [checkUserRows] = await connection.query(checkUserIdxQuery, userIdx);
+      return checkUserRows;
+  }
+    
+   
+
+
   module.exports ={
     selectUserFlowerpot,
     selectUserAcquiredFlowerpot,
@@ -143,5 +157,6 @@ async function selectSerchUnacqFlowerpot(connection, userIdx, flowerName) {
     deleteFlowerPot,
     selectSerchAcqFlowerpot,
     selectSerchUnacqFlowerpot,
-    insertFlowerpot
+    insertFlowerpot,
+    checkUserIdx
   };

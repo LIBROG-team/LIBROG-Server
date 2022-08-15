@@ -6,18 +6,6 @@ const morgan = require('morgan');
 var cors = require('cors');
 module.exports = function () {
     const app = express();
-    const whitelist = ['https://sadad64.shop', 'http://localhost:3000', 'http://::1'];
-    const corsOptions = {
-        origin: function (origin, callback) {
-            if (whitelist.indexOf(origin) !== -1) {
-                callback(null, true);
-            } else if ( origin === undefined ) {
-                app.use(cors());
-            } else {
-                callback(new Error("CORS ERROR : Not Allowed Origin."));
-            }
-        }
-    };
 
     app.use(compression());
     app.use(express.json());

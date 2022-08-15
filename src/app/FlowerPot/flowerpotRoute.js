@@ -27,9 +27,7 @@ module.exports = function(app){
     app.get ('/flowerpots/:userIdx/searchUnacqFlower', flowerpot.getSerachUnacqFlowerpot);
 
     //3.8 획득 화분에서 유저화분으로 추가 API
-
     app.post('/flowerpots/flowerpotAdd/:userFlowerListIdx',flowerpot.addFlowerpot);
- 
     
 
    

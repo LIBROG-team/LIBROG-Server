@@ -59,3 +59,10 @@ exports.emailCheck = async function (email) {
   
     return userProfileInfoResult[0];
   }
+
+  exports.getProfileImgUrl = async function(idx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const getProfileImgUrlResult = await userDao.getProfileImgUrl(connection, idx);
+    connection.release();
+    return getProfileImgUrlResult[0].profileImgUrl;
+  }

@@ -3,12 +3,14 @@ const userProvider = require("../../app/User/userProvider");
 const userService = require("../../app/User/userService");
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response, errResponse} = require("../../../config/response");
+const userDao = require("./userDao");
 
 const regexEmail = require("regex-email");
 const {emit} = require("nodemon");
 const axios = require("axios");
 const nodemailer = require("nodemailer");
 const crypto = require("crypto");
+const fs = require("fs");
 
 
 /**
@@ -21,7 +23,15 @@ const crypto = require("crypto");
     /**
      * Body: email, password, name, profileImgUrl, introduction
      */
-    const {email, password, name, profileImgUrl, introduction} = req.body;
+    // console.log(req.body);
+    // console.log(req.body.name);
+
+    console.log(req);
+    const email = req.email;
+    const password = req.password;
+    const name = req.name;
+    const introduction = req.introduction;
+    const profileImgUrl = req.profileImgUrl;
 
     // 이메일 빈 값 체크
     if (!email)
@@ -40,7 +50,7 @@ const crypto = require("crypto");
     return res.send(response(baseResponse.SIGNUP_PASSWORD_EMPTY));
 
     // 비밀번호 길이 체크
-    if (email.length < 8 || email.length > 20)
+    if (password.length < 8 || password.length > 20)
         return res.send(response(baseResponse.SIGNUP_PASSWORD_LENGTH));
 
     // 이름 빈 값 체크
@@ -52,8 +62,9 @@ const crypto = require("crypto");
         return res.send(response(baseResponse.SIGNUP_NAME_LENGTH));
 
     // 프로필 사진 빈 값 체크
-    if (!profileImgUrl)
-        return res.send(response(baseResponse.SIGNUP_PROFILEIMGURL_EMPTY));
+    if (!profileImgUrl) {
+        profileImgUrl = 'https://librog.shop/source/profileImg/defaultImg.png';
+    }
 
     // 자기소개 빈 값 체크
     if (!introduction)
@@ -68,6 +79,7 @@ const crypto = require("crypto");
     );
     
     return res.send(signUpResponse);
+
 };
 
 /**
@@ -78,15 +90,25 @@ const crypto = require("crypto");
 exports.deleteUsers = async function (req, res) {
     /*
         Path Variable : userIdx
-    */    
+    */
     const userIdx = req.params.userIdx;
 
-    if(!userIdx) //userIdx == "undefined"
+    if(!userIdx){
         return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
+    }else if(userIdx <= 0){
+        return res.send(errResponse(baseResponse.USER_USERIDX_LENGTH));
+    }
 
-    const withdrawalResponse = await userService.deleteUserInfo(userIdx);
-    return res.send(response(baseResponse.SUCCESS, withdrawalResponse));
+    const userIdxResult = await userService.deleteUserInfo(userIdx);
+    return res.send(response(baseResponse.SUCCESS, userIdxResult));
 }
+
+/**
+ * API No. 1.5
+ * API Name : 비밀번호 변경 API
+ * [PATCH] /users
+ */
+
 
 /**
  * API No. 1.10
@@ -296,3 +318,64 @@ const textContent = `
     return res.send(findPasswordResult);
 }
 
+/**
+ * API No. 1.24
+ * API Name : 프로필 수정 API
+ * [PATCH] /users/profile/edit/
+ */
+ exports.editProfile = async function (req, res) {
+    let {name, introduction, profileImgUrl, idx, newProfileImg} = req;
+
+    if(!idx){
+        return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
+    } else if(idx <= 0){
+        return res.send(errResponse(baseResponse.USER_USERIDX_LENGTH));
+    } else if(!introduction) {
+        introduction = "자기 소개가 없습니다.";
+    } else if(introduction.lenght > 300) {
+        return res.send(errResponse(baseResponse.INTRODUCE_QUOTE_LENGTH));
+    } else if(!profileImgUrl) {
+        profileImgUrl = 'https://librog.shop/source/profileImg/defaultImg.png';
+    } else if(!name) {
+        return res.send(errResponse(baseResponse.SIGNUP_NAME_EMPTY));
+    } else if (name > 20) {
+        return res.send(errResponse(baseResponse.SIGNUP_NAME_LENGTH));
+    }
+
+    const editProfileParams = [name, introduction, profileImgUrl, idx];
+    
+    if (newProfileImg == true) {
+        // 이미지 파일이 존재할 경우
+        const deletePreviousImageFile = await userProvider.getProfileImgUrl(idx);
+        console.log(deletePreviousImageFile.slice(38) + ' has deleted');
+        try {
+            if (deletePreviousImageFile.slice(38) != 'default.png') {
+                fs.unlink(`/home/ubuntu/source/profileImg/${deletePreviousImageFile.slice(38)}`, (err) => {
+                    if (err != null) {
+                        console.log(err);
+                        const errorResponse = {
+                            "isSuccess": "Unable to determine",
+                            "code": "FS1001",
+                            "message": `File System Error during unlink file - ${err}`,
+                        }
+                        return res.send(errorResponse);
+                    }
+                });
+            }
+            const deletePreviousImage = await userService.deletePreviousImage(idx);
+            const editIntroduceResult = await userService.editProfile(editProfileParams);
+            return res.send(editIntroduceResult);
+        } catch(err) {
+            const errorResponse = {
+                "isSuccess": "False",
+                "code": "FS1000",
+                "message": `File System Error - ${err}`,
+            }
+            return res.send(errorResponse);
+        }
+    } else {
+        // 이미지 파일이 존재하지 않는 경우
+        const editIntroduceResult = await userService.editProfile(editProfileParams);
+        return res.send(editIntroduceResult);
+    }
+}

@@ -31,11 +31,26 @@ exports.createUser = async function (email, password, name, profileImgUrl, intro
         const connection = await pool.getConnection(async (conn) => conn);
 
         const userIdResult = await userDao.insertUserInfo(connection, insertUserInfoParams);
-        // console.log(`추가된 회원 : ${userIdResult[0].insertId}`)
-        connection.release();
-        return response(baseResponse.SUCCESS);
-        
 
+        ///초기 화분 추가 api
+
+        const createdUserIdx= userIdResult.insertId;
+
+        const acqFlowerpotResult = await userDao.acquireFlowerpot(connection, createdUserIdx);
+        if(acqFlowerpotResult.length < 1){
+            connection.release();
+            return errResponse(baseResponse.USER_NOT_EXIST);
+        }
+
+        ///
+
+
+        // console.log(userIdResult[0].insertId);
+        connection.release();
+
+        const resultObj = { "createdUserIdx" : userIdResult[0].insertId };
+        return response(baseResponse.SUCCESS, resultObj);
+        
     } catch (err) {
         logger.error(`App - createUser Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
@@ -49,22 +64,45 @@ API Name: 유저 삭제 API
 exports.deleteUserInfo = async function (userIdx) {
     const connection = await pool.getConnection(async (conn) => conn);
     try {
-        const withdrawalResponse = await userDao.deleteUser(connection, userIdx);
-        return response(baseResponse.SUCCESS);
 
+        const deleteUserRRInfoResult = await userDao.deleteUserRRInfo(connection, userIdx);
+        // console.log('SUCCESS. You deleted 1. ReadingRecord.');
+        const deleteUserFPInfoResult = await userDao.deleteUserFPInfo(connection, userIdx);
+        // console.log('SUCCESS. You deleted 2. FlowerPot.');
+        const deleteUserUFLInfoResult = await userDao.deleteUserUFLInfo(connection, userIdx);
+        // console.log('SUCCESS. You deleted 3. UserFlowerList.');
+        const deleteUserUInfoResult = await userDao.deleteUserUInfo(connection, userIdx);
+        // console.log('SUCCESS. You deleted 4. User.');
+
+        return response(baseResponse.SUCCESS, { 'deletedUserIdx': userIdx });
         // // validation 이미 탈퇴한 유저일 때
         // const IsItActiveUserList = await userDao.IsItActiveUser(connection, userIdx);
         // if(IsItActiveUserList.length < 1 || IsItActiveUserList[0].status == 'DELETED'){
-        //     connection /*여기서부터 나중에*/
+        //     connection.release();
+        //     return errResponse(baseResponse.USER_NOT_EXIST);
         // }
+
+
+        // const deleteUsersList = await userDao.deleteUserRR(connection, userIdx);
+        // // const deleteUserFPList = await userDao.deleteUserFPInfoRow(connection, userIdx);
+        // // const deleteUserUFLList = await userDao.deleteUserUFLInfoRow(connection, userIdx);
+        // // const deleteUserUList = await userDao.deleteUserUInfoRow(connection, userIdx);
+
+        // console.log(deleteUsersList);
+        // return response(baseResponse.SUCCESS);
+        //     // deleteUserFPList,
+        //     // deleteUserUFLList,
+        //     // deleteUserUList
+           
+
+
     } catch (err) {
         console.log(`App - deleteUserInfo Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
     } finally {
         connection.release();
     }
-};
-
+}
 
 
 exports.kakaoLogin = async function (kakaoResult) {
@@ -139,6 +177,34 @@ exports.findPassword = async function (findPasswordParams) {
         logger.error(`App - find password Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
 
+    } finally {
+        connection.release();
+    }
+}
+
+exports.deletePreviousImage = async function (idx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    
+    try {
+        const deletePreviousImage = await userDao.deletePreviousImage(connection, idx);    
+        return response(baseResponse.SUCCESS, deletePreviousImage);
+    } catch(err) {
+        logger.error(`App - Delete previous image url Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    } finally {
+        connection.release();
+    }
+}
+
+exports.editProfile = async function (editProfileParams) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    
+    try {
+        const editProfile = await userDao.editProfile(connection, editProfileParams);    
+        return response(baseResponse.SUCCESS, editProfile);
+    } catch(err) {
+        logger.error(`App - Edit Profile Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
     } finally {
         connection.release();
     }

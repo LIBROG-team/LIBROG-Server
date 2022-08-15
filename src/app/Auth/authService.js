@@ -15,7 +15,7 @@ exports.postSignIn = async function (email, password) {
         const emailRows = await userProvider.emailCheck(email);
 
         if (emailRows.length < 1) {
-            return errResponse(baseResponse.SIGNIN_EMAIL_WRONG);
+            return errResponse(baseResponse.SIGNIN_EMAIL_CANNOT_FIND);
         }
 
         const hashedPassword = crypto
@@ -61,13 +61,3 @@ exports.postSignIn = async function (email, password) {
         connection.release();
     }
 }
-
-// exports.postSignOut = async function (req, res) {
-//     try {
-//         return res.clearCookie('User').end();
-//     } catch (err) {
-//         console.log(`App - postSignOut Service error\n: ${err.message}`);
-//         return errResponse(baseResponse.DB_ERROR);
-//     }
-
-// }
