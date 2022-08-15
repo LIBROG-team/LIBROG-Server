@@ -58,4 +58,7 @@ module.exports = function(app){
     
     // 2.11 유저 전체 독서기록 필터 (제목 순) api
     app.get('/records/readingRecord/filter/title/:userIdx', record.getFilterTitle);
+
+    // function -> reconfigure all flowerPot exp
+    // app.patch('/records/reconfigure/flowerpotsExp', record.patchAllFlowerPotExp);
 }

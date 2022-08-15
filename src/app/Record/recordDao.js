@@ -106,7 +106,7 @@ async function selectFlowerPotRecords(connection, flowerPotIdx){
 
 /**
  * API No.2.3
- * API Name: 독서 기록 삭제 API
+ * API Name: 독서 기록 추가 API
  * [POST] /records/addition
  */
 async function insertRecords(connection, createRecordsParams){
@@ -129,6 +129,16 @@ async function insertBookIdx(connection, createBookParams){
     `;
     const [insertBookIdx] = await connection.query(insertBookIdxQuery, createBookParams);
     return insertBookIdx;
+}
+// 2.32 화분 최근기록 업데이트 API
+async function updateFlowerpotDate(connection, flowerpotIdx){
+    const updateFPDateQuery = `
+        UPDATE FlowerPot
+        SET updatedAt = now()
+        WHERE idx = ?;
+    `;
+    const [updateFPDateRows] = await connection.query(updateFPDateQuery, flowerpotIdx);
+    return updateFPDateQuery;
 }
 
 /**
@@ -307,6 +317,46 @@ async function selectFilterRecent(connection, userIdx){
 }
 
 // 독서기록 exp 재설정 함수
+// async function updateAllFlowerPotsExp(connection){
+//     const selectAllFPExpQuery = `
+//         SELECT idx
+//         FROM FlowerPot
+//         ORDER BY idx ASC;
+//     `;
+//     // # 최초 1번만 해주고 나머지는 WHERE status = 'ACTIVE' 쿼리 필요
+//     const [flowerpotsRows] = await connection.query(selectAllFPExpQuery);
+//     console.log(flowerpotsRows);
+//     let flowerpotInfo;  // 각 화분 정보 저장
+
+//     flowerpotsRows.forEach(async ele => {
+        
+//         flowerpotInfo = await selectFlowerPotRecords(connection, ele.idx);  // 모든 화분 리스트 넣고 돌림
+//         // console.log(flowerpotInfo);
+//         // console.log('ele', ele);
+//         if(flowerpotInfo.length > 0){   // 화분 1개당 독서기록 구함
+//             flowerpotInfo = flowerpotInfo[0];
+//             // console.log(ele.idx);
+//             // console.log('flowerpotInfo', flowerpotInfo);
+//             let recordIdx = flowerpotInfo.readingRecordIdx;
+//             let [recordInfo] = await selectReadingRecord(connection, recordIdx);
+
+//             // exp 설정
+//             let {starRating, quote, content} = recordInfo;
+//             let exp = 0;
+//             if(starRating !== null)
+//                 exp += 500;
+//             if(quote !== null)
+//                 exp += 1500;
+//             if(content !== null)
+//                 exp += 3000;
+            
+//             // console.log('recordInfo', recordInfo);
+
+//         } 
+//     });
+//     return flowerpotsRows;
+// }
+
 // postExp에는 수정하는 exp값을 입력
 async function updateReadingRecordExp(connection, postExp, recordIdx){
     const updateQuery = `
@@ -403,6 +453,7 @@ module.exports = {
     insertRecords,
     selectBookIdx,
     insertBookIdx,
+    updateFlowerpotDate,    // 2.32
     // insertBookAuthor,
 
     updateRecords,
@@ -417,6 +468,7 @@ module.exports = {
 
     updateFlowerpotExp,
     updateReadingRecordExp,
+    // updateAllFlowerPotsExp,
     
     selectBookDB,
     // selectBookAuthorDB,
