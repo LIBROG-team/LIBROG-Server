@@ -78,10 +78,10 @@ async function selectFlowerpotInfo(connection, flowerDataIdx) {
     async function deleteFlowerPot(connection, flowerpotIdx) {
       const deleteFlowerpotInfoQuery = `
       DELETE  a, b
-      FROM FlowerPot a
-      LEFT JOIN ReadingRecord b
-      ON b.flowerPotIdx = a.idx
-      WHERE a.idx=?;
+      FROM ReadingRecord b
+            LEFT JOIN FlowerPot a
+            ON b.flowerPotIdx = a.idx
+      WHERE b.flowerPotIdx=?;
       `;
       const [deleteuserflowerpotInfoRow] = await connection.query(deleteFlowerpotInfoQuery, flowerpotIdx);
       return deleteuserflowerpotInfoRow;
