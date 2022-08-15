@@ -73,19 +73,44 @@ async function selectFlowerpotInfo(connection, flowerDataIdx) {
       return userflowerpotInfoRow;
     }
 
+
     
-//유저의 화분 삭제
+//유저의 화분 삭제(독서기록 있을때)
     async function deleteFlowerPot(connection, flowerpotIdx) {
       const deleteFlowerpotInfoQuery = `
       DELETE  a, b
-      FROM FlowerPot a
-      LEFT JOIN ReadingRecord b
-      ON b.flowerPotIdx = a.idx
-      WHERE a.idx=?;
+      FROM ReadingRecord b
+            LEFT JOIN FlowerPot a
+            ON b.flowerPotIdx = a.idx
+      WHERE b.flowerPotIdx=?;
       `;
       const [deleteuserflowerpotInfoRow] = await connection.query(deleteFlowerpotInfoQuery, flowerpotIdx);
       return deleteuserflowerpotInfoRow;
     }
+//유저의 화분 삭제(독서기록 없을때)
+      async function deleteNoRecordFlowerPot(connection, flowerpotIdx) {
+             const deleteNoRecordFlowerpotInfoQuery = `
+             DELETE a
+              FROM FlowerPot a
+            WHERE a.idx=?;
+                  `;
+      const [deleteNoRecordflowerpotInfoRow] = await connection.query(deleteNoRecordFlowerpotInfoQuery, flowerpotIdx);
+      return deleteNoRecordflowerpotInfoRow;
+      }
+//독서기록 여부 확인
+async function checkRecordCount(connection, flowerpotIdx){
+      const checkRecordCountQuery = `
+      SELECT *
+      FROM FlowerPot as p
+            left join ReadingRecord r on p.idx = r.flowerPotIdx and r.status = 'ACTIVE'
+      WHERE  r.flowerPotIdx=? group by p.idx;
+      `;
+      const [checkRecordCountRows] = await connection.query(checkRecordCountQuery, flowerpotIdx);
+      return checkRecordCountRows;
+  }
+
+
+
   //획득 화분내에서 검색
   async function selectSerchAcqFlowerpot(connection, userIdx, flowerName) {
       const selectSearchAcqFlowerpotQuery = `
@@ -171,5 +196,7 @@ async function checkFlowerpotIdx(connection, flowerpotIdx){
     selectSerchUnacqFlowerpot,
     insertFlowerpot,
     checkUserIdx,
-    checkFlowerpotIdx
+    checkFlowerpotIdx,
+    deleteNoRecordFlowerPot,
+    checkRecordCount
   };
