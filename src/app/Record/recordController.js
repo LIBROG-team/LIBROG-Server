@@ -338,3 +338,9 @@ exports.getUserFlowerListDB = async function(req, res){
     const getUserFlowerListDBResult = await recordProvider.readUserFlowerListDB();
     return res.send(getUserFlowerListDBResult);
 }
+
+// 
+// exports.patchAllFlowerPotExp = async function(req, res){
+//     const results = await recordProvider.rewriteAllFlowerPotsExp();
+//     return res.send(results);
+// }
