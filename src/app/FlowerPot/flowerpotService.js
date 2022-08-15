@@ -14,10 +14,19 @@ exports.deleteFlowerPotInfo = async function (flowerpotIdx) {
     try {
         const deleteFlowerPotInfoResult = await flowerpotDao.deleteFlowerPot(connection, flowerpotIdx);
 
-         //유저의 화분이 없을때
+        
+      //유저의 화분이 없을때
+         
+      const checkFlowerpotIdxRows = await flowerpotDao.checkFlowerpotIdx(connection, flowerpotIdx);
+      
+      if(checkFlowerpotIdxRows.length < 1){
+          connection.release();
+          return errResponse(baseResponse.FLOWERPOT_NO_FLOWERPOTS);
+      }
+
       if(deleteFlowerPotInfoResult.length < 1){
         connection.release();
-        return errResponse(baseResponse.USER_NO_FLOWERPOTS);
+        return errResponse(baseResponse.FLOWERPOT_NO_FLOWERPOTS);
       }
 
         return response(baseResponse.SUCCESS);
