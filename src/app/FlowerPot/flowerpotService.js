@@ -21,15 +21,14 @@ exports.deleteFlowerPotInfo = async function (flowerpotIdx) {
            return errResponse(baseResponse.FLOWERPOT_NO_FLOWERPOTS);
        }
 
-       
-       const deleteFlowerPotInfoResult = await flowerpotDao.deleteFlowerPot(connection, flowerpotIdx);
-
-        
-     
-      if(deleteFlowerPotInfoResult.length < 1){
-        connection.release();
-        return errResponse(baseResponse.FLOWERPOT_NO_FLOWERPOTS);
-      }
+       const checkRecordRows = await flowerpotDao.checkRecordCount(connection, flowerpotIdx);
+       console.log(checkRecordRows);
+       if(checkRecordRows.length<1){//독서기록 없는 화분일때
+        const deleteNoRecordFlowerPotResult = await flowerpotDao.deleteNoRecordFlowerPot(connection, flowerpotIdx);
+       }else{//독서기록 있는 화분일 때
+        const deleteFlowerPotInfoResult = await flowerpotDao.deleteFlowerPot(connection, flowerpotIdx);
+       }       
+      
 
         return response(baseResponse.SUCCESS);
     } catch (err) {
