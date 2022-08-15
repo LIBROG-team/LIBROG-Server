@@ -32,7 +32,7 @@ exports.createUser = async function (email, password, name, profileImgUrl, intro
 
         const userIdResult = await userDao.insertUserInfo(connection, insertUserInfoParams);
 
-        ///초기 화분 추가 api
+        ////초기 화분 추가 api
 
         const createdUserIdx= userIdResult.insertId;
 
@@ -43,13 +43,12 @@ exports.createUser = async function (email, password, name, profileImgUrl, intro
         }
 
         ///
-
-
         // console.log(userIdResult[0].insertId);
         connection.release();
 
-        const resultObj = { "createdUserIdx" : userIdResult[0].insertId };
+        const resultObj = { "createdUserIdx" : userIdResult.insertId };
         return response(baseResponse.SUCCESS, resultObj);
+
         
     } catch (err) {
         logger.error(`App - createUser Service error\n: ${err.message}`);

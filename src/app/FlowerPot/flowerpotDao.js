@@ -78,10 +78,10 @@ async function selectFlowerpotInfo(connection, flowerDataIdx) {
     async function deleteFlowerPot(connection, flowerpotIdx) {
       const deleteFlowerpotInfoQuery = `
       DELETE  a, b
-      FROM ReadingRecord a
-      LEFT JOIN FlowerPot b
-      ON a.flowerPotIdx = b.idx
-      WHERE b.idx=?;
+      FROM FlowerPot a
+      LEFT JOIN ReadingRecord b
+      ON b.flowerPotIdx = a.idx
+      WHERE a.idx=?;
       `;
       const [deleteuserflowerpotInfoRow] = await connection.query(deleteFlowerpotInfoQuery, flowerpotIdx);
       return deleteuserflowerpotInfoRow;
@@ -145,6 +145,18 @@ async function checkUserIdx(connection, userIdx){
       const [checkUserRows] = await connection.query(checkUserIdxQuery, userIdx);
       return checkUserRows;
   }
+  
+
+    // 화분존재여부 조회 api
+async function checkFlowerpotIdx(connection, flowerpotIdx){
+      const checkFlowerpotIdxQuery = `
+      SELECT *
+      FROM FlowerPot f
+      WHERE f.idx = ?;
+      `;
+      const [checkFlowerpotRows] = await connection.query(checkFlowerpotIdxQuery, flowerpotIdx);
+      return checkFlowerpotRows;
+  }
     
    
 
@@ -158,5 +170,6 @@ async function checkUserIdx(connection, userIdx){
     selectSerchAcqFlowerpot,
     selectSerchUnacqFlowerpot,
     insertFlowerpot,
-    checkUserIdx
+    checkUserIdx,
+    checkFlowerpotIdx
   };
