@@ -37,6 +37,9 @@ exports.createRecords = async function(createRecordsParams, userIdx){
         const recordIdx = createRecordsList.insertId;
         rewriteExp(connection, recordIdx, flowerPotIdx, 0);
 
+        // 화분에 updatedAt refresh 해주는 코드
+        const updateFPDateResult = await recordDao.updateFlowerpotDate(connection, flowerPotIdx);
+
         return response(baseResponse.SUCCESS, {'createdRecordId':createRecordsList.insertId});
     }catch(err){
         logger.error(`App - createRecords Service error\n: ${err.message}`);
