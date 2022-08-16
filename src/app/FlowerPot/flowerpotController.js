@@ -229,6 +229,24 @@ exports.getflowerpots = async function(req, res){
         }
 
 
-   
+/**
+ * API No.9
+ * API Name : 메인화면 화분 일러스트, 이름 정보 API
+ * [GET] /flowerpots/flowerpotMain/:userIdx
+ * 
+ */
+          exports.getFlowerpotMain = async function(req, res){
+            const userIdx = req.params.userIdx;
+    
+            if (!userIdx) {
+                return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
+            } 
+            if (userIdx <= 0) {
+                return res.send(errResponse(baseResponse.USER_USERIDX_LENGTH));
+            }
+        
+            const getFlowerpotMainResponse = await flowerpotProvider.getFlowerpotMain(userIdx);
+            return res.send(response(baseResponse.SUCCESS, getFlowerpotMainResponse))
+        }
 
     

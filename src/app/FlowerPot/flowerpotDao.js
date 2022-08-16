@@ -182,11 +182,31 @@ async function checkFlowerpotIdx(connection, flowerpotIdx){
       const [checkFlowerpotRows] = await connection.query(checkFlowerpotIdxQuery, flowerpotIdx);
       return checkFlowerpotRows;
   }
+
+  // 메인화면 화분 정보 API
+  async function selectFlowerpotMain(connection, userIdx) {
+      const selectFlowerMainQuery = `
+      SELECT      d.name,
+                  d.engName,
+                  d.flowerImgUrl,
+                  d.type,
+                  p.startDate,
+                  p.lastDate
+      FROM FlowerPot as p
+                  left join FlowerData as d on d.idx = p.flowerDataIdx and p.status='ACTIVE'
+                  left join ReadingRecord r on p.idx = r.flowerPotIdx and r.status = 'ACTIVE'
+
+      WHERe userIdx = ?
+      ORDER BY lastDate DESC;
+      `
+      const [selectFlowerMainQueryRows] = await connection.query(selectFlowerMainQuery, userIdx);
+      return selectFlowerMainQueryRows;
+  }
     
    
 
 
-  module.exports ={
+  module.exports = {
     selectUserFlowerpot,
     selectUserAcquiredFlowerpot,
     selectUserunAcquiredFlowerpot,
@@ -198,5 +218,6 @@ async function checkFlowerpotIdx(connection, flowerpotIdx){
     checkUserIdx,
     checkFlowerpotIdx,
     deleteNoRecordFlowerPot,
-    checkRecordCount
+    checkRecordCount,
+    selectFlowerpotMain,
   };
