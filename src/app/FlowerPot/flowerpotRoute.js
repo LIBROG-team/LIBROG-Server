@@ -29,6 +29,8 @@ module.exports = function(app){
     //3.8 획득 화분에서 유저화분으로 추가 API
     app.post('/flowerpots/flowerpotAdd/:userFlowerListIdx',flowerpot.addFlowerpot);
     
+    // 3.9 메인화면 화분 일러스트, 이름 정보 API
+    app.get('/flowerpots/flowerpotMain/:userIdx',flowerpot.getFlowerpotMain);
 
    
 
