@@ -41,8 +41,16 @@ exports.createUser = async function (email, password, name, profileImgUrl, intro
             connection.release();
             return errResponse(baseResponse.USER_NOT_EXIST);
         }
+        const userFlowerpotResult = await userDao.userFlowerpot(connection, createdUserIdx);
+        if(userFlowerpotResult.length < 1){
+            connection.release();
+            return errResponse(baseResponse.USER_NOT_EXIST);
+        }
 
-        ///
+        
+
+
+
         // console.log(userIdResult[0].insertId);
         connection.release();
 

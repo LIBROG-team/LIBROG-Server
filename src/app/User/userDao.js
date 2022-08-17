@@ -278,6 +278,16 @@ async function getProfileImgUrl(connection, idx) {
   return acquireFlowerpotRow;
 }
 
+ // 초기 유저의 화분 추가
+    
+ async function userFlowerpot(connection, createdUserIdx) {
+  const userFlowerpotQuery = `
+  INSERT INTO  FlowerPot(userIdx,flowerDataIdx)
+  VALUES (?,3);
+  `;
+  const [userFlowerpotRow] = await connection.query(userFlowerpotQuery,createdUserIdx);
+  return userFlowerpotRow;
+}
 
   module.exports = {
     selectUserEmail,
@@ -299,5 +309,6 @@ async function getProfileImgUrl(connection, idx) {
     deletePreviousImage,
     editProfile,
     getProfileImgUrl,
-    acquireFlowerpot
+    acquireFlowerpot,
+    userFlowerpot
   };
