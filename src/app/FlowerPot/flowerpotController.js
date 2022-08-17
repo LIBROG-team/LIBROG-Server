@@ -246,6 +246,10 @@ exports.getflowerpots = async function(req, res){
             }
         
             const getFlowerpotMainResponse = await flowerpotProvider.getFlowerpotMain(userIdx);
+            if (getFlowerpotMainResponse == undefined) {
+                return res.send(errResponse(baseResponse.MAIN_FLOWERPOT_NOT_EXIST))
+            }
+
             return res.send(response(baseResponse.SUCCESS, getFlowerpotMainResponse))
         }
 

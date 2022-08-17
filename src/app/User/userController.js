@@ -172,7 +172,7 @@ exports.getProfile = async function (req, res) {
         return res.send(errResponse(baseResponse.USER_USERIDX_LENGTH));
     }
     const userProfileResult = await userProvider.userProfile(userIdx);
-    return res.send(userProfileResult);
+    return res.send(response(baseResponse.SUCCESS, userProfileResult));
 }
 
 /**
