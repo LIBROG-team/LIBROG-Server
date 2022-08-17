@@ -95,6 +95,7 @@ module.exports = {
 
     RECORDS_NO_RECORDS : { "isSuccess": false, "code": 3015, "message":"지워졌거나 존재하지 않는 독서기록입니다." },
     RECORDS_NO_AUTHOR : { "isSuccess": false, "code": 3016, "message":"해당 독서기록에서 저자가 null값입니다." },
+    MAIN_FLOWERPOT_NOT_EXIST : { "isSuccess": false, "code": 3017, "message":"메인 화면에 표시할 화분이 없습니다." },
 
     // Response error
     SIGNIN_EMAIL_WRONG : { "isSuccess": false, "code": 3020, "message": "이메일이 잘못 되었습니다." },

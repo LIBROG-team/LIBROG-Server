@@ -16,15 +16,8 @@ module.exports = function(app){
         return fileExt;
       }
 
-    // 4.1 공지사항 배너 조회 API
-    app.get('/contents/notice/', contents.getNotice);
-
-    // 4.2 추천 책 조회 API
-    app.get('/contents/recommendBooks/', contents.getRecommendBooks);
-
-    // 4.3 프로필 이미지 업로드 API
-    const storage = multer.diskStorage({
-        destination: '/home/ubuntu/source/profileImg',
+      const storage = multer.diskStorage({
+        destination: '../source/profileImg',
         filename: (req, file, cb) => {
             return cb (null, `${file.fieldname}_${Date.now()}.${getExt(file.originalname)}`);
         }
@@ -34,5 +27,12 @@ module.exports = function(app){
         storage: storage,
     });
 
+    // 4.1 공지사항 배너 조회 API
+    app.get('/contents/notice/', contents.getNotice);
+
+    // 4.2 추천 책 조회 API
+    app.get('/contents/recommendBooks/', contents.getRecommendBooks);
+
+    // 4.3 프로필 이미지 업로드 API
     app.post('/contents/uploadProfileImg/', upload.single('profile'), contents.uploadProfileImg);
 }

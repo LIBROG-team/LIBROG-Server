@@ -139,10 +139,9 @@ exports.retrieveFlowerpot = async function (userIdx) {
   exports.getFlowerpotMain = async function (userIdx) {
     const connection = await pool.getConnection(async (conn) => conn);
     const getFlowerpot = await flowerpotDao.selectFlowerpotMain(connection, userIdx);
-    
-    console.log(getFlowerpot[0]);
   
     connection.release();
+
   
     return getFlowerpot[0];
   };
