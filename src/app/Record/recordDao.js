@@ -247,7 +247,7 @@ async function selectReadingRecord(connection, readingRecordIdx){
  */
 async function selectFilterRecent(connection, userIdx){
     const selectFilterRecentQuery = `
-    SELECT r.idx readingRecordIdx, r.bookIdx, r.flowerPotIdx, r.date, r.starRating, r.status, b.name, b.bookImgUrl
+    SELECT f.idx readingRecordIdx, r.bookIdx, r.flowerPotIdx, r.date, r.starRating, r.status, b.name, b.bookImgUrl, r.createdAt
     FROM ReadingRecord r
         LEFT JOIN (
             SELECT idx, bookImgUrl, name
@@ -258,7 +258,8 @@ async function selectFilterRecent(connection, userIdx){
             FROM FlowerPot
         ) f on f.idx = r.flowerPotIdx
     WHERE f.userIdx = ? AND r.status = 'ACTIVE'
-    ORDER BY date DESC
+
+    ORDER BY createdAt DESC
     LIMIT 1000;
     `;
     const [selectFilterRecentRows] = await connection.query(selectFilterRecentQuery, userIdx);
