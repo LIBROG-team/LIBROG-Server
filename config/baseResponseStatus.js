@@ -18,7 +18,7 @@ module.exports = {
     USER_USERIDX_LENGTH : { "isSuccess": false, "code": 2002, "message": "userIdx는 0보다 큰 값으로 입력해주세요." },
     USER_USERIDX_WRONG : { "isSuccess": false, "code": 2003, "message":"유저 인덱스값이 유효한 값이 아닙니다." },
     INTRODUCE_QUOTE_LENGTH : { "isSuccess": false, "code": 2004, "message":"유저 자기소개는 300자를 넘길 수 없습니다." },
-    USER_ID_NOT_MATCH : { "isSuccess": false, "code": 2005, "message": "유저 아이디 값을 확인해주세요" },
+    USER_IDX_NOT_MATCH : { "isSuccess": false, "code": 2005, "message": "유저 인덱스 값을 확인해주세요" },
 
     RECORDS_FLOWERPOTIDX_EMPTY : { "isSuccess": false, "code": 2011, "message":"화분 인덱스값을 입력해주세요." },
     RECORDS_FLOWERPOTIDX_LENGTH : { "isSuccess": false, "code": 2012, "message":"화분 인덱스값은 0보다 큰 값으로 입력해주세요." },
@@ -105,6 +105,7 @@ module.exports = {
     SIGNUP_REDUNDANT_EMAIL : { "isSuccess": false, "code": 3024, "message":"중복된 이메일입니다." },
     CANT_CHANGE_PASSWORD_SOCIAL_ACCOUNT : { "isSuccess": false, "code": 3025, "message":"소셜 로그인 된 계정은 비밀번호를 변경할 수 없습니다." },
     SIGNIN_EMAIL_CANNOT_FIND : { "isSuccess": false, "code": 3026, "message": "해당 이메일로 가입된 계정이 존재하지 않습니다." },
+    NEW_PASSWORD_PLEASE : { "isSuccess": false, "code": 3027, "message": "기존 비밀번호와 동일한 비밀번호입니다. 새로운 비밀번호를 입력해주세요." },
 
 
     // 4000 : DB Error

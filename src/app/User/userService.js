@@ -65,7 +65,7 @@ exports.createUser = async function (email, password, name, profileImgUrl, intro
 };
 
 /*
-API Name: 유저 삭제 API
+API Name: 유저 탈퇴 API
 */
 
 exports.deleteUserInfo = async function (userIdx) {
@@ -82,33 +82,67 @@ exports.deleteUserInfo = async function (userIdx) {
         // console.log('SUCCESS. You deleted 4. User.');
 
         return response(baseResponse.SUCCESS, { 'deletedUserIdx': userIdx });
-        // // validation 이미 탈퇴한 유저일 때
-        // const IsItActiveUserList = await userDao.IsItActiveUser(connection, userIdx);
-        // if(IsItActiveUserList.length < 1 || IsItActiveUserList[0].status == 'DELETED'){
-        //     connection.release();
-        //     return errResponse(baseResponse.USER_NOT_EXIST);
-        // }
-
-
-        // const deleteUsersList = await userDao.deleteUserRR(connection, userIdx);
-        // // const deleteUserFPList = await userDao.deleteUserFPInfoRow(connection, userIdx);
-        // // const deleteUserUFLList = await userDao.deleteUserUFLInfoRow(connection, userIdx);
-        // // const deleteUserUList = await userDao.deleteUserUInfoRow(connection, userIdx);
-
-        // console.log(deleteUsersList);
-        // return response(baseResponse.SUCCESS);
-        //     // deleteUserFPList,
-        //     // deleteUserUFLList,
-        //     // deleteUserUList
-           
-
-
     } catch (err) {
         console.log(`App - deleteUserInfo Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
     } finally {
         connection.release();
     }
+}
+
+//비밀번호 변경
+exports.changePassword = async function (userIdx, oldPassword, newPassword) {
+    const connection = await pool.getConnection(async (conn) => conn);
+
+    try {
+        // 비밀번호 암호화
+        const hashedOldPassword = crypto
+        .createHash("sha512")
+        .update(oldPassword)
+        .digest("hex");
+
+        //기존 비밀번호 테스트
+        const oldPasswordRows = await userDao.oldPasswordCheck(connection, userIdx, oldPassword);
+
+        if (oldPasswordRows[0].password != hashedOldPassword) {
+            return errResponse(baseResponse.SIGNIN_PASSWORD_WRONG);
+        }
+        console.log('test is done');
+
+        // 입력받은 새로운 비밀번호를, oldPassword와 중복 확인
+        if (newPassword == oldPassword) {
+            return errResponse(baseResponse.NEW_PASSWORD_PLEASE);
+        }
+
+        // // 비밀번호 재입력 요청
+        // const passwordRows = await userProvider.passwordCheck(password);
+        // if (passwordRows != password)
+        //     return errResponse("새로 지정한 비밀번호와 일치하지 않습니다.");
+        
+        // 새로운 비번 암호화
+        const hashedNewPassword = await crypto
+        .createHash("sha512")
+        .update(newPassword)
+        .digest("hex");
+
+        //새로운 비번 확인
+
+        //비번변경 쿼리 호출
+        const changeUserPasswordResult = await userDao.changeUserPassword(connection, hashedNewPassword, userIdx);
+
+        console.log('SUCCESS. You changed your password. NewPassword is :', newPassword);
+
+        const resultObj = { "userIdx" : userIdx, "newPassword" : newPassword };
+        return response(baseResponse.SUCCESS, resultObj);
+
+    } catch (err) {
+        logger.error(`App - changePassword Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+
+    } finally {
+        connection.release();
+    }
+
 }
 
 
