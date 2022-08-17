@@ -11,6 +11,7 @@ async function selectUserFlowerpot(connection, userIdx) {
             d.bloomingPeriod,
             d.content,
             d.type,
+            d.backgroundColor,
             p.startDate,
             p.lastDate,
             p.exp,
