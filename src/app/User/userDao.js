@@ -118,16 +118,46 @@ async function deleteUserUInfo(connection, userIdx) {
   return deleteUQueryRow[0];
 }
 
-// // 유저 탈퇴 시 존재하는 유저인지 확인()
-// async function IsItActiveUser(connection, userIdx) {
-//   const IsItActiveUserQuery = `
-//     SELECT idx
-//     FROM User
-//     WHERE idx = ?;
-//   `;
-//   const [IsItActiveUserRows] = await connection.query(IsItActiveUserQuery, userIdx);
-//   return IsItActiveUserRows;
-// }
+//기존 비밀번호 확인
+async function oldPasswordCheck(connection, userIdx, oldPassword) {
+  console.log('dao 1');
+
+  const oldPasswordCheckQuery = `
+  SELECT idx, password
+  FROM User
+  WHERE idx = ?;
+  `;
+  //이 쿼리로 가져온 u.password는 oldPassword로 선언되어야 함
+  //여기서 password는 hashed된 값이 아니므로
+  // 기존의 password라고 입력받은 걸 hashed처리한 값과 / db상에 password로 저장된 걸(이걸 쿼리에서 뽑아온 거임) 비교하면 됨 
+  console.log('dao 2');
+  const [oldPasswordCheckQueryRow] = await connection.query(
+    oldPasswordCheckQuery,
+    userIdx, oldPassword
+  );
+  console.log('dao 3')
+  return oldPasswordCheckQueryRow;
+}
+
+//비밀번호 변경
+async function changeUserPassword(connection, hashedNewPassword, userIdx) {
+  const patchPasswordQuery = `
+  UPDATE User
+  SET password = ?
+  WHERE idx = ?;
+  `;
+
+  console.log('dao 4');
+
+  const [patchPasswordQueryRow] = await connection.query(
+      patchPasswordQuery,
+      [hashedNewPassword, userIdx]
+    );
+
+  console.log('dao:', hashedNewPassword);
+
+  return patchPasswordQueryRow;
+}
 
 // 카카오계정 이메일이 존재하는지 확인
 async function kakaoUserAccountCheck(connection, email, type) {
@@ -294,11 +324,12 @@ async function getProfileImgUrl(connection, idx) {
     insertUserInfo,
     selectUserPassword,
     selectUserAccount,
-    // deleteUserRR,
     deleteUserRRInfo,
     deleteUserFPInfo,
     deleteUserUFLInfo,
     deleteUserUInfo,
+    oldPasswordCheck,
+    changeUserPassword,
     kakaoUserAccountCheck,
     kakaoUserAccountInsert,
     kakaoUserAccountInfo,

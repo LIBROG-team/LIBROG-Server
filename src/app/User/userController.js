@@ -106,9 +106,50 @@ exports.deleteUsers = async function (req, res) {
 /**
  * API No. 1.5
  * API Name : 비밀번호 변경 API
- * [PATCH] /users
+ * [PATCH] /users/password/change
  */
+exports.changePassword = async function (req, res) {
+    /*
+    Body: userIdx, oldPassword, newPassword
+    */
+    const userIdx = req.body.userIdx;
+    const oldPassword = req.body.oldPassword;
+    const newPassword = req.body.newPassword;
+    // const confirmation = req.body.confirmation;
+    
+    // //idx jwt
+    // const userIdxFromJWT = req.verifiedToken.userIdx;
 
+    // if (userIdxFromJWT != userIdx) {
+    //     return res.send(errResponse(baseResponse.USER_IDX_NOT_MATCH));
+    // }
+
+    //userIdx validation
+    if(!userIdx){
+        return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
+    }else if(userIdx <= 0){
+        return res.send(errResponse(baseResponse.USER_USERIDX_LENGTH));
+    }
+
+    //oldPassword validation
+    if (!oldPassword) {
+        return res.send(errResponse(baseResponse.SIGNIN_PASSWORD_EMPTY));
+    }   else if (oldPassword.length < 8) {
+        return res.send(errResponse(baseResponse.SIGNIN_PASSWORD_LENGTH));
+    }
+
+    //newPassword validation
+    if (!newPassword) {
+        return res.send(errResponse(baseResponse.SIGNIN_PASSWORD_EMPTY));
+    }   else if (newPassword.length < 8) {
+        return res.send(errResponse(baseResponse.SIGNIN_PASSWORD_LENGTH));
+    }
+
+    // const patchPasswordParams = [userIdx, oldPassword, newPassword];
+
+    const changePasswordResult = await userService.changePassword(userIdx, oldPassword, newPassword);
+    return res.send(changePasswordResult);
+}
 
 /**
  * API No. 1.10
