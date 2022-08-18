@@ -61,4 +61,6 @@ module.exports = function(app){
 
     // function -> reconfigure all flowerPot exp
     // app.patch('/records/reconfigure/flowerpotsExp', record.patchAllFlowerPotExp);
+    // 2.12 메인화면 문구, 독서일자 조회 api
+    app.get('/records/mainpage/:userIdx', record.getMainPageInfo);
 }

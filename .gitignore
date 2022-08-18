@@ -5,5 +5,5 @@ log/*
 node_modules
 config/secret.js
 log
-기타 파일들/*
+etc_files/*
 src/app/User/userController.js
