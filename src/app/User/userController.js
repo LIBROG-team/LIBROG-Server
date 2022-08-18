@@ -117,12 +117,14 @@ exports.changePassword = async function (req, res) {
     const newPassword = req.body.newPassword;
     // const confirmation = req.body.confirmation;
     
-    // //idx jwt
-    // const userIdxFromJWT = req.verifiedToken.userIdx;
+    //idx jwt
+    const userIdxFromJWT = req.verifiedToken.idx;
+    // console.log(req.verifiedToken);
+    // console.log(userIdxFromJWT);
 
-    // if (userIdxFromJWT != userIdx) {
-    //     return res.send(errResponse(baseResponse.USER_IDX_NOT_MATCH));
-    // }
+    if (userIdxFromJWT != userIdx) {
+        return res.send(errResponse(baseResponse.USER_IDX_NOT_MATCH));
+    }
 
     //userIdx validation
     if(!userIdx){
