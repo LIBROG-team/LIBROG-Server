@@ -77,6 +77,8 @@ const fs = require("fs");
         profileImgUrl,
         introduction
     );
+
+    
     
     return res.send(signUpResponse);
 
@@ -293,16 +295,19 @@ exports.editIntroduce = async function (req, res) {
             }
 
             const newPass = first + second + third + fourth + fifth + sixth;
-            const hashed = crypto.createHash('sha512').update(newPass).digest('hex');
-            return hashed;
+            return newPass
         }    
 
-    const findPasswordParams = [getNewPassword(), email];
+    const newPassword = getNewPassword();
+
+    const hashed = crypto.createHash('sha512').update(newPassword).digest('hex');
+    
+    const findPasswordParams = [hashed, email];
     const findPasswordResult = await userService.findPassword(findPasswordParams);
     
     // 실패했다면 이메일 전송하지 않음
     if (findPasswordResult.isSuccess == false) {
-        return res.send(findPasswordResult);
+        return res.send(response(baseResponse.SIGNIN_EMAIL_CANNOT_FIND));
     }
 
     // email 전송 부분
@@ -329,7 +334,7 @@ const textContent = `
           만일 비밀번호 재설정 요청을 하신 적이 없는 경우 해당 이메일 주소로 회신하여 주시기 바랍니다. <br>
       <br>
           임시발급 된 비밀번호는 다음과 같습니다.</div>
-      <div style="margin-top: 20px; width: 40vw; font-family: Pretendard; font-size: 20px;">${findPasswordParams[0]}</div>
+      <div style="margin-top: 20px; width: 40vw; font-family: Pretendard; font-size: 20px;">${newPassword}</div>
     </div>
 </body>
 </html>
