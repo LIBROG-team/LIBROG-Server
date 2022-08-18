@@ -122,7 +122,7 @@ exports.retriveReadingRecord = async function(readingRecordIdx){
     if(retriveReadingRecordList.length < 1){
         return errResponse(baseResponse.RECORDS_NO_RECORDS);
     }
-    const authorArr = retriveReadingRecordList[0].author;
+    // let authorArr = retriveReadingRecordList[0].author;
     // 저자 배열 ,로 분리
     try{
         if(retriveReadingRecordList[0].author){
@@ -133,9 +133,9 @@ exports.retriveReadingRecord = async function(readingRecordIdx){
     }catch(err){
         logger.error(`App - retriveReadingRecord Provider error\n: ${err.message}`);
         return errResponse(baseResponse.RECORDS_NO_AUTHOR);
+    }finally{
+        connection.release();
     }
-        // console.log(retriveReadingRecordList[0]);
-    connection.release();
     return response(baseResponse.SUCCESS, retriveReadingRecordList[0]);
 }
 
