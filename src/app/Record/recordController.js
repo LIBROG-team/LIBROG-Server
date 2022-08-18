@@ -304,6 +304,21 @@ exports.getReadingRecord = async function(req, res){
     return res.send(getFilterTitleResult);
 }
 
+/**
+ * API No. 2.12
+ * API Name: 메인화면 문구, 독서일자 조회 api
+ * [GET] /records/mainpage/:userIdx
+ */
+exports.getMainPageInfo = async function(req, res){
+    const userIdx = req.params.userIdx;
+    if(!userIdx){
+        return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
+    }else if(userIdx <= 0){
+        return res.send(errResponse(baseResponse.USER_USERIDX_LENGTH));
+    }
+    const mainPageResult = await recordProvider.retrieveMainPageInfo(userIdx);
+    return res.send(mainPageResult);
+}
 
 // DB 조회 쿼리
 exports.getBookDB = async function(req, res){
