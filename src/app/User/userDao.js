@@ -120,7 +120,6 @@ async function deleteUserUInfo(connection, userIdx) {
 
 //기존 비밀번호 확인
 async function oldPasswordCheck(connection, userIdx, oldPassword) {
-  console.log('dao 1');
 
   const oldPasswordCheckQuery = `
   SELECT idx, password
@@ -130,12 +129,10 @@ async function oldPasswordCheck(connection, userIdx, oldPassword) {
   //이 쿼리로 가져온 u.password는 oldPassword로 선언되어야 함
   //여기서 password는 hashed된 값이 아니므로
   // 기존의 password라고 입력받은 걸 hashed처리한 값과 / db상에 password로 저장된 걸(이걸 쿼리에서 뽑아온 거임) 비교하면 됨 
-  console.log('dao 2');
   const [oldPasswordCheckQueryRow] = await connection.query(
     oldPasswordCheckQuery,
     userIdx, oldPassword
   );
-  console.log('dao 3')
   return oldPasswordCheckQueryRow;
 }
 
@@ -147,7 +144,6 @@ async function changeUserPassword(connection, hashedNewPassword, userIdx) {
   WHERE idx = ?;
   `;
 
-  console.log('dao 4');
 
   const [patchPasswordQueryRow] = await connection.query(
       patchPasswordQuery,

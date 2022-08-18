@@ -59,7 +59,7 @@ module.exports = function(app){
     app.delete('/users/userDelete/:userIdx', user.deleteUsers);
 
     // 1.5 비밀번호 변경 API
-    app.patch('/users/password/change', user.changePassword);
+    app.patch('/users/password/change', jwtMiddleware, user.changePassword);
 
     // // TODO: After 로그인 인증 방법 (JWT)
     // // 로그인 하기 API (JWT 생성)
