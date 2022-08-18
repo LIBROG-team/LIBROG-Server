@@ -1,4 +1,4 @@
-// ìœ ì € ì¡°íšŒ api
+// À¯Àú Á¶È¸ api
 async function checkUserIdx(connection, userIdx){
     const checkUserIdxQuery = `
         SELECT u.idx, u.email, u.status
@@ -8,7 +8,7 @@ async function checkUserIdx(connection, userIdx){
     const [checkUserRows] = await connection.query(checkUserIdxQuery, userIdx);
     return checkUserRows;
 }
-// 2.2 -> ìœ ì € ê°€ì§€ê³  ìˆëŠ” í™”ë¶„ ì¡°íšŒ API
+// 2.2 -> À¯Àú °¡Áö°í ÀÖ´Â È­ºĞ Á¶È¸ API
 async function checkFlowerPot(connection, flowerPotIdx){
     const checkFlowerPotQuery = `
         SELECT idx, f.status
@@ -20,7 +20,7 @@ async function checkFlowerPot(connection, flowerPotIdx){
 }
 
 /**
- * API Name: ì±… ì¸ë±ìŠ¤ ì¡°íšŒ API
+ * API Name: Ã¥ ÀÎµ¦½º Á¶È¸ API
  */
  async function selectBookIdx(connection, bookName){
     const selectBookIdxQuery = `
@@ -33,11 +33,11 @@ async function checkFlowerPot(connection, flowerPotIdx){
 }
 
 async function checkRecentFlowerPot(connection, userIdx){
-    // 0725 ìœ ì € ìµœê·¼ í™”ë¶„ ì¡°íšŒ ì¿¼ë¦¬
+    // 0725 À¯Àú ÃÖ±Ù È­ºĞ Á¶È¸ Äõ¸®
     /**
-     * 1. status == 'ACTIVE'ì´ê³ 
-     * 2. ì•„ì§ í™”ë¶„ ì±„ìš°ê³  ìˆëŠ” ìƒíƒœ(maxExp > exp)ì´ê³ 
-     * 3. ê·¸ì¤‘ ê°€ì¥ exp percentageë¥¼ ë§ì´ ì±„ìš´ ìˆœìœ¼ë¡œ(ë‚´ë¦¼ì°¨ìˆœ ì •ë ¬) í™”ë¶„ ì„ íƒ
+     * 1. status == 'ACTIVE'ÀÌ°í
+     * 2. ¾ÆÁ÷ È­ºĞ Ã¤¿ì°í ÀÖ´Â »óÅÂ(maxExp > exp)ÀÌ°í
+     * 3. ±×Áß °¡Àå exp percentage¸¦ ¸¹ÀÌ Ã¤¿î ¼øÀ¸·Î(³»¸²Â÷¼ø Á¤·Ä) È­ºĞ ¼±ÅÃ
      */
     const checkFlowerPotQuery = `
         SELECT FlowerPot.idx FlowerPotIdx, flowerDataIdx, maxExp, exp, IF(exp > 0, (exp / maxExp * 100), 0) as percentage
@@ -52,7 +52,7 @@ async function checkRecentFlowerPot(connection, userIdx){
     const [checkFlowerPotRows] = await connection.query(checkFlowerPotQuery, userIdx);
     return checkFlowerPotRows;
 }
-// ë…ì„œê¸°ë¡ ì¡°íšŒ api
+// µ¶¼­±â·Ï Á¶È¸ api
 async function checkRecords(connection, recordsIdx){
     const checkRecordsQuery = `
         SELECT idx, status, flowerPotIdx
@@ -64,15 +64,15 @@ async function checkRecords(connection, recordsIdx){
 }
 /**
  * API No. 2.1
- * API Name: ìœ ì € ë…ì„œê¸°ë¡ ì¡°íšŒ API
- * [GET] /records/:userIdx
+ * API Name: À¯Àú µ¶¼­±â·Ï Á¶È¸ API
+ * [GET] /records/user/:userIdx
  */
 async function selectUserRecords(connection, userIdx){
     const selectUserFlowerPotQuery = `
-        SELECT r.idx readingRecordIdx, r.bookIdx, r.flowerPotIdx, r.date, IF(r.starRating is null, 0, starRating), r.status, b.bookImgUrl
+        SELECT r.idx readingRecordIdx, r.bookIdx, r.flowerPotIdx, r.date, IF(r.starRating is null, 0, r.starRating) starRating, r.status, b.name, b.bookImgUrl
         FROM ReadingRecord r
             LEFT JOIN (
-                SELECT idx, bookImgUrl
+                SELECT idx, bookImgUrl, name
                 FROM Book
             ) b on b.idx = r.bookIdx
             LEFT JOIN(
@@ -88,7 +88,7 @@ async function selectUserRecords(connection, userIdx){
 
 /**
  * API No. 2.2
- * API Name: í™”ë¶„ë³„ ë…ì„œ ê¸°ë¡ ì¡°íšŒ API
+ * API Name: È­ºĞº° µ¶¼­ ±â·Ï Á¶È¸ API
  * [GET] /records/:flowerPotIdx
  */
 async function selectFlowerPotRecords(connection, flowerPotIdx){
@@ -106,7 +106,7 @@ async function selectFlowerPotRecords(connection, flowerPotIdx){
 
 /**
  * API No.2.3
- * API Name: ë…ì„œ ê¸°ë¡ ì¶”ê°€ API
+ * API Name: µ¶¼­ ±â·Ï Ãß°¡ API
  * [POST] /records/addition
  */
 async function insertRecords(connection, createRecordsParams){
@@ -120,7 +120,7 @@ async function insertRecords(connection, createRecordsParams){
 }
 
 
-// 2.31 ì±… ì¶”ê°€ API
+// 2.31 Ã¥ Ãß°¡ API
 async function insertBookIdx(connection, createBookParams){
     const insertBookIdxQuery = `
     INSERT INTO Book
@@ -130,7 +130,7 @@ async function insertBookIdx(connection, createBookParams){
     const [insertBookIdx] = await connection.query(insertBookIdxQuery, createBookParams);
     return insertBookIdx;
 }
-// 2.32 í™”ë¶„ ìµœê·¼ê¸°ë¡ ì—…ë°ì´íŠ¸ API
+// 2.32 È­ºĞ ÃÖ±Ù±â·Ï ¾÷µ¥ÀÌÆ® API
 async function updateFlowerpotDate(connection, flowerpotIdx){
     const updateFPDateQuery = `
         UPDATE FlowerPot
@@ -143,7 +143,7 @@ async function updateFlowerpotDate(connection, flowerpotIdx){
 
 /**
  * API No. 2.4
- * API Name: ë…ì„œ ê¸°ë¡ ìˆ˜ì • API
+ * API Name: µ¶¼­ ±â·Ï ¼öÁ¤ API
  * [PATCH] /records/fix
  */
 async function updateRecords(connection, patchRecordsParams){
@@ -157,7 +157,7 @@ async function updateRecords(connection, patchRecordsParams){
 }
 /**
  * API No. 2.5
- * API Name: ë…ì„œ ê¸°ë¡ ì‚­ì œ API
+ * API Name: µ¶¼­ ±â·Ï »èÁ¦ API
  * [PATCH] /records/removal
  */
 async function deleteRecords(connection, recordIdx){
@@ -170,7 +170,7 @@ async function deleteRecords(connection, recordIdx){
 
 /**
  * API No. 2.6
- * API Name: ìœ ì € ë…ì„œ ê¸°ë¡ í†µê³„ ì¡°íšŒ API
+ * API Name: À¯Àú µ¶¼­ ±â·Ï Åë°è Á¶È¸ API
  * [GET] /records/statistics/:userIdx
  */
 async function selectStatistics(connection, userIdx){
@@ -206,7 +206,7 @@ async function selectStatistics(connection, userIdx){
 
 /**
  * API No. 2.7
- * API Name: ìœ ì €ë³„ ìµœê·¼ ì½ì€ ì±… ì¡°íšŒ API
+ * API Name: À¯Àúº° ÃÖ±Ù ÀĞÀº Ã¥ Á¶È¸ API
  * [GET] /records/bookRecords/:userIdx
  */
 async function selectRecentBookRecords(connection, userIdx){
@@ -226,7 +226,7 @@ async function selectRecentBookRecords(connection, userIdx){
 
 /**
  * API No. 2.8
- * API Name: ë…ì„œê¸°ë¡ ìƒì„¸ì¡°íšŒ API
+ * API Name: µ¶¼­±â·Ï »ó¼¼Á¶È¸ API
  * [GET] /records/:readingRecordIdx
  */
 async function selectReadingRecord(connection, readingRecordIdx){
@@ -242,12 +242,12 @@ async function selectReadingRecord(connection, readingRecordIdx){
 
 /**
  * API No. 2.9
- * API Name: ï¿½ì‘€ï¿½ï¿½ï¿½ ï¿½ìŸ¾ï§£ï¿½ ï¿½ë£†ï¿½ê½Œæ¹²ê³•ì¤‰ ï¿½ë¸˜ï¿½ê½£ (ï§¤ì’“ë  ï¿½ë‹š) api
+ * API Name: À¯Àú ÀüÃ¼ µ¶¼­±â·Ï ÇÊÅÍ (ÃÖ±Ù ¼ø) api
  * [GET] /records/readingRecord/filter/recent/:userIdx
  */
 async function selectFilterRecent(connection, userIdx){
     const selectFilterRecentQuery = `
-    SELECT f.idx readingRecordIdx, r.bookIdx, r.flowerPotIdx, r.date, r.starRating, r.status, b.name, b.bookImgUrl, r.createdAt
+    SELECT r.idx readingRecordIdx, r.bookIdx, r.flowerPotIdx, r.date, r.starRating, r.status, b.name, b.bookImgUrl, r.createdAt
     FROM ReadingRecord r
         LEFT JOIN (
             SELECT idx, bookImgUrl, name
@@ -268,7 +268,7 @@ async function selectFilterRecent(connection, userIdx){
 
 /**
  * API No. 2.10
- * API Name: ï¿½ì‘€ï¿½ï¿½ï¿½ ï¿½ìŸ¾ï§£ï¿½ ï¿½ë£†ï¿½ê½Œæ¹²ê³•ì¤‰ ï¿½ë¸˜ï¿½ê½£ (è¹‚ê¾©ì  ï¿½ë‹š) api
+ * API Name: À¯Àú ÀüÃ¼ µ¶¼­±â·Ï ÇÊÅÍ (º°Á¡ ¼ø) api
  * [GET] /records/readingRecord/filter/rating/:userIdx
  */
  async function selectFilterRating(connection, userIdx){
@@ -294,7 +294,7 @@ async function selectFilterRecent(connection, userIdx){
 
 /**
  * API No. 2.11
- * API Name: ï¿½ì‘€ï¿½ï¿½ï¿½ ï¿½ìŸ¾ï§£ï¿½ ï¿½ë£†ï¿½ê½Œæ¹²ê³•ì¤‰ ï¿½ë¸˜ï¿½ê½£ (ï¿½ì £ï§ï¿½ ï¿½ë‹š) api
+ * API Name: ÀüÃ¼ µ¶¼­±â·Ï ÇÊÅÍ (Á¦¸ñ ¼ø) api
  * [GET] /records/readingRecord/filter/title/:userIdx
  */
  async function selectFilterTitle(connection, userIdx){
@@ -317,31 +317,31 @@ async function selectFilterRecent(connection, userIdx){
     return selectFilterTitleRows;
 }
 
-// ë…ì„œê¸°ë¡ exp ì¬ì„¤ì • í•¨ìˆ˜
+// µ¶¼­±â·Ï exp Àç¼³Á¤ ÇÔ¼ö
 // async function updateAllFlowerPotsExp(connection){
 //     const selectAllFPExpQuery = `
 //         SELECT idx
 //         FROM FlowerPot
 //         ORDER BY idx ASC;
 //     `;
-//     // # ìµœì´ˆ 1ë²ˆë§Œ í•´ì£¼ê³  ë‚˜ë¨¸ì§€ëŠ” WHERE status = 'ACTIVE' ì¿¼ë¦¬ í•„ìš”
+//     // # ÃÖÃÊ 1¹ø¸¸ ÇØÁÖ°í ³ª¸ÓÁö´Â WHERE status = 'ACTIVE' Äõ¸® ÇÊ¿ä
 //     const [flowerpotsRows] = await connection.query(selectAllFPExpQuery);
 //     console.log(flowerpotsRows);
-//     let flowerpotInfo;  // ê° í™”ë¶„ ì •ë³´ ì €ì¥
+//     let flowerpotInfo;  // °¢ È­ºĞ Á¤º¸ ÀúÀå
 
 //     flowerpotsRows.forEach(async ele => {
         
-//         flowerpotInfo = await selectFlowerPotRecords(connection, ele.idx);  // ëª¨ë“  í™”ë¶„ ë¦¬ìŠ¤íŠ¸ ë„£ê³  ëŒë¦¼
+//         flowerpotInfo = await selectFlowerPotRecords(connection, ele.idx);  // ¸ğµç È­ºĞ ¸®½ºÆ® ³Ö°í µ¹¸²
 //         // console.log(flowerpotInfo);
 //         // console.log('ele', ele);
-//         if(flowerpotInfo.length > 0){   // í™”ë¶„ 1ê°œë‹¹ ë…ì„œê¸°ë¡ êµ¬í•¨
+//         if(flowerpotInfo.length > 0){   // È­ºĞ 1°³´ç µ¶¼­±â·Ï ±¸ÇÔ
 //             flowerpotInfo = flowerpotInfo[0];
 //             // console.log(ele.idx);
 //             // console.log('flowerpotInfo', flowerpotInfo);
 //             let recordIdx = flowerpotInfo.readingRecordIdx;
 //             let [recordInfo] = await selectReadingRecord(connection, recordIdx);
 
-//             // exp ì„¤ì •
+//             // exp ¼³Á¤
 //             let {starRating, quote, content} = recordInfo;
 //             let exp = 0;
 //             if(starRating !== null)
@@ -358,7 +358,7 @@ async function selectFilterRecent(connection, userIdx){
 //     return flowerpotsRows;
 // }
 
-// postExpì—ëŠ” ìˆ˜ì •í•˜ëŠ” expê°’ì„ ì…ë ¥
+// postExp¿¡´Â ¼öÁ¤ÇÏ´Â exp°ªÀ» ÀÔ·Â
 async function updateReadingRecordExp(connection, postExp, recordIdx){
     const updateQuery = `
         UPDATE ReadingRecord SET exp = ? WHERE idx = ?;
@@ -367,8 +367,8 @@ async function updateReadingRecordExp(connection, postExp, recordIdx){
     return updateRRExpRows;
 }
 
-// í™”ë¶„ exp ì¬ì„¤ì • í•¨ìˆ˜
-// expChangeValueì—ëŠ” ë°”ê¿€ ê°’ì„ ì…ë ¥
+// È­ºĞ exp Àç¼³Á¤ ÇÔ¼ö
+// expChangeValue¿¡´Â ¹Ù²Ü °ªÀ» ÀÔ·Â
 async function updateFlowerpotExp(connection, expChangeValue, flowerPotIdx){
     const updateExpQuery = `
         UPDATE FlowerPot SET exp = exp + ? WHERE idx = ?;
@@ -377,7 +377,7 @@ async function updateFlowerpotExp(connection, expChangeValue, flowerPotIdx){
     return updateFlowerpotExpRows;
 }
 
-// DB ï¿½ìŸ¾ï§£ï¿½ return ï¿½ë¸¯ï¿½ë’— API
+// DB Á¶È¸ api
 // Book table
 async function selectBookDB(connection){
     const selectBookDBQuery = `
