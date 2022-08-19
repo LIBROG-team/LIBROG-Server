@@ -14,8 +14,8 @@ async function selectUserEmail(connection, email) {
 // 유저 생성
 async function insertUserInfo(connection, insertUserInfoParams) {
     const insertUserInfoQuery = `
-          INSERT INTO User(email, password, name, profileImgUrl, introduction)
-          VALUES (?, ?, ?, ?, ?);
+          INSERT INTO User(email, password, salt, name, profileImgUrl, introduction)
+          VALUES (?, ?, ?, ?, ?, ?);
       `;
       
     const [insertUserInfoRow] = await connection.query(
@@ -34,11 +34,25 @@ async function selectUserPassword(connection, email, password) {
         WHERE email = ?`;
   const selectUserPasswordRow = await connection.query(
       selectUserPasswordQuery,
-      email,
-      password
+      [email,
+      password]
   );
 
   return selectUserPasswordRow;
+}
+
+//salt 체크
+async function selectUserSalt(connection, email) {
+  const selectUserSaltQuery = `
+        SELECT salt, idx
+        FROM User
+        WHERE email = ?`;
+  const selectUserSaltRow = await connection.query(
+      selectUserSaltQuery,
+      email
+  );
+  // console.log('dao salt:', selectUserSaltRow);
+  return selectUserSaltRow;
 }
 
 // 유저 계정 상태 체크 (jwt 생성 위해 idx 값도 가져온다.)
@@ -131,9 +145,26 @@ async function oldPasswordCheck(connection, userIdx, oldPassword) {
   // 기존의 password라고 입력받은 걸 hashed처리한 값과 / db상에 password로 저장된 걸(이걸 쿼리에서 뽑아온 거임) 비교하면 됨 
   const [oldPasswordCheckQueryRow] = await connection.query(
     oldPasswordCheckQuery,
-    userIdx, oldPassword
+    [userIdx, oldPassword]
   );
   return oldPasswordCheckQueryRow;
+}
+
+//saltCheck for chagnePassword
+async function saltCheck(connection, userIdx) {
+  const saltCheckQuery = `
+  SELECT salt
+  FROM User
+  WHERE idx = ?;
+  `;
+
+  const saltCheckQueryRow = await connection.query(
+    saltCheckQuery,
+    userIdx
+  );
+  // console.log('dao saltqueryrow: ', saltCheckQueryRow);
+  // console.log(saltCheckQueryRow[0]);
+  return saltCheckQueryRow[0];
 }
 
 //비밀번호 변경
@@ -150,7 +181,7 @@ async function changeUserPassword(connection, hashedNewPassword, userIdx) {
       [hashedNewPassword, userIdx]
     );
 
-  console.log('dao:', hashedNewPassword);
+  // console.log('dao:', hashedNewPassword);
 
   return patchPasswordQueryRow;
 }
@@ -319,12 +350,14 @@ async function getProfileImgUrl(connection, idx) {
     selectUserEmail,
     insertUserInfo,
     selectUserPassword,
+    selectUserSalt,
     selectUserAccount,
     deleteUserRRInfo,
     deleteUserFPInfo,
     deleteUserUFLInfo,
     deleteUserUInfo,
     oldPasswordCheck,
+    saltCheck,
     changeUserPassword,
     kakaoUserAccountCheck,
     kakaoUserAccountInsert,

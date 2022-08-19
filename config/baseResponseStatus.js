@@ -58,7 +58,7 @@ module.exports = {
     SIGNIN_EMAIL_LENGTH : { "isSuccess": false, "code": 2051, "message":"email은 255글자 이하의 길이로 입력해주세요." },
     SIGNIN_EMAIL_ERROR_TYPE : { "isSuccess": false, "code": 2052, "message":"이메일을 형식을 정확하게 입력해주세요." },
     SIGNIN_PASSWORD_EMPTY : { "isSuccess": false, "code": 2053, "message":"password를 입력해주세요." },
-    SIGNIN_PASSWORD_LENGTH : { "isSuccess": false, "code": 2054, "message":"password는 8글자 이상의 길이로 입력해주세요." },
+    SIGNIN_PASSWORD_LENGTH : { "isSuccess": false, "code": 2054, "message":"password는 8글자 이상 20글자 이하의 길이로 입력해주세요." },
 
     FLOWERDATA_EMPTY : { "isSuccess": false, "code": 2060, "message": "flowerDataIdx를 입력해주세요." },
     FLOWERDATA_LENGTH : { "isSuccess": false, "code": 2061, "message": "flowerDataIdx는 0보다 큰 값으로 입력해주세요." },
