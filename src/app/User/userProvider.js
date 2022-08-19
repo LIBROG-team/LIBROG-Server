@@ -42,6 +42,22 @@ exports.emailCheck = async function (email) {
     return kakaoUserAccountInfoResult;
   }
 
+  exports.appleAccountCheck = async function(email, type) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const appleAccountCheckResult = await userDao.appleUserAccountCheck(connection, email, type);
+    connection.release();
+  
+    return appleAccountCheckResult;
+  }
+
+  exports.appleUserAccountInfo = async function(email, type) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const appleUserAccountInfoResult = await userDao.appleUserAccountInfo(connection, email, type);
+    connection.release();
+  
+    return appleUserAccountInfoResult;
+  }
+
   exports.userProfile = async function(userIdx) {
     const connection = await pool.getConnection(async (conn) => conn);
     const userProfileInfoResult = await userDao.getUserProfile(connection, userIdx);
