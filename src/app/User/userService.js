@@ -20,13 +20,18 @@ exports.createUser = async function (email, password, name, profileImgUrl, intro
         if (emailRows.length > 0)
             return errResponse(baseResponse.SIGNUP_REDUNDANT_EMAIL);
 
-        // 비밀번호 암호화
-        const hashedPassword = await crypto
-            .createHash("sha512")
-            .update(password)
-            .digest("hex");
+        //salt and hash
+        const salt = crypto
+            .randomBytes(8)
+            .toString('hex');
 
-        const insertUserInfoParams = [email, hashedPassword, name, profileImgUrl, introduction];
+        // console.log('salt:', salt);
+        
+        const hashed = crypto.pbkdf2Sync(password, salt, 1, 64, 'sha512').toString('hex');
+        
+        // console.log('hashed:', hashed);
+
+        const insertUserInfoParams = [email, hashed, salt, name, profileImgUrl, introduction];
 
         const connection = await pool.getConnection(async (conn) => conn);
 
@@ -95,16 +100,16 @@ exports.changePassword = async function (userIdx, oldPassword, newPassword) {
     const connection = await pool.getConnection(async (conn) => conn);
 
     try {
-        // 비밀번호 암호화
-        const hashedOldPassword = crypto
-        .createHash("sha512")
-        .update(oldPassword)
-        .digest("hex");
+        //1. DB에서 salt 조회해서 가져오기
+        const saltRows = await userDao.saltCheck(connection, userIdx);
 
-        //기존 비밀번호 테스트
+        //2. 입력받은 기존비번, DB상의 salt 합쳐서 hash 처리
+        const hashedOldPassword = crypto.pbkdf2Sync(oldPassword, saltRows[0].salt, 1, 64, 'sha512').toString('hex');
+
+        //3. DB상의 비번 조회해서 가져오기
         const oldPasswordRows = await userDao.oldPasswordCheck(connection, userIdx, oldPassword);
 
-        if (oldPasswordRows[0].password != hashedOldPassword) {
+        if (hashedOldPassword != oldPasswordRows[0].password) {
             return errResponse(baseResponse.SIGNIN_PASSWORD_WRONG);
         }
         console.log('test is done');
@@ -114,23 +119,14 @@ exports.changePassword = async function (userIdx, oldPassword, newPassword) {
             return errResponse(baseResponse.NEW_PASSWORD_PLEASE);
         }
 
-        // // 비밀번호 재입력 요청
-        // const passwordRows = await userProvider.passwordCheck(password);
-        // if (passwordRows != password)
-        //     return errResponse("새로 지정한 비밀번호와 일치하지 않습니다.");
-        
-        // 새로운 비번 암호화
-        const hashedNewPassword = await crypto
-        .createHash("sha512")
-        .update(newPassword)
-        .digest("hex");
-
-        //새로운 비번 확인
+        const hashedNewPassword = crypto.pbkdf2Sync(newPassword, saltRows[0].salt, 1, 64, 'sha512').toString('hex');
 
         //비번변경 쿼리 호출
         const changeUserPasswordResult = await userDao.changeUserPassword(connection, hashedNewPassword, userIdx);
 
-        console.log('SUCCESS. You changed your password. NewPassword is :', newPassword);
+        console.log('SUCCESS. You changed your password.');
+        // console.log('NewPassword is :', newPassword);
+
 
         const resultObj = { "userIdx" : userIdx, "newPassword" : newPassword };
         return response(baseResponse.SUCCESS, resultObj);

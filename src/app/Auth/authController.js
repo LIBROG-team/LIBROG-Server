@@ -31,7 +31,7 @@ exports.login = async function(req, res) {
     //password validation
     if (!password) {
         return res.send(errResponse(baseResponse.SIGNIN_PASSWORD_EMPTY));
-    }   else if (password.length < 8) {
+    }   else if (password.length < 8 || password.length > 20) {
         return res.send(errResponse(baseResponse.SIGNIN_PASSWORD_LENGTH));
     }
     // //    else if (!regexPwd.test(password)) {

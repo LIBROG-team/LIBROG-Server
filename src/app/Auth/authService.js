@@ -12,19 +12,27 @@ const secret_config = require("../../../config/secret.js");
 exports.postSignIn = async function (email, password) {
     const connection = await pool.getConnection(async (conn) => conn);
     try {
+        //email validation
         const emailRows = await userProvider.emailCheck(email);
 
         if (emailRows.length < 1) {
             return errResponse(baseResponse.SIGNIN_EMAIL_CANNOT_FIND);
         }
 
-        const hashedPassword = crypto
-        .createHash("sha512")
-        .update(password)
-        .digest("hex");
-
+        //salt+password => hash
+        //1. salt 조회해서 가져오기
+        const salt = await userProvider.saltCheck(email);
+        // console.log('authService:',salt[0]); //{ salt: 'd55b25e00bdaca81', idx: 177 }
+        // console.log('authService:',salt[0].salt); //d55b25e00bdaca81
+        //2. DB상의 비밀번호, DB상의 salt 합쳐서 hash 처리
+        const hashedPassword = crypto.pbkdf2Sync(password, salt[0].salt, 1, 64, 'sha512').toString('hex');
+        //3. 사용자에게 password입력받기
         const passwordRows = await userProvider.passwordCheck(email, password);
+        
+        // console.log(passwordRows[0].password);
+        // console.log(hashedPassword);
 
+        //password validation
         if (passwordRows[0].password != hashedPassword) {
             return errResponse(baseResponse.SIGNIN_PASSWORD_WRONG);
         }
