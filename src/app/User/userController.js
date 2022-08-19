@@ -223,14 +223,20 @@ exports.KakaoLogin = async function (req, res) {
      if (!code)
          return res.send(response(baseResponse.APPLE_ACCESS_TOKEN_UNDEFINED));
  
-     const response = await authApple.accessToken(code);
-     const idToken = jwt.decode(response.id_token);
-     const email = idToken.email;
-     const sub = idToken.sub;
+    try {
+        const response = await authApple.accessToken(code);
+        const idToken = jwt.decode(response.id_token);
+        const email = idToken.email;
+        const sub = idToken.sub;
+    } catch(err) {
+        console.log(err);
+        return res.send(errResponse(baseResponse.APPLE_LOGIN_ERROR));
+    }
+
 
      // 가입된 유저인지 확인
      const checkUser = await userService.checkAppleUser(email, sub);
-
+    return checkUser;
 }
 
 
