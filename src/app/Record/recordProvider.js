@@ -232,7 +232,10 @@ exports.retrieveMainPageInfo = async function(userIdx){
         const [msgLastIdx] = await recordDao.checkMessageEndNum(connection);    // messages 개수 가져오는 쿼리
         const msgIdx = Math.round(Math.random() * 10) % msgLastIdx.cnt + 1;     // messages 개수로 가져올 msgIdx를 랜덤으로 결정함.
         const [mpResult] = await recordDao.selectMPInfo(connection, msgIdx, userIdx);
-        
+        // 유저 화분 없을 시 결과가 나오지 않음 -> validation
+        if(!mpResult){
+            return errResponse(baseResponse.USER_NO_FLOWERPOTS);
+        }
         return response(baseResponse.SUCCESS, mpResult);
     }catch(err){
         logger.error(`App - retrieveMainPageInfo Provider error\n: ${err.message}`);
