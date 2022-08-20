@@ -121,7 +121,7 @@ exports.changePassword = async function (req, res) {
     const newPassword = req.body.newPassword;
     // const confirmation = req.body.confirmation;
     
-    //idx jwt
+    // idx jwt
     const userIdxFromJWT = req.verifiedToken.idx;
     // console.log(req.verifiedToken);
     // console.log(userIdxFromJWT);
@@ -140,14 +140,14 @@ exports.changePassword = async function (req, res) {
     //oldPassword validation
     if (!oldPassword) {
         return res.send(errResponse(baseResponse.SIGNIN_PASSWORD_EMPTY));
-    }   else if (oldPassword.length < 8) {
+    }   else if (oldPassword.length < 8 || oldPassword.length > 20) {
         return res.send(errResponse(baseResponse.SIGNIN_PASSWORD_LENGTH));
     }
 
     //newPassword validation
     if (!newPassword) {
         return res.send(errResponse(baseResponse.SIGNIN_PASSWORD_EMPTY));
-    }   else if (newPassword.length < 8) {
+    }   else if (newPassword.length < 8 || newPassword.length > 20) {
         return res.send(errResponse(baseResponse.SIGNIN_PASSWORD_LENGTH));
     }
 

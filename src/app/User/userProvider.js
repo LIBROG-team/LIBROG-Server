@@ -17,6 +17,16 @@ exports.emailCheck = async function (email) {
     connection.release();
     return passwordCheckResult[0];
   };
+
+  //salt
+  exports.saltCheck = async function (email) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const saltCheckResult = await userDao.selectUserSalt(connection, email);
+    connection.release();
+    // console.log(saltCheckResult[0]);
+    return saltCheckResult[0];
+  };
+
   
   exports.accountCheck = async function (email) {
     const connection = await pool.getConnection(async (conn) => conn);
