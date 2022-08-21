@@ -44,10 +44,31 @@ async function patchFlowerData(connection, patchFlowerDataparams) {
   return patchFlowerDataRow;
 }
 
+async function certificateEmail(connection, email) {
+  const certificateEmailQuery = `
+  SELECT idx, name, email
+  FROM User
+  WHERE email = ?`
+  const [certificateEmailRow] = await connection.query(certificateEmailQuery,email);
+  return certificateEmailRow;
+}
+
+async function promotionCertification(connection, code) {
+  const promotionCertificationQuery = `
+  SELECT idx, couponName, rewards, code
+  FROM PromotionCode
+  WHERE code = ?`
+  const [promotionCertificationRow] = await connection.query(promotionCertificationQuery, code);
+  return promotionCertificationRow;
+}
+
+
   module.exports = {
     selectUserCount,
     selectFlowerpotCount,
     selectBookCount,
     selectGetAllFlower,
     patchFlowerData,
+    certificateEmail,
+    promotionCertification,
   }
