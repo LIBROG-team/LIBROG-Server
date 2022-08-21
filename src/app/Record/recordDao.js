@@ -184,33 +184,24 @@ async function deleteRecords(connection, recordIdx){
  */
 async function selectStatistics(connection, userIdx){
     const selectStatisticsQuery = `
-        SELECT User.idx as userIdx,
-        IF(flowerCnt is null, 0, flowerCnt) as flowerCnt,
-        IF(readingCnt is null, 0, readingCnt) as readingCnt,
-        IF(starRatingCnt is null, 0, starRatingcnt) as starRatingCnt,
-        IF(quoteCnt is null, 0, quoteCnt) as quoteCnt,
-        IF(contentCnt is null, 0, contentCnt) as contentCnt
-        FROM User
-        LEFT JOIN (
-            SELECT FlowerPot.idx, userIdx, COUNT(FlowerPot.idx) as flowerCnt
-            FROM FlowerPot
-            WHERE FlowerPot.status = 'ACTIVE'
-            GROUP BY userIdx
-        ) fp on fp.userIdx = User.idx
-        LEFT JOIN(
-            SELECT ReadingRecord.idx, starRating, quote, content, flowerPotIdx,
-                    COUNT(ReadingRecord.idx) as readingCnt,
-                    COUNT(starRating) as starRatingCnt,
-                    COUNT(quote) as quoteCnt,
-                    COUNT(content) as contentCnt
-            FROM ReadingRecord
-            WHERE ReadingRecord.status = 'ACTIVE'
-            GROUP BY flowerPotIdx
-        ) rr on rr.flowerPotIdx = fp.idx
-        HAVING User.idx = ?;
+        SELECT f.userIdx, COUNT(f.idx) flowerCnt, COUNT(r.idx) readingCnt,
+        COUNT(starRating) starRatingCnt, COUNT(quote) quoteCnt, COUNT(content) contentCnt
+        FROM FlowerPot f
+        LEFT JOIN ReadingRecord r ON r.flowerPotIdx = f.idx
+        WHERE f.userIdx = ?;
     `;
     const [selectStatisticsRows] = await connection.query(selectStatisticsQuery, userIdx);
     return selectStatisticsRows;
+}
+
+async function selectFlowerCnt(connection, userIdx){
+    const flowerCntQuery = `
+        SELECT COUNT(idx) flowerCnt
+        FROM FlowerPot
+        WHERE userIdx = ?;
+    `;
+    const [flowerCntRows] = await connection.query(flowerCntQuery, userIdx);
+    return flowerCntRows;
 }
 
 /**
@@ -493,6 +484,7 @@ module.exports = {
     updateRecords,
     deleteRecords,
     selectStatistics,
+    selectFlowerCnt,
     selectRecentBookRecords,
     selectReadingRecord,
 
