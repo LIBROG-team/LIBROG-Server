@@ -16,4 +16,7 @@ module.exports = function(app){
 
     // 10.10 식물 정보 수정 API
     app.patch('/dashboard/flower/edit', dashboard.patchFlowerData);
+
+    //10.41 프로모션 쿠폰 코드 API
+    app.post('/dashboard/promotion/code/certification', dashboard.promotionCertification);
 }
