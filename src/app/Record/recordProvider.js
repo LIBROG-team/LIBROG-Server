@@ -60,7 +60,7 @@ exports.readBookIdx = async function(bookName){
 
 /**
  * API No. 2.6
- * API Name: �쑀��� �룆�꽌 湲곕줉 �넻怨� 議고쉶 API
+ * API Name: 독서기록 통계 조회 API
  * [GET] /records/statistics/:userIdx
  */
 exports.readStatistics = async function(userIdx){
@@ -78,10 +78,12 @@ exports.readStatistics = async function(userIdx){
         connection.release();
         return errResponse(baseResponse.USER_DELETED_USER);
     }
-    const statisticsRows = await recordDao.selectStatistics(connection, userIdx);
-    // console.log('statisticsRows', statisticsRows);
+    let [statisticsRows] = await recordDao.selectStatistics(connection, userIdx);
+    const [flowerCntRows] = await recordDao.selectFlowerCnt(connection, userIdx);
+    statisticsRows.flowerCnt = flowerCntRows.flowerCnt;
+    // console.log('statisticsRows', statisticsRows, flowerCntRows);
     connection.release();
-    return response(baseResponse.SUCCESS, statisticsRows[0]);
+    return response(baseResponse.SUCCESS, statisticsRows);
 }
 /**
  * API No. 2.7
