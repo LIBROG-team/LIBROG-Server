@@ -1,0 +1,7 @@
+{
+    "client_id": "com.librog.LIBROG.service",
+    "team_id": "69F5355JYF",
+    "key_id": "86KXQ3X755",
+    "redirect_uri": "https://dev.librog.shop/api/auth/apple",
+    "private_key_path": "AuthKey_86KXQ3X755.p8"
+}

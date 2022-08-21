@@ -185,6 +185,49 @@ exports.kakaoLogin = async function (kakaoResult) {
 
 }
 
+exports.checkAppleUser = async function(email, sub) {
+    try {
+        const appleAccountRow = await userProvider.appleAccountCheck(email, 'apple');
+        if (appleAccountRow[0] === undefined) {
+            // DB에 등록 되있지 않은 유저라면, DB에 정보 추가
+            const insertAppleUserInfoParams = [email, sub, 'apple'];
+
+            const connection = await pool.getConnection(async (conn) => conn);
+            
+            const appleUserIdResult = await userDao.appleUserAccountInsert(connection, insertAppleUserInfoParams);
+            console.log(`추가된 회원 : ${appleUserIdResult[0].insertId}`)
+            connection.release();
+
+            const appleLoginResultObj = {
+                "message": '새로운 애플 계정이 DB에 등록 되었습니다.',
+                "idx": appleUserIdResult[0].insertId,
+                "email": appleUserIdResult.email,
+                "name": appleUserIdResult.name,
+                "profileImgUrl": appleUserIdResult.profileImgUrl,
+                "loginType": 'apple',
+            }
+            return response(baseResponse.SUCCESS_APPLE_LOGIN, appleLoginResultObj);
+        }
+
+        // 이미 가입된 유저라면 로그인 결과 return
+        if (appleAccountRow[0].email.length > 0 && appleAccountRow[0].type == 'apple') {
+            const appleAccountInfoRow = await userProvider.appleUserAccountInfo(appleAccountRow[0].email, 'apple');
+            const appleLoginResultObj = {
+                "message": '이미 가입된 유저입니다.',
+                "idx": appleAccountInfoRow[0].idx,
+                "email": appleAccountInfoRow[0].email,
+                "name": appleAccountInfoRow[0].name,
+                "profileImgUrl": appleAccountInfoRow[0].profileImgUrl,
+                "loginType": 'apple',
+            }
+            return response(baseResponse.SUCCESS_APPLE_LOGIN, appleLoginResultObj);
+        }
+    } catch(err) {
+        console.log(err);
+    }
+}
+
+
 exports.editIntroduce = async function(patchIntroductionParams) {
     const connection = await pool.getConnection(async (conn) => conn);
     try {
