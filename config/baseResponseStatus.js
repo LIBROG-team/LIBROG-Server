@@ -4,7 +4,6 @@ module.exports = {
     SUCCESS : { "isSuccess": true, "code": 1000, "message":"성공" },
     
     SUCCESS_KAKAO_LOGIN : { "isSuccess": true, "code": 1500, "message":"카카오 로그인 성공" },
-    SUCCESS_KAKAO_LOGIN : { "isSuccess": true, "code": 1501, "message":"애플 로그인 성공" },
 
     // Common
     TOKEN_EMPTY : { "isSuccess": false, "code": 2000, "message":"JWT 토큰을 입력해주세요." },
@@ -13,8 +12,6 @@ module.exports = {
     KAKAO_LOGIN_ERROR : { "isSuccess": false, "code": 3500, "message":"카카오 로그인에서 오류가 발생했습니다. 서버로그를 참조해주세요." },
     KAKAO_ACCESS_TOKEN_UNDEFINED : { "isSuccess": false, "code": 3501, "message":"카카오 Access Token 값이 비어있거나 유효하지 않습니다." },
     KAKAO_LOGIN_UNAUTHORIZED_ERROR : { "isSuccess": false, "code": 3502, "message":"카카오 로그인 에러. 인증되지 않은 Token 입니다. (code : 401)" },
-    APPLE_ACCESS_TOKEN_UNDEFINED: { "isSuccess": false, "code": 3503, "message":"Apple 인가코드 값이 비어있거나 유효하지 않습니다." },
-    APPLE_LOGIN_ERROR :{ "isSuccess": false, "code": 3504, "message":"Apple 로그인에서 오류가 발생했습니다. 서버로그를 참조해주세요." },
 
     // 2000 : 형식적 Validation Error
     USER_USERIDX_EMPTY : { "isSuccess": false, "code": 2001, "message": "userIdx를 입력해주세요." },
