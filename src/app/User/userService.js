@@ -243,6 +243,22 @@ exports.editIntroduce = async function(patchIntroductionParams) {
     }
 }
 
+exports.getSalt = async function(email) {
+    const connection = await pool.getConnection(async (conn) => conn);
+
+    try {
+        const saltRows = await userDao.selectOnlySalt(connection, email);
+        console.log('Service- saltRows[0].salt: ', saltRows[0].salt);
+        const resultObj = saltRows[0].salt;
+        return response(baseResponse.SUCCESS, resultObj);
+    } catch (err) {
+        logger.error(`App - getSalt Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    } finally {
+        connection.release();
+    }
+}
+
 exports.findPassword = async function (findPasswordParams) {
     const connection = await pool.getConnection(async (conn) => conn);
     try {
