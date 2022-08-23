@@ -326,7 +326,7 @@ async function selectMPInfo(connection, msgIdx, userIdx){
     const mpInfoQuery = `
         SELECT TIMESTAMPDIFF(DAY, 
             DATE_FORMAT(createdAt, '%Y-%m-%d'), 
-            DATE_FORMAT(updatedAt, '%Y-%m-%d'))as daycnt, cmt.content
+            DATE_FORMAT(updatedAt, '%Y-%m-%d')) + 1 as daycnt, cmt.content
         FROM FlowerPot
         LEFT JOIN(
             SELECT *
