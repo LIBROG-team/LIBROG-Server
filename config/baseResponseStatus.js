@@ -100,6 +100,7 @@ module.exports = {
     RECORDS_NO_AUTHOR : { "isSuccess": false, "code": 3016, "message":"해당 독서기록에서 저자가 null값입니다." },
     MAIN_FLOWERPOT_NOT_EXIST : { "isSuccess": false, "code": 3017, "message":"메인 화면에 표시할 화분이 없습니다." },
 
+    STATISTICS_ERROR : { "isSuccess": false, "code": 3018, "message":"유저 통계를 불러오던 중 오류가 발생했습니다." },
     // Response error
     SIGNIN_EMAIL_WRONG : { "isSuccess": false, "code": 3020, "message": "이메일이 잘못 되었습니다." },
     SIGNIN_PASSWORD_WRONG : { "isSuccess": false, "code": 3021, "message": "비밀번호가 잘못 되었습니다." },

@@ -32,7 +32,8 @@ module.exports = function(app){
     // 3.9 메인화면 화분 일러스트, 이름 정보 API
     app.get('/flowerpots/flowerpotMain/:userIdx',flowerpot.getFlowerpotMain);
 
-   
+    // 3.10 조건에 맞는 화분 획득 API
+    app.post('/flowerpots/new/:userIdx', flowerpot.checkFlowerContidion);
 
 
 
