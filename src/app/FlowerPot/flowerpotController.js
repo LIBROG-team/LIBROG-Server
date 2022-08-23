@@ -26,6 +26,7 @@ exports.getflowerpots = async function(req, res){
 
     const userIdxResult = await flowerpotProvider.retrieveFlowerpot(userIdx);
     
+      
     return res.send(response(baseResponse.SUCCESS, userIdxResult))
 
 }

@@ -193,7 +193,9 @@ async function checkFlowerpotIdx(connection, flowerpotIdx){
                   d.type,
                   d.backgroundColor,
                   p.startDate,
-                  p.lastDate
+                  p.lastDate,
+                  p.exp,
+                  d.maxExp
       FROM FlowerPot as p
                   left join FlowerData as d on d.idx = p.flowerDataIdx and p.status='ACTIVE'
                   left join ReadingRecord r on p.idx = r.flowerPotIdx and r.status = 'ACTIVE'

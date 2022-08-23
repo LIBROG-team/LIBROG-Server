@@ -19,10 +19,24 @@ exports.retrieveFlowerpot = async function (userIdx) {
         connection.release();
         return errResponse(baseResponse.USER_NO_FLOWERPOTS);
       }
+
+      //경험치에 따라 이미지 변경
+      for(var i =0 ; i<userFlowerpotResult.length ; i++){
+      if(userFlowerpotResult[i].exp<= userFlowerpotResult[i].maxExp*0.4){
+        userFlowerpotResult[i].flowerPotImgUrl = 'https://librog.shop/source/flowerImg/001sprout.png'
+        userFlowerpotResult[i].flowerImgUrl = 'https://librog.shop/source/flowerImg/001sprout.png'
+      }
+      else if(userFlowerpotResult[i].exp <= userFlowerpotResult[i].maxExp*0.7){
+        userFlowerpotResult[i].flowerPotImgUrl = 'https://librog.shop/source/flowerImg/002stem.png'
+        userFlowerpotResult[i].flowerImgUrl = 'https://librog.shop/source/flowerImg/002stem.png'
+      }
+    }
     
       connection.release();
     
       return userFlowerpotResult;
+
+      
 
     }catch(err){
       console.log(`App - retrieveFlowerpot Provider error\n: ${err.message}`);
@@ -139,6 +153,15 @@ exports.retrieveFlowerpot = async function (userIdx) {
   exports.getFlowerpotMain = async function (userIdx) {
     const connection = await pool.getConnection(async (conn) => conn);
     const getFlowerpot = await flowerpotDao.selectFlowerpotMain(connection, userIdx);
+
+    
+      //경험치에 따라 이미지 변경
+        if(getFlowerpot[0].exp<= getFlowerpot[0].maxExp*0.4){
+          getFlowerpot[0].flowerImgUrl = 'https://librog.shop/source/flowerImg/001sprout.png'
+        }
+        else if(getFlowerpot[0].exp <= getFlowerpot[0].maxExp*0.7){
+          getFlowerpot[0].flowerImgUrl = 'https://librog.shop/source/flowerImg/002stem.png'
+        }
   
     connection.release();
 
