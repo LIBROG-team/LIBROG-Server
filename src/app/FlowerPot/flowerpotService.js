@@ -12,17 +12,26 @@ exports.deleteFlowerPotInfo = async function (flowerpotIdx) {
 
     
     try {
-       //유저의 화분이 없을때
+   
          
-       const checkFlowerpotIdxRows = await flowerpotDao.checkFlowerpotIdx(connection, flowerpotIdx);
-      
-       if(checkFlowerpotIdxRows.length < 1){
-           connection.release();
-           return errResponse(baseResponse.FLOWERPOT_NO_FLOWERPOTS);
-       }
+       const checkFlowerpotIdxRows = await flowerpotDao.checkFlowerpotIdx(connection, flowerpotIdx);      
+        //해당화분이 없을 때
+        if(checkFlowerpotIdxRows.length < 1){
+            connection.release();
+            return errResponse(baseResponse.USER_SEARCH_NO_FLOWERPOTS);
+        }
+
+        //유저의 화분이 한개일 때
+        const userIdx = checkFlowerpotIdxRows[0].userIdx;
+        const userFlowerpotResult = await flowerpotDao.selectUserFlowerpot(connection, userIdx);
+       
+        if(userFlowerpotResult.length<2){
+            connection.release();
+            return errResponse(baseResponse.USER_ONE_FLOWERPOT);
+        }
 
        const checkRecordRows = await flowerpotDao.checkRecordCount(connection, flowerpotIdx);
-       console.log(checkRecordRows);
+  
        if(checkRecordRows.length<1){//독서기록 없는 화분일때
         const deleteNoRecordFlowerPotResult = await flowerpotDao.deleteNoRecordFlowerPot(connection, flowerpotIdx);
        }else{//독서기록 있는 화분일 때

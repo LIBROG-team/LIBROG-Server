@@ -151,9 +151,24 @@ exports.retrieveFlowerpot = async function (userIdx) {
   };
 
   exports.getFlowerpotMain = async function (userIdx) {
+   
+    try{
     const connection = await pool.getConnection(async (conn) => conn);
     const getFlowerpot = await flowerpotDao.selectFlowerpotMain(connection, userIdx);
+    const userFlowerpotResult = await flowerpotDao.selectUserFlowerpot(connection, userIdx);
+    const checkUserIdxRows = await flowerpotDao.checkUserIdx(connection, userIdx);
 
+      // 유저 없는지
+      if(checkUserIdxRows.length < 1){
+          connection.release();
+          return errResponse(baseResponse.USER_NOT_EXIST);
+          
+      }
+       //유저의 화분이 없을때
+       if(userFlowerpotResult.length < 1){
+        connection.release();
+        return errResponse(baseResponse.USER_NO_FLOWERPOTS);
+      }
     
       //경험치에 따라 이미지 변경
         if(getFlowerpot[0].exp<= getFlowerpot[0].maxExp*0.4){
@@ -164,7 +179,11 @@ exports.retrieveFlowerpot = async function (userIdx) {
         }
   
     connection.release();
-
-  
     return getFlowerpot[0];
+
+  }catch(err){
+    console.log(`App - getFlowerpotMain Provider error\n: ${err.message}`);
+    connection.release();
+    return errResponse(baseResponse.DB_ERROR);
+  }
   };
