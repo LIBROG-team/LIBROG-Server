@@ -241,20 +241,6 @@ async function kakaoUserAccountInfo(connection, email, type) {
       return kakaoUserAccountInfoRow;
 }
 
-// APPLE 계정 이메일이 존재하는지 확인
-async function appleUserAccountCheck(connection, email, type) {
-  const selectkakaoUserAccountQuery = `
-        SELECT email, type
-        FROM User
-        WHERE email = ? AND type = 'apple';`;
-        const [kakaoUserAccountCheckRow] = await connection.query(
-          selectkakaoUserAccountQuery,
-          email,
-          type,
-      );
-      return kakaoUserAccountCheckRow;
-}
-
 async function getUserProfile(connection, userIdx) {
     const selectuserProfileQuery = `
     SELECT idx, profileImgUrl, name, introduction, type
@@ -390,9 +376,6 @@ async function getProfileImgUrl(connection, idx) {
     kakaoUserAccountCheck,
     kakaoUserAccountInsert,
     kakaoUserAccountInfo,
-    appleUserAccountCheck,
-    appleUserAccountInsert,
-    appleUserAccountInfo,
     getUserProfile,
     editUserIntroduction,
     findPassword,
