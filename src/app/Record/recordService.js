@@ -39,6 +39,10 @@ exports.createRecords = async function(createRecordsParams, userIdx){
         const recordIdx = createRecordsList.insertId;
         rewriteExp(connection, recordIdx, flowerPotIdx, 0);
 
+        //경험치에 따라 화분data 변경 해주는 코드
+
+
+
         // 화분에 updatedAt refresh 해주는 코드
         const updateFPDateResult = await recordDao.updateFlowerpotDate(connection, flowerPotIdx);
         // transaction 커밋
