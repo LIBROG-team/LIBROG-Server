@@ -55,6 +55,19 @@ async function selectUserSalt(connection, email) {
   return selectUserSaltRow;
 }
 
+//salt 체크 for 임시비번설정
+async function selectOnlySalt(connection, email) {
+  const selectOnlySaltQuery = `
+        SELECT salt
+        FROM User
+        WHERE email = ?`;
+  const selectOnlySaltRow = await connection.query(
+    selectOnlySaltQuery,
+      email
+  );
+  return selectOnlySaltRow[0];
+}
+
 // 유저 계정 상태 체크 (jwt 생성 위해 idx 값도 가져온다.)
 async function selectUserAccount(connection, email) {
   const selectUserAccountQuery = `
@@ -365,6 +378,7 @@ async function getProfileImgUrl(connection, idx) {
     insertUserInfo,
     selectUserPassword,
     selectUserSalt,
+    selectOnlySalt,
     selectUserAccount,
     deleteUserRRInfo,
     deleteUserFPInfo,

@@ -302,8 +302,12 @@ exports.editIntroduce = async function (req, res) {
         }    
 
     const newPassword = getNewPassword();
+    
+    //salt
+    const gottensalt = await userService.getSalt(email);
 
-    const hashed = crypto.createHash('sha512').update(newPassword).digest('hex');
+    //newPassword+salt=>암호화
+    const hashed = crypto.pbkdf2Sync(newPassword, gottensalt.result, 1, 64, 'sha512').toString('hex');
     
     const findPasswordParams = [hashed, email];
     const findPasswordResult = await userService.findPassword(findPasswordParams);
