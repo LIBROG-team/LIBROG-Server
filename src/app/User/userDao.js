@@ -255,34 +255,6 @@ async function appleUserAccountCheck(connection, email, type) {
       return kakaoUserAccountCheckRow;
 }
 
-// APPLE 계정으로 로그인 시 DB에 계정이 없다면 DB에 새 계정을 등록
-async function appleUserAccountInsert(connection, insertAppleUserInfoParams) {
-  const insertAppleUserInfoQuery = `
-  INSERT INTO User(email, name, type, profileImgUrl)
-  VALUES (?, ?, ?, https://librog.shop/source/profileImg/default.png);
-  `;
-  const insertAppleUserInfoQueryRow = await connection.query(
-    insertAppleUserInfoQuery,
-    insertAppleUserInfoParams
-  );
-
-  return insertAppleUserInfoQueryRow;
-}
-
-// DB에 저장된 APPLE 로그인 정보 가져오기
-async function appleUserAccountInfo(connection, email, type) {
-  const selectappleUserAccountInfoQuery = `
-        SELECT idx, email, name, profileImgUrl, type
-        FROM User
-        WHERE email = ? AND type = 'apple';`;
-        const [appleUserAccountInfoRow] = await connection.query(
-          selectappleUserAccountInfoQuery,
-          email,
-          type
-          );
-      return appleUserAccountInfoRow;
-}
-
 async function getUserProfile(connection, userIdx) {
     const selectuserProfileQuery = `
     SELECT idx, profileImgUrl, name, introduction, type

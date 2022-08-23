@@ -75,9 +75,6 @@ module.exports = function(app){
     // 1.10 Kakao Login 및 인증
     app.post('/users/kakao/certificate/', user.KakaoLogin);
 
-    // 1.11 Apple Login 및 인증
-    app.post('/users/apple/certificate/', user.AppleLogin);
-
     // 1.20 자기소개 조회 api
     app.get('/users/profile/:userIdx', user.getProfile);
 

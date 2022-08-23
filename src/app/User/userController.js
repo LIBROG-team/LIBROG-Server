@@ -206,39 +206,6 @@ exports.KakaoLogin = async function (req, res) {
     });
 }
 
-/**
- * API No. 1.11
- * API Name : Apple Token 인증 API
- * [POST] /users/apple/certificate/
- */
- exports.AppleLogin = async function (req, res) {
-
-    /**
-     * Body: accessToken
-     */
-
-     const { code } = req.body;
-
-     // code 값이 비었는지 확인
-     if (!code)
-         return res.send(response(baseResponse.APPLE_ACCESS_TOKEN_UNDEFINED));
- 
-    try {
-        const response = await authApple.accessToken(code);
-        const idToken = jwt.decode(response.id_token);
-        const email = idToken.email;
-        const sub = idToken.sub;
-    } catch(err) {
-        console.log(err);
-        return res.send(errResponse(baseResponse.APPLE_LOGIN_ERROR));
-    }
-
-
-     // 가입된 유저인지 확인
-     const checkUser = await userService.checkAppleUser(email, sub);
-    return checkUser;
-}
-
 
 /**
  * API No. 1.20
