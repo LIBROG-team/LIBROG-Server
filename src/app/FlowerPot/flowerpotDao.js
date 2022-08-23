@@ -11,6 +11,7 @@ async function selectUserFlowerpot(connection, userIdx) {
             d.bloomingPeriod,
             d.content,
             d.type,
+            d.backgroundColor,
             p.startDate,
             p.lastDate,
             p.exp,
@@ -190,6 +191,7 @@ async function checkFlowerpotIdx(connection, flowerpotIdx){
                   d.engName,
                   d.flowerImgUrl,
                   d.type,
+                  d.backgroundColor,
                   p.startDate,
                   p.lastDate
       FROM FlowerPot as p
@@ -197,7 +199,7 @@ async function checkFlowerpotIdx(connection, flowerpotIdx){
                   left join ReadingRecord r on p.idx = r.flowerPotIdx and r.status = 'ACTIVE'
 
       WHERe userIdx = ?
-      ORDER BY lastDate DESC;
+      ORDER BY startDate DESC;
       `
       const [selectFlowerMainQueryRows] = await connection.query(selectFlowerMainQuery, userIdx);
       return selectFlowerMainQueryRows;

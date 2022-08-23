@@ -20,13 +20,18 @@ exports.createUser = async function (email, password, name, profileImgUrl, intro
         if (emailRows.length > 0)
             return errResponse(baseResponse.SIGNUP_REDUNDANT_EMAIL);
 
-        // 비밀번호 암호화
-        const hashedPassword = await crypto
-            .createHash("sha512")
-            .update(password)
-            .digest("hex");
+        //salt and hash
+        const salt = crypto
+            .randomBytes(8)
+            .toString('hex');
 
-        const insertUserInfoParams = [email, hashedPassword, name, profileImgUrl, introduction];
+        // console.log('salt:', salt);
+        
+        const hashed = crypto.pbkdf2Sync(password, salt, 1, 64, 'sha512').toString('hex');
+        
+        // console.log('hashed:', hashed);
+
+        const insertUserInfoParams = [email, hashed, salt, name, profileImgUrl, introduction];
 
         const connection = await pool.getConnection(async (conn) => conn);
 
@@ -65,7 +70,7 @@ exports.createUser = async function (email, password, name, profileImgUrl, intro
 };
 
 /*
-API Name: 유저 삭제 API
+API Name: 유저 탈퇴 API
 */
 
 exports.deleteUserInfo = async function (userIdx) {
@@ -82,33 +87,58 @@ exports.deleteUserInfo = async function (userIdx) {
         // console.log('SUCCESS. You deleted 4. User.');
 
         return response(baseResponse.SUCCESS, { 'deletedUserIdx': userIdx });
-        // // validation 이미 탈퇴한 유저일 때
-        // const IsItActiveUserList = await userDao.IsItActiveUser(connection, userIdx);
-        // if(IsItActiveUserList.length < 1 || IsItActiveUserList[0].status == 'DELETED'){
-        //     connection.release();
-        //     return errResponse(baseResponse.USER_NOT_EXIST);
-        // }
-
-
-        // const deleteUsersList = await userDao.deleteUserRR(connection, userIdx);
-        // // const deleteUserFPList = await userDao.deleteUserFPInfoRow(connection, userIdx);
-        // // const deleteUserUFLList = await userDao.deleteUserUFLInfoRow(connection, userIdx);
-        // // const deleteUserUList = await userDao.deleteUserUInfoRow(connection, userIdx);
-
-        // console.log(deleteUsersList);
-        // return response(baseResponse.SUCCESS);
-        //     // deleteUserFPList,
-        //     // deleteUserUFLList,
-        //     // deleteUserUList
-           
-
-
     } catch (err) {
         console.log(`App - deleteUserInfo Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
     } finally {
         connection.release();
     }
+}
+
+//비밀번호 변경
+exports.changePassword = async function (userIdx, oldPassword, newPassword) {
+    const connection = await pool.getConnection(async (conn) => conn);
+
+    try {
+        //1. DB에서 salt 조회해서 가져오기
+        const saltRows = await userDao.saltCheck(connection, userIdx);
+
+        //2. 입력받은 기존비번, DB상의 salt 합쳐서 hash 처리
+        const hashedOldPassword = crypto.pbkdf2Sync(oldPassword, saltRows[0].salt, 1, 64, 'sha512').toString('hex');
+
+        //3. DB상의 비번 조회해서 가져오기
+        const oldPasswordRows = await userDao.oldPasswordCheck(connection, userIdx, oldPassword);
+
+        if (hashedOldPassword != oldPasswordRows[0].password) {
+            return errResponse(baseResponse.SIGNIN_PASSWORD_WRONG);
+        }
+        console.log('test is done');
+
+        // 입력받은 새로운 비밀번호를, oldPassword와 중복 확인
+        if (newPassword == oldPassword) {
+            return errResponse(baseResponse.NEW_PASSWORD_PLEASE);
+        }
+
+        const hashedNewPassword = crypto.pbkdf2Sync(newPassword, saltRows[0].salt, 1, 64, 'sha512').toString('hex');
+
+        //비번변경 쿼리 호출
+        const changeUserPasswordResult = await userDao.changeUserPassword(connection, hashedNewPassword, userIdx);
+
+        console.log('SUCCESS. You changed your password.');
+        // console.log('NewPassword is :', newPassword);
+
+
+        const resultObj = { "userIdx" : userIdx, "newPassword" : newPassword };
+        return response(baseResponse.SUCCESS, resultObj);
+
+    } catch (err) {
+        logger.error(`App - changePassword Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+
+    } finally {
+        connection.release();
+    }
+
 }
 
 
@@ -155,6 +185,49 @@ exports.kakaoLogin = async function (kakaoResult) {
 
 }
 
+exports.checkAppleUser = async function(email, sub) {
+    try {
+        const appleAccountRow = await userProvider.appleAccountCheck(email, 'apple');
+        if (appleAccountRow[0] === undefined) {
+            // DB에 등록 되있지 않은 유저라면, DB에 정보 추가
+            const insertAppleUserInfoParams = [email, sub, 'apple'];
+
+            const connection = await pool.getConnection(async (conn) => conn);
+            
+            const appleUserIdResult = await userDao.appleUserAccountInsert(connection, insertAppleUserInfoParams);
+            console.log(`추가된 회원 : ${appleUserIdResult[0].insertId}`)
+            connection.release();
+
+            const appleLoginResultObj = {
+                "message": '새로운 애플 계정이 DB에 등록 되었습니다.',
+                "idx": appleUserIdResult[0].insertId,
+                "email": appleUserIdResult.email,
+                "name": appleUserIdResult.name,
+                "profileImgUrl": appleUserIdResult.profileImgUrl,
+                "loginType": 'apple',
+            }
+            return response(baseResponse.SUCCESS_APPLE_LOGIN, appleLoginResultObj);
+        }
+
+        // 이미 가입된 유저라면 로그인 결과 return
+        if (appleAccountRow[0].email.length > 0 && appleAccountRow[0].type == 'apple') {
+            const appleAccountInfoRow = await userProvider.appleUserAccountInfo(appleAccountRow[0].email, 'apple');
+            const appleLoginResultObj = {
+                "message": '이미 가입된 유저입니다.',
+                "idx": appleAccountInfoRow[0].idx,
+                "email": appleAccountInfoRow[0].email,
+                "name": appleAccountInfoRow[0].name,
+                "profileImgUrl": appleAccountInfoRow[0].profileImgUrl,
+                "loginType": 'apple',
+            }
+            return response(baseResponse.SUCCESS_APPLE_LOGIN, appleLoginResultObj);
+        }
+    } catch(err) {
+        console.log(err);
+    }
+}
+
+
 exports.editIntroduce = async function(patchIntroductionParams) {
     const connection = await pool.getConnection(async (conn) => conn);
     try {
@@ -165,6 +238,22 @@ exports.editIntroduce = async function(patchIntroductionParams) {
         logger.error(`App - editUserIntroduction Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
 
+    } finally {
+        connection.release();
+    }
+}
+
+exports.getSalt = async function(email) {
+    const connection = await pool.getConnection(async (conn) => conn);
+
+    try {
+        const saltRows = await userDao.selectOnlySalt(connection, email);
+        console.log('Service- saltRows[0].salt: ', saltRows[0].salt);
+        const resultObj = saltRows[0].salt;
+        return response(baseResponse.SUCCESS, resultObj);
+    } catch (err) {
+        logger.error(`App - getSalt Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
     } finally {
         connection.release();
     }

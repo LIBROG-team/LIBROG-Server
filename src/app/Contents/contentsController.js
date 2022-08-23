@@ -2,7 +2,7 @@ const contentsProvider = require("../../app/Contents/contentsProvider");
 const contentsService = require("../../app/Contents/contentsService");
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response, errResponse} = require("../../../config/response");
-const multer = require("multer");
+
 
 /**
  * API No. 4.1
@@ -37,8 +37,6 @@ const multer = require("multer");
     console.log(req.file);
     console.log(req.body);
 
-    
-
     // const RecommendBooksResult = await contentsProvider.retrieveRecommendBooks();
-    return res.send(req.file);
+    return res.send(response(baseResponse.SUCCESS, req.file + `file url : www.librog.shop/source/profileImg/${req.file.filename}`));
 }

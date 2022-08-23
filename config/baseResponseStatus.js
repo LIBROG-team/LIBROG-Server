@@ -4,6 +4,7 @@ module.exports = {
     SUCCESS : { "isSuccess": true, "code": 1000, "message":"성공" },
     
     SUCCESS_KAKAO_LOGIN : { "isSuccess": true, "code": 1500, "message":"카카오 로그인 성공" },
+    SUCCESS_KAKAO_LOGIN : { "isSuccess": true, "code": 1501, "message":"애플 로그인 성공" },
 
     // Common
     TOKEN_EMPTY : { "isSuccess": false, "code": 2000, "message":"JWT 토큰을 입력해주세요." },
@@ -12,13 +13,15 @@ module.exports = {
     KAKAO_LOGIN_ERROR : { "isSuccess": false, "code": 3500, "message":"카카오 로그인에서 오류가 발생했습니다. 서버로그를 참조해주세요." },
     KAKAO_ACCESS_TOKEN_UNDEFINED : { "isSuccess": false, "code": 3501, "message":"카카오 Access Token 값이 비어있거나 유효하지 않습니다." },
     KAKAO_LOGIN_UNAUTHORIZED_ERROR : { "isSuccess": false, "code": 3502, "message":"카카오 로그인 에러. 인증되지 않은 Token 입니다. (code : 401)" },
+    APPLE_ACCESS_TOKEN_UNDEFINED: { "isSuccess": false, "code": 3503, "message":"Apple 인가코드 값이 비어있거나 유효하지 않습니다." },
+    APPLE_LOGIN_ERROR :{ "isSuccess": false, "code": 3504, "message":"Apple 로그인에서 오류가 발생했습니다. 서버로그를 참조해주세요." },
 
     // 2000 : 형식적 Validation Error
     USER_USERIDX_EMPTY : { "isSuccess": false, "code": 2001, "message": "userIdx를 입력해주세요." },
     USER_USERIDX_LENGTH : { "isSuccess": false, "code": 2002, "message": "userIdx는 0보다 큰 값으로 입력해주세요." },
     USER_USERIDX_WRONG : { "isSuccess": false, "code": 2003, "message":"유저 인덱스값이 유효한 값이 아닙니다." },
     INTRODUCE_QUOTE_LENGTH : { "isSuccess": false, "code": 2004, "message":"유저 자기소개는 300자를 넘길 수 없습니다." },
-    USER_ID_NOT_MATCH : { "isSuccess": false, "code": 2005, "message": "유저 아이디 값을 확인해주세요" },
+    USER_IDX_NOT_MATCH : { "isSuccess": false, "code": 2005, "message": "유저 인덱스 값을 확인해주세요" },
 
     RECORDS_FLOWERPOTIDX_EMPTY : { "isSuccess": false, "code": 2011, "message":"화분 인덱스값을 입력해주세요." },
     RECORDS_FLOWERPOTIDX_LENGTH : { "isSuccess": false, "code": 2012, "message":"화분 인덱스값은 0보다 큰 값으로 입력해주세요." },
@@ -58,7 +61,7 @@ module.exports = {
     SIGNIN_EMAIL_LENGTH : { "isSuccess": false, "code": 2051, "message":"email은 255글자 이하의 길이로 입력해주세요." },
     SIGNIN_EMAIL_ERROR_TYPE : { "isSuccess": false, "code": 2052, "message":"이메일을 형식을 정확하게 입력해주세요." },
     SIGNIN_PASSWORD_EMPTY : { "isSuccess": false, "code": 2053, "message":"password를 입력해주세요." },
-    SIGNIN_PASSWORD_LENGTH : { "isSuccess": false, "code": 2054, "message":"password는 8글자 이상의 길이로 입력해주세요." },
+    SIGNIN_PASSWORD_LENGTH : { "isSuccess": false, "code": 2054, "message":"password는 8글자 이상 20글자 이하의 길이로 입력해주세요." },
 
     FLOWERDATA_EMPTY : { "isSuccess": false, "code": 2060, "message": "flowerDataIdx를 입력해주세요." },
     FLOWERDATA_LENGTH : { "isSuccess": false, "code": 2061, "message": "flowerDataIdx는 0보다 큰 값으로 입력해주세요." },
@@ -95,6 +98,7 @@ module.exports = {
 
     RECORDS_NO_RECORDS : { "isSuccess": false, "code": 3015, "message":"지워졌거나 존재하지 않는 독서기록입니다." },
     RECORDS_NO_AUTHOR : { "isSuccess": false, "code": 3016, "message":"해당 독서기록에서 저자가 null값입니다." },
+    MAIN_FLOWERPOT_NOT_EXIST : { "isSuccess": false, "code": 3017, "message":"메인 화면에 표시할 화분이 없습니다." },
 
     // Response error
     SIGNIN_EMAIL_WRONG : { "isSuccess": false, "code": 3020, "message": "이메일이 잘못 되었습니다." },
@@ -104,6 +108,7 @@ module.exports = {
     SIGNUP_REDUNDANT_EMAIL : { "isSuccess": false, "code": 3024, "message":"중복된 이메일입니다." },
     CANT_CHANGE_PASSWORD_SOCIAL_ACCOUNT : { "isSuccess": false, "code": 3025, "message":"소셜 로그인 된 계정은 비밀번호를 변경할 수 없습니다." },
     SIGNIN_EMAIL_CANNOT_FIND : { "isSuccess": false, "code": 3026, "message": "해당 이메일로 가입된 계정이 존재하지 않습니다." },
+    NEW_PASSWORD_PLEASE : { "isSuccess": false, "code": 3027, "message": "기존 비밀번호와 동일한 비밀번호입니다. 새로운 비밀번호를 입력해주세요." },
 
 
     // 4000 : DB Error

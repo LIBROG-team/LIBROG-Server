@@ -11,7 +11,9 @@ const axios = require("axios");
 const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 const fs = require("fs");
-
+const appleAuth = require("apple-auth");
+const appleConfig = require("../../../config/apple_config.json");
+const authApple = new appleAuth(appleConfig, "../../../config/AuthKey_86KXQ3X755.p8")
 
 /**
  * API No. 1.1
@@ -77,6 +79,8 @@ const fs = require("fs");
         profileImgUrl,
         introduction
     );
+
+    
     
     return res.send(signUpResponse);
 
@@ -106,14 +110,57 @@ exports.deleteUsers = async function (req, res) {
 /**
  * API No. 1.5
  * API Name : 비밀번호 변경 API
- * [PATCH] /users
+ * [PATCH] /users/password/change
  */
+exports.changePassword = async function (req, res) {
+    /*
+    Body: userIdx, oldPassword, newPassword
+    */
+    const userIdx = req.body.userIdx;
+    const oldPassword = req.body.oldPassword;
+    const newPassword = req.body.newPassword;
+    // const confirmation = req.body.confirmation;
+    
+    // idx jwt
+    const userIdxFromJWT = req.verifiedToken.idx;
+    // console.log(req.verifiedToken);
+    // console.log(userIdxFromJWT);
 
+    if (userIdxFromJWT != userIdx) {
+        return res.send(errResponse(baseResponse.USER_IDX_NOT_MATCH));
+    }
+
+    //userIdx validation
+    if(!userIdx){
+        return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
+    }else if(userIdx <= 0){
+        return res.send(errResponse(baseResponse.USER_USERIDX_LENGTH));
+    }
+
+    //oldPassword validation
+    if (!oldPassword) {
+        return res.send(errResponse(baseResponse.SIGNIN_PASSWORD_EMPTY));
+    }   else if (oldPassword.length < 8 || oldPassword.length > 20) {
+        return res.send(errResponse(baseResponse.SIGNIN_PASSWORD_LENGTH));
+    }
+
+    //newPassword validation
+    if (!newPassword) {
+        return res.send(errResponse(baseResponse.SIGNIN_PASSWORD_EMPTY));
+    }   else if (newPassword.length < 8 || newPassword.length > 20) {
+        return res.send(errResponse(baseResponse.SIGNIN_PASSWORD_LENGTH));
+    }
+
+    // const patchPasswordParams = [userIdx, oldPassword, newPassword];
+
+    const changePasswordResult = await userService.changePassword(userIdx, oldPassword, newPassword);
+    return res.send(changePasswordResult);
+}
 
 /**
  * API No. 1.10
  * API Name : Kakao Token 인증 API
- * [POST] /app/users/kakao/certificate/
+ * [POST] /users/kakao/certificate/
  */
 exports.KakaoLogin = async function (req, res) {
 
@@ -160,6 +207,40 @@ exports.KakaoLogin = async function (req, res) {
 }
 
 /**
+ * API No. 1.11
+ * API Name : Apple Token 인증 API
+ * [POST] /users/apple/certificate/
+ */
+ exports.AppleLogin = async function (req, res) {
+
+    /**
+     * Body: accessToken
+     */
+
+     const { code } = req.body;
+
+     // code 값이 비었는지 확인
+     if (!code)
+         return res.send(response(baseResponse.APPLE_ACCESS_TOKEN_UNDEFINED));
+ 
+    try {
+        const response = await authApple.accessToken(code);
+        const idToken = jwt.decode(response.id_token);
+        const email = idToken.email;
+        const sub = idToken.sub;
+    } catch(err) {
+        console.log(err);
+        return res.send(errResponse(baseResponse.APPLE_LOGIN_ERROR));
+    }
+
+
+     // 가입된 유저인지 확인
+     const checkUser = await userService.checkAppleUser(email, sub);
+    return checkUser;
+}
+
+
+/**
  * API No. 1.20
  * API Name : 프로필 조회 API
  * [GET] /users/profile/:userIdx
@@ -172,7 +253,7 @@ exports.getProfile = async function (req, res) {
         return res.send(errResponse(baseResponse.USER_USERIDX_LENGTH));
     }
     const userProfileResult = await userProvider.userProfile(userIdx);
-    return res.send(userProfileResult);
+    return res.send(response(baseResponse.SUCCESS, userProfileResult));
 }
 
 /**
@@ -250,16 +331,23 @@ exports.editIntroduce = async function (req, res) {
             }
 
             const newPass = first + second + third + fourth + fifth + sixth;
-            const hashed = crypto.createHash('sha512').update(newPass).digest('hex');
-            return hashed;
+            return newPass
         }    
 
-    const findPasswordParams = [getNewPassword(), email];
+    const newPassword = getNewPassword();
+    
+    //salt
+    const gottensalt = await userService.getSalt(email);
+
+    //newPassword+salt=>암호화
+    const hashed = crypto.pbkdf2Sync(newPassword, gottensalt.result, 1, 64, 'sha512').toString('hex');
+    
+    const findPasswordParams = [hashed, email];
     const findPasswordResult = await userService.findPassword(findPasswordParams);
     
     // 실패했다면 이메일 전송하지 않음
     if (findPasswordResult.isSuccess == false) {
-        return res.send(findPasswordResult);
+        return res.send(response(baseResponse.SIGNIN_EMAIL_CANNOT_FIND));
     }
 
     // email 전송 부분
@@ -285,8 +373,9 @@ const textContent = `
       <br>
           만일 비밀번호 재설정 요청을 하신 적이 없는 경우 해당 이메일 주소로 회신하여 주시기 바랍니다. <br>
       <br>
-          임시발급 된 비밀번호는 다음과 같습니다.</div>
-      <div style="margin-top: 20px; width: 40vw; font-family: Pretendard; font-size: 20px;">${findPasswordParams[0]}</div>
+          임시발급 된 비밀번호는 아래와 같습니다.
+        </div>
+      <div style="margin-top: 20px; width: 40vw; font-family: Pretendard; font-size: 20px;">${newPassword}</div>
     </div>
 </body>
 </html>

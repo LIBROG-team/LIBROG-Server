@@ -58,8 +58,8 @@ module.exports = function(app){
     // 1.4 유저 탈퇴 API
     app.delete('/users/userDelete/:userIdx', user.deleteUsers);
 
-    // // 1.5 비밀번호 변경 API
-    // app.patch('/users/password/change', jwtMiddleware, user.changePassword);
+    // 1.5 비밀번호 변경 API
+    app.patch('/users/password/change', jwtMiddleware, user.changePassword);
 
     // // TODO: After 로그인 인증 방법 (JWT)
     // // 로그인 하기 API (JWT 생성)
@@ -71,10 +71,12 @@ module.exports = function(app){
     // TODO: 자동로그인 API (JWT 검증 및 Payload 내뱉기)
     // JWT 검증 API
     // app.get('/app/auto-login', jwtMiddleware, user.check);
-    // TODO: 탈퇴하기 API
 
     // 1.10 Kakao Login 및 인증
     app.post('/users/kakao/certificate/', user.KakaoLogin);
+
+    // 1.11 Apple Login 및 인증
+    app.post('/users/apple/certificate/', user.AppleLogin);
 
     // 1.20 자기소개 조회 api
     app.get('/users/profile/:userIdx', user.getProfile);

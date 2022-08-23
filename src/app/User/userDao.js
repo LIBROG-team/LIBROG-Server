@@ -14,8 +14,8 @@ async function selectUserEmail(connection, email) {
 // 유저 생성
 async function insertUserInfo(connection, insertUserInfoParams) {
     const insertUserInfoQuery = `
-          INSERT INTO User(email, password, name, profileImgUrl, introduction)
-          VALUES (?, ?, ?, ?, ?);
+          INSERT INTO User(email, password, salt, name, profileImgUrl, introduction)
+          VALUES (?, ?, ?, ?, ?, ?);
       `;
       
     const [insertUserInfoRow] = await connection.query(
@@ -34,11 +34,38 @@ async function selectUserPassword(connection, email, password) {
         WHERE email = ?`;
   const selectUserPasswordRow = await connection.query(
       selectUserPasswordQuery,
-      email,
-      password
+      [email,
+      password]
   );
 
   return selectUserPasswordRow;
+}
+
+//salt 체크
+async function selectUserSalt(connection, email) {
+  const selectUserSaltQuery = `
+        SELECT salt, idx
+        FROM User
+        WHERE email = ?`;
+  const selectUserSaltRow = await connection.query(
+      selectUserSaltQuery,
+      email
+  );
+  // console.log('dao salt:', selectUserSaltRow);
+  return selectUserSaltRow;
+}
+
+//salt 체크 for 임시비번설정
+async function selectOnlySalt(connection, email) {
+  const selectOnlySaltQuery = `
+        SELECT salt
+        FROM User
+        WHERE email = ?`;
+  const selectOnlySaltRow = await connection.query(
+    selectOnlySaltQuery,
+      email
+  );
+  return selectOnlySaltRow[0];
 }
 
 // 유저 계정 상태 체크 (jwt 생성 위해 idx 값도 가져온다.)
@@ -118,16 +145,59 @@ async function deleteUserUInfo(connection, userIdx) {
   return deleteUQueryRow[0];
 }
 
-// // 유저 탈퇴 시 존재하는 유저인지 확인()
-// async function IsItActiveUser(connection, userIdx) {
-//   const IsItActiveUserQuery = `
-//     SELECT idx
-//     FROM User
-//     WHERE idx = ?;
-//   `;
-//   const [IsItActiveUserRows] = await connection.query(IsItActiveUserQuery, userIdx);
-//   return IsItActiveUserRows;
-// }
+//기존 비밀번호 확인
+async function oldPasswordCheck(connection, userIdx, oldPassword) {
+
+  const oldPasswordCheckQuery = `
+  SELECT idx, password
+  FROM User
+  WHERE idx = ?;
+  `;
+  //이 쿼리로 가져온 u.password는 oldPassword로 선언되어야 함
+  //여기서 password는 hashed된 값이 아니므로
+  // 기존의 password라고 입력받은 걸 hashed처리한 값과 / db상에 password로 저장된 걸(이걸 쿼리에서 뽑아온 거임) 비교하면 됨 
+  const [oldPasswordCheckQueryRow] = await connection.query(
+    oldPasswordCheckQuery,
+    [userIdx, oldPassword]
+  );
+  return oldPasswordCheckQueryRow;
+}
+
+//saltCheck for chagnePassword
+async function saltCheck(connection, userIdx) {
+  const saltCheckQuery = `
+  SELECT salt
+  FROM User
+  WHERE idx = ?;
+  `;
+
+  const saltCheckQueryRow = await connection.query(
+    saltCheckQuery,
+    userIdx
+  );
+  // console.log('dao saltqueryrow: ', saltCheckQueryRow);
+  // console.log(saltCheckQueryRow[0]);
+  return saltCheckQueryRow[0];
+}
+
+//비밀번호 변경
+async function changeUserPassword(connection, hashedNewPassword, userIdx) {
+  const patchPasswordQuery = `
+  UPDATE User
+  SET password = ?
+  WHERE idx = ?;
+  `;
+
+
+  const [patchPasswordQueryRow] = await connection.query(
+      patchPasswordQuery,
+      [hashedNewPassword, userIdx]
+    );
+
+  // console.log('dao:', hashedNewPassword);
+
+  return patchPasswordQueryRow;
+}
 
 // 카카오계정 이메일이 존재하는지 확인
 async function kakaoUserAccountCheck(connection, email, type) {
@@ -169,6 +239,48 @@ async function kakaoUserAccountInfo(connection, email, type) {
           type
           );
       return kakaoUserAccountInfoRow;
+}
+
+// APPLE 계정 이메일이 존재하는지 확인
+async function appleUserAccountCheck(connection, email, type) {
+  const selectkakaoUserAccountQuery = `
+        SELECT email, type
+        FROM User
+        WHERE email = ? AND type = 'apple';`;
+        const [kakaoUserAccountCheckRow] = await connection.query(
+          selectkakaoUserAccountQuery,
+          email,
+          type,
+      );
+      return kakaoUserAccountCheckRow;
+}
+
+// APPLE 계정으로 로그인 시 DB에 계정이 없다면 DB에 새 계정을 등록
+async function appleUserAccountInsert(connection, insertAppleUserInfoParams) {
+  const insertAppleUserInfoQuery = `
+  INSERT INTO User(email, name, type, profileImgUrl)
+  VALUES (?, ?, ?, https://librog.shop/source/profileImg/default.png);
+  `;
+  const insertAppleUserInfoQueryRow = await connection.query(
+    insertAppleUserInfoQuery,
+    insertAppleUserInfoParams
+  );
+
+  return insertAppleUserInfoQueryRow;
+}
+
+// DB에 저장된 APPLE 로그인 정보 가져오기
+async function appleUserAccountInfo(connection, email, type) {
+  const selectappleUserAccountInfoQuery = `
+        SELECT idx, email, name, profileImgUrl, type
+        FROM User
+        WHERE email = ? AND type = 'apple';`;
+        const [appleUserAccountInfoRow] = await connection.query(
+          selectappleUserAccountInfoQuery,
+          email,
+          type
+          );
+      return appleUserAccountInfoRow;
 }
 
 async function getUserProfile(connection, userIdx) {
@@ -293,15 +405,22 @@ async function getProfileImgUrl(connection, idx) {
     selectUserEmail,
     insertUserInfo,
     selectUserPassword,
+    selectUserSalt,
+    selectOnlySalt,
     selectUserAccount,
-    // deleteUserRR,
     deleteUserRRInfo,
     deleteUserFPInfo,
     deleteUserUFLInfo,
     deleteUserUInfo,
+    oldPasswordCheck,
+    saltCheck,
+    changeUserPassword,
     kakaoUserAccountCheck,
     kakaoUserAccountInsert,
     kakaoUserAccountInfo,
+    appleUserAccountCheck,
+    appleUserAccountInsert,
+    appleUserAccountInfo,
     getUserProfile,
     editUserIntroduction,
     findPassword,

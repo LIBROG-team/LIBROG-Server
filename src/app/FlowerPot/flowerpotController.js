@@ -246,6 +246,11 @@ exports.getflowerpots = async function(req, res){
             }
         
             const getFlowerpotMainResponse = await flowerpotProvider.getFlowerpotMain(userIdx);
+            
+            if (!getFlowerpotMainResponse) {    // 0818 | 변수 == undefined로 하면 undefined가 변수로 취급되어 그 값이 undefined기때문에 true로 판단될 때도 있음. 하지만 오류나서 이렇게 수정.
+                return res.send(errResponse(baseResponse.MAIN_FLOWERPOT_NOT_EXIST))
+            }
+
             return res.send(response(baseResponse.SUCCESS, getFlowerpotMainResponse))
         }
 

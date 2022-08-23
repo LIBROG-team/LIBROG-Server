@@ -17,6 +17,16 @@ exports.emailCheck = async function (email) {
     connection.release();
     return passwordCheckResult[0];
   };
+
+  //salt
+  exports.saltCheck = async function (email) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const saltCheckResult = await userDao.selectUserSalt(connection, email);
+    connection.release();
+    // console.log(saltCheckResult[0]);
+    return saltCheckResult[0];
+  };
+
   
   exports.accountCheck = async function (email) {
     const connection = await pool.getConnection(async (conn) => conn);
@@ -40,6 +50,22 @@ exports.emailCheck = async function (email) {
     connection.release();
   
     return kakaoUserAccountInfoResult;
+  }
+
+  exports.appleAccountCheck = async function(email, type) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const appleAccountCheckResult = await userDao.appleUserAccountCheck(connection, email, type);
+    connection.release();
+  
+    return appleAccountCheckResult;
+  }
+
+  exports.appleUserAccountInfo = async function(email, type) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const appleUserAccountInfoResult = await userDao.appleUserAccountInfo(connection, email, type);
+    connection.release();
+  
+    return appleUserAccountInfoResult;
   }
 
   exports.userProfile = async function(userIdx) {

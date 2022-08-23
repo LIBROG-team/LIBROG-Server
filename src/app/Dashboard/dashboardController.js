@@ -67,3 +67,25 @@ exports.countUser = async function(req, res){
     return res.send(response(baseResponse.SUCCESS, patchFlowerDataResult));
 }
 
+/**
+ * 
+ * API No.10.40
+ * API Name : 프로모션 쿠폰코드 API
+ * [POST] /dashboard/promotion/code/certification
+ */
+exports.promotionCertification = async function(req, res){
+    console.log(req.body);
+    const {email, promotionCode} = req.body;
+    console.log(email, promotionCode);
+
+    if (!email) {
+        return res.send("Email을 입력해주세요.");
+    } else if (!promotionCode) {
+        return res.send("프로모션 코드를 입력해주세요.");
+    }
+
+    const promotionCertificationparams = [email, promotionCode];
+    const promotionCertificationResult = await dashboardService.promotionCertification(promotionCertificationparams);
+    
+    return res.send(response(baseResponse.SUCCESS, promotionCertificationResult));
+}
