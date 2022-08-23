@@ -11,9 +11,6 @@ const axios = require("axios");
 const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 const fs = require("fs");
-const appleAuth = require("apple-auth");
-const appleConfig = require("../../../config/apple_config.json");
-const authApple = new appleAuth(appleConfig, "../../../config/AuthKey_86KXQ3X755.p8")
 
 /**
  * API No. 1.1
