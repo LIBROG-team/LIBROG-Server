@@ -93,6 +93,7 @@ exports.deleteFlowerPotInfo = async function (flowerpotIdx) {
         // 유저 최근화분, 화분개수, 책 개수 저장
         const flowerCnt = userStatistics.result.flowerCnt;
         const readingCnt = userStatistics.result.readingCnt;
+        let newFlowers = [];    // 추가된 FD Idx 저장하는 배열
 
         // 유저 완료 화분 가져오기
         const completeFlowerList = await flowerpotDao.selectCompleteFlowerPot(connection, userIdx);
@@ -101,31 +102,36 @@ exports.deleteFlowerPotInfo = async function (flowerpotIdx) {
         const unacqFlowerList = await flowerpotDao.selectFlowerConditions(connection, userIdx);
         
         // 미획득 화분 돌면서 각각 조건에 따라 if로 나누어 조건 처리
-        unacqFlowerList.forEach(async ele => {
+        // for..of 문 사용해야 비동기 처리 안함.
+        for(ele of unacqFlowerList){
             if(ele.conditionCode == 0){
                 // 그냥 리턴
             }else if(ele.conditionCode == 1){ // ele는 미획득 화분의 각 요소
                 // 이전에 특정 화분을 끝내는 조건
-                completeFlowerList.forEach(async comp => {    // comp는 경험치를 다 채운 화분 요소
+                for(comp of completeFlowerList){    // comp는 경험치를 다 채운 화분 요소
                     if(ele.conditionReqVal == comp.idx){
                         // 조건 -> 화분 추가
                         const insertRows = await flowerpotDao.insertUserFlowerList(connection, userIdx, ele.flowerDataIdx);
+                        newFlowers.push(ele.flowerDataIdx); // 추가된 FlowerData Idx
                     }
-                });
+                }
             }else if(ele.conditionCode == 2){
                 // 화분개수 조건
                 if(flowerCnt >= ele.conditionReqVal){
                     const insertRows = await flowerpotDao.insertUserFlowerList(connection, userIdx, ele.flowerDataIdx);
+                    newFlowers.push(ele.flowerDataIdx);
                 }
             }else if(ele.conditionCode == 3){
                 // 독서기록 조건
                 if(readingCnt >= ele.conditionReqVal){
                     const insertRows = await flowerpotDao.insertUserFlowerList(connection, userIdx, ele.flowerDataIdx);
+                    newFlowers.push(ele.flowerDataIdx);
+
                 }
             }
-        });
+        }
         connection.commit();
-        return response(baseResponse.SUCCESS);
+        return response(baseResponse.SUCCESS, {'added':newFlowers});
     }catch(err){
         console.log(`App - flowerPotCondition Service Error\n: ${err.message}`);
         await connection.rollback();

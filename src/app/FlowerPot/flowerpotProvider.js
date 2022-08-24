@@ -176,11 +176,11 @@ exports.retrieveFlowerpot = async function (userIdx) {
         else if(getFlowerpot[0].exp <= getFlowerpot[0].maxExp*0.7){
           getFlowerpot[0].flowerImgUrl = 'https://librog.shop/source/flowerImg/002stem.png'
         }
+        return getFlowerpot[0];
       }catch(err){
         console.log(`App - flowerPotCondition Service Error\n: ${err.message}`);
         return errResponse(baseResponse.USER_NO_FLOWERPOTS);   
+      }finally{
+        connection.release();
       }
-
-    connection.release();
-    return getFlowerpot[0];
   }
