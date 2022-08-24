@@ -218,7 +218,7 @@ async function selectRecentBookRecords(connection, userIdx){
         LEFT JOIN User u on FP.userIdx = u.idx
         WHERE u.idx = ? AND rr.status = 'ACTIVE'
         ORDER BY rr.idx DESC
-        LIMIT 50;
+        LIMIT 10;
     `;
     const [selectRecentBookRecordsRows] = await connection.query(selectRecentBookRecordsQuery, userIdx);
     return selectRecentBookRecordsRows;
