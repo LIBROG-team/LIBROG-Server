@@ -69,7 +69,7 @@ exports.postRecords = async function(req, res){
     }
     // 저자 arr 요소 하나씩 validation
     authorArr.forEach((author) => {
-        if(author.length > 45){
+        if(author.length > 100){
             return res.send(errResponse(baseResponse.RECORDS_AUTHOR_LENGTH));
         }
     });
