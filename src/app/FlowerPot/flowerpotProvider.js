@@ -154,14 +154,19 @@ exports.retrieveFlowerpot = async function (userIdx) {
     const connection = await pool.getConnection(async (conn) => conn);
     const getFlowerpot = await flowerpotDao.selectFlowerpotMain(connection, userIdx);
 
-    
-      //경험치에 따라 이미지 변경
-        if(getFlowerpot[0].exp<= getFlowerpot[0].maxExp*0.4){
+      try{
+        //경험치에 따라 이미지 변경
+        if(getFlowerpot[0].exp <= getFlowerpot[0].maxExp*0.4){
           getFlowerpot[0].flowerImgUrl = 'https://librog.shop/source/flowerImg/001sprout.png'
         }
         else if(getFlowerpot[0].exp <= getFlowerpot[0].maxExp*0.7){
           getFlowerpot[0].flowerImgUrl = 'https://librog.shop/source/flowerImg/002stem.png'
         }
+      }catch(err){
+        console.log(`App - flowerPotCondition Service Error\n: ${err.message}`);
+        return errResponse(baseResponse.USER_NO_FLOWERPOTS);   
+      }
+        
   
     connection.release();
 

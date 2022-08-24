@@ -227,7 +227,8 @@ async function selectCondition(connection, userIdx){
             LEFT JOIN FlowerData FD on f.flowerDataIdx = FD.idx
             WHERE f.userIdx = ?;
       `;
-      const [selectConditionRows]
+      const [selectConditionRows] = await connection.query(conditionQuery, userIdx);
+      return selectConditionRows;
 }
   module.exports = {
     selectUserFlowerpot,
