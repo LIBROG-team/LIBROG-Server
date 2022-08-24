@@ -13,7 +13,7 @@ const {connect} = require("http2");
 
 
 // 첫 가입시 화분 추가해주기
-function getFirstFlowerpot(idx) {
+async function getFirstFlowerpot(idx) {
     const createdUserIdx = idx;
 
     const acqFlowerpotResult = await userDao.acquireFlowerpot(connection, createdUserIdx);
