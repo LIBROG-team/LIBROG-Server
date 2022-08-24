@@ -4,7 +4,7 @@ const flowerpotDao = require("./flowerpotDao");
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response, errResponse} = require("../../../config/response");
 const flowerpotProvider = require("./flowerpotProvider");
-
+const recordProvider = require("../Record/recordProvider");
 
 
 exports.deleteFlowerPotInfo = async function (flowerpotIdx) {
@@ -77,3 +77,37 @@ exports.deleteFlowerPotInfo = async function (flowerpotIdx) {
         connection.release();
     }
   };
+
+  // 3.10 조건에 맞는 화분 획득 API
+  exports.flowerPotCondition = async function(userIdx){
+    const connection = await pool.getConnection(async (conn) => conn);
+    try{
+        connection.beginTransaction();
+        const userStatistics = await recordProvider.readStatistics(userIdx);
+        if(!userStatistics.isSuccess){
+            connection.rollback();
+            connection.release();
+            return errResponse(baseResponse.STATISTICS_ERROR);
+        }
+        const [recentFlowerPot] = await flowerpotDao.selectRecentFlowerPot(connection, userIdx);
+        
+        if(!recentFlowerPot){
+            connection.rollback();
+            connection.release();
+            return errResponse(baseResponse.USER_NO_FLOWERPOTS);
+        }
+        const recentFlowerPotIdx = recentFlowerPot.idx;
+        const flowerCnt = userStatistics.result.flowerCnt;
+        const readingCnt = userStatistics.result.readingCnt;
+
+
+        connection.commit();
+        return ;
+    }catch(err){
+        console.log(`App - flowerPotCondition Service Error\n: ${err.message}`);
+        await connection.rollback();
+        return errResponse(baseResponse.DB_ERROR);   
+    }finally{
+        connection.release();
+    }
+  }

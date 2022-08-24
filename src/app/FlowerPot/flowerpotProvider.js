@@ -151,12 +151,11 @@ exports.retrieveFlowerpot = async function (userIdx) {
   };
 
   exports.getFlowerpotMain = async function (userIdx) {
-   
-    try{
     const connection = await pool.getConnection(async (conn) => conn);
-    const getFlowerpot = await flowerpotDao.selectFlowerpotMain(connection, userIdx);
-    const userFlowerpotResult = await flowerpotDao.selectUserFlowerpot(connection, userIdx);
-    const checkUserIdxRows = await flowerpotDao.checkUserIdx(connection, userIdx);
+    try{
+      const getFlowerpot = await flowerpotDao.selectFlowerpotMain(connection, userIdx);
+      const userFlowerpotResult = await flowerpotDao.selectUserFlowerpot(connection, userIdx);
+      const checkUserIdxRows = await flowerpotDao.checkUserIdx(connection, userIdx);
 
       // 유저 없는지
       if(checkUserIdxRows.length < 1){
@@ -177,13 +176,11 @@ exports.retrieveFlowerpot = async function (userIdx) {
         else if(getFlowerpot[0].exp <= getFlowerpot[0].maxExp*0.7){
           getFlowerpot[0].flowerImgUrl = 'https://librog.shop/source/flowerImg/002stem.png'
         }
-  
+      }catch(err){
+        console.log(`App - flowerPotCondition Service Error\n: ${err.message}`);
+        return errResponse(baseResponse.USER_NO_FLOWERPOTS);   
+      }
+
     connection.release();
     return getFlowerpot[0];
-
-  }catch(err){
-    console.log(`App - getFlowerpotMain Provider error\n: ${err.message}`);
-    connection.release();
-    return errResponse(baseResponse.DB_ERROR);
   }
-  };

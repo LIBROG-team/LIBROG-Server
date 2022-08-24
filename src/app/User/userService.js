@@ -143,13 +143,12 @@ exports.changePassword = async function (userIdx, oldPassword, newPassword) {
 
 
 exports.kakaoLogin = async function (kakaoResult) {
+    const connection = await pool.getConnection(async (conn) => conn);
     try {
         const kakaoAccountRow = await userProvider.kakaoAccountCheck(kakaoResult.email, 'kakao');
         if (kakaoAccountRow[0] === undefined) {
             // DB에 등록 되있지 않은 유저라면, DB에 정보 추가
             const insertKakaoUserInfoParams = [kakaoResult.email, kakaoResult.nickname, kakaoResult.profileImgUrl, 'kakao'];
-
-            const connection = await pool.getConnection(async (conn) => conn);
             
             const kakaoUserIdResult = await userDao.kakaoUserAccountInsert(connection, insertKakaoUserInfoParams);
             console.log(`추가된 회원 : ${kakaoUserIdResult[0].insertId}`)
@@ -181,6 +180,8 @@ exports.kakaoLogin = async function (kakaoResult) {
         }
     } catch(err) {
         console.log(err);
+    }finally{
+        connection.release();
     }
 
 }

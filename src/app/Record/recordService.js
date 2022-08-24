@@ -20,6 +20,8 @@ const recordDao = require("./recordDao");
 exports.createRecords = async function(createRecordsParams, userIdx){
     const connection = await pool.getConnection(async (conn) => conn);
     try{
+        // 트랜젝션 처리
+        await connection.beginTransaction();
         // bookIdx DB에 있는지 check? -> db에 있는것만 검색 api에서 주니까 pass
         // flowerPotIdx만 check -> 0725 최근 화분으로 고정.
         const flowerPotCheckResult = await recordDao.checkRecentFlowerPot(connection, userIdx);
@@ -43,11 +45,12 @@ exports.createRecords = async function(createRecordsParams, userIdx){
 
         // 화분에 updatedAt refresh 해주는 코드
         const updateFPDateResult = await recordDao.updateFlowerpotDate(connection, flowerPotIdx);
-
-
+        // transaction 커밋
+        await connection.commit();
         return response(baseResponse.SUCCESS, {'createdRecordId':createRecordsList.insertId});
     }catch(err){
         logger.error(`App - createRecords Service error\n: ${err.message}`);
+        await connection.rollback();
         return errResponse(baseResponse.DB_ERROR);
     }finally{
         connection.release();
@@ -61,10 +64,13 @@ exports.createRecords = async function(createRecordsParams, userIdx){
 exports.createBook = async function(createBookParams){
     const connection = await pool.getConnection(async (conn) => conn);
     try{
+        await connection.beginTransaction();
         const createBookList = await recordDao.insertBookIdx(connection, createBookParams);
+        await connection.commit();
         return response(baseResponse.SUCCESS, createBookList);
     }catch(err){
         logger.error(`App - createBook Service error\n: ${err.message}`);
+        await connection.rollback();
         return errResponse(baseResponse.DB_ERROR);
     }finally{
         connection.release();
@@ -80,6 +86,7 @@ exports.editRecords = async function(patchRecordsParams){
     const connection = await pool.getConnection(async (conn) => conn);
     const recordIdx = patchRecordsParams[3];
     try{
+        await connection.beginTransaction();
         // validation - records 삭제되고 없을때
         const checkRecordsList = await recordDao.checkRecords(connection, patchRecordsParams[3]);
         if(checkRecordsList.length < 1 || checkRecordsList[0].status === 'DELETED'){
@@ -94,9 +101,11 @@ exports.editRecords = async function(patchRecordsParams){
         rewriteExp(connection, recordIdx, flowerPotIdx, 0);
         
         // 결과 return
+        await connection.commit();
         return response(baseResponse.SUCCESS, editRecordsList);
     }catch(err){
         logger.error(`App - editRecords Service error\n: ${err.message}`);
+        await connection.rollback();
         return errResponse(baseResponse.DB_ERROR);
     }finally{
         connection.release();
@@ -110,6 +119,7 @@ exports.editRecords = async function(patchRecordsParams){
 exports.removeRecords = async function(recordsIdx){
     const connection = await pool.getConnection(async (conn) => conn);
     try{
+        await connection.beginTransaction();
         // validation - records 삭제되고 없을때
         const checkRecordsList = await recordDao.checkRecords(connection, recordsIdx);
         if(checkRecordsList.length < 1 || checkRecordsList[0].status === 'DELETED'){
@@ -121,9 +131,11 @@ exports.removeRecords = async function(recordsIdx){
         rewriteExp(connection, recordsIdx, flowerPotIdx, 1);
         // readingRecord 삭제
         const removeRecordsList = await recordDao.deleteRecords(connection, recordsIdx);
+        await connection.commit();
         return response(baseResponse.SUCCESS, removeRecordsList);
     }catch(err){
         logger.error(`App - removeRecords Service error\n: ${err.message}`);
+        await connection.rollback();
         return errResponse(baseResponse.DB_ERROR);
     }finally{
         connection.release();
