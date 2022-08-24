@@ -207,28 +207,36 @@ async function checkFlowerpotIdx(connection, flowerpotIdx){
       return selectFlowerMainQueryRows;
   }
     
-// 가장 최근 화분 조회 쿼리
-async function selectRecentFlowerPot(connection, userIdx){
+// 다 채운 화분 조회 쿼리
+async function selectCompleteFlowerPot(connection, userIdx){
       const recentFlowerPotQuery = `
-            SELECT f.idx, f.createdAt, f.exp
+            SELECT FD.idx, f.createdAt, f.exp
             FROM FlowerPot f
             LEFT JOIN FlowerData FD ON FD.idx = f.flowerDataIdx
             WHERE f.userIdx = ? AND f.exp >= FD.maxExp
             ORDER BY createdAt DESC;
       `;
-      const [selectRecentFlowerPotRows] = await connection.query(recentFlowerPotQuery, userIdx);
-      return selectRecentFlowerPotRows;
+      const [selectCompleteFlowerPotRows] = await connection.query(recentFlowerPotQuery, userIdx);
+      return selectCompleteFlowerPotRows;
 }
-
-async function selectCondition(connection, userIdx){
+// 미획득 화분들 조건 조회 쿼리
+async function selectFlowerConditions(connection, userIdx){
       const conditionQuery = `
-            SELECT f.idx, FD.condition
-            FROM FlowerPot f
-            LEFT JOIN FlowerData FD on f.flowerDataIdx = FD.idx
-            WHERE f.userIdx = ?;
+            SELECT fd.idx as flowerDataIdx, fd.conditionCode, fd.conditionReqVal
+            FROM FlowerData as fd
+            WHERE  fd.idx NOT IN (SELECT  fd.idx FROM UserFlowerList as fl left join FlowerData as fd on fd.idx =fl.flowerDataIdx
+            WHERE fl.userIdx = ?);
       `;
       const [selectConditionRows] = await connection.query(conditionQuery, userIdx);
       return selectConditionRows;
+}
+
+async function insertUserFlowerList(connection, userIdx, flowerDataIdx){
+      const insertQuery = `
+            INSERT INTO UserFlowerList (userIdx, flowerDataIdx) VALUES (?, ?);
+      `;
+      const [insertResult] = await connection.query(insertQuery, [userIdx, flowerDataIdx]);
+      return insertResult;
 }
   module.exports = {
     selectUserFlowerpot,
@@ -244,5 +252,7 @@ async function selectCondition(connection, userIdx){
     deleteNoRecordFlowerPot,
     checkRecordCount,
     selectFlowerpotMain,
-    selectRecentFlowerPot,
+    selectCompleteFlowerPot,
+    selectFlowerConditions,
+    insertUserFlowerList
   };
