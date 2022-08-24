@@ -1,4 +1,4 @@
-const baseResponse = require("../../../config/baseResponseStatus");
+﻿const baseResponse = require("../../../config/baseResponseStatus");
 const { pool } = require("../../../config/database");
 const { response, errResponse } = require("../../../config/response");
 const { logger } = require("../../../config/winston");
@@ -87,7 +87,7 @@ exports.readStatistics = async function(userIdx){
 }
 /**
  * API No. 2.7
- * API Name: �쑀���蹂� 理쒓렐 �씫��� 梨� 議고쉶 API
+ * API Name: 최근 읽은 책 조회 API
  * [GET] /records/bookRecords/:userIdx
  */
 exports.readRecentBookRecords = async function(userIdx){
@@ -115,7 +115,7 @@ exports.readRecentBookRecords = async function(userIdx){
 }
 /**
  * API No. 2.8
- * API Name: �룆�꽌湲곕줉 �긽�꽭議고쉶 API
+ * API Name: 독서기록 상세조회 API
  * [GET] /records/:readingRecordIdx
  */
 exports.retriveReadingRecord = async function(readingRecordIdx){
@@ -144,7 +144,7 @@ exports.retriveReadingRecord = async function(readingRecordIdx){
 
 /**
  * API No. 2.9
- * API Name: �쑀��� �쟾泥� �룆�꽌湲곕줉 �븘�꽣 (理쒓렐 �닚) api
+ * API Name: 유저 전체 독서기록 필터 (최근 순) api
  * [GET] /records/readingRecord/filter/recent/:userIdx
  */
 
@@ -160,15 +160,16 @@ exports.retriveFilterRecent = async function (userIdx) {
     }catch(err){
         logger.error(`App - retriveReadingRecord Provider error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
+    }finally{
+        connection.release();
     }
-
-    connection.release();
+    
     return response(baseResponse.SUCCESS, retriveFilterRecent);
 }
 
 /**
  * API No. 2.10
- * API Name: �쑀��� �쟾泥� �룆�꽌湲곕줉 �븘�꽣 (蹂꾩젏 �닚) api
+ * API Name: 유저 전체 독서기록 필터 (별점 순) api
  * [GET] /records/readingRecord/filter/rating/:userIdx
  */
  exports.retriveFilterRating = async function (userIdx) {
@@ -191,7 +192,7 @@ exports.retriveFilterRecent = async function (userIdx) {
 
 /**
  * API No. 2.11
- * API Name: �쑀��� �쟾泥� �룆�꽌湲곕줉 �븘�꽣 (�젣紐� �닚) api
+ * API Name: 유저 전체 독서기록 필터 (제목 순) api
  * [GET] /records/readingRecord/filter/title/:userIdx
  */
  exports.retriveFilterTitle = async function (userIdx) {
@@ -247,7 +248,7 @@ exports.retrieveMainPageInfo = async function(userIdx){
     }
 }
 
-// DB 議고쉶 API
+// DB 조회 API
 
 exports.readBookDB = async function(){
     const connection = await pool.getConnection(async (conn) => conn);

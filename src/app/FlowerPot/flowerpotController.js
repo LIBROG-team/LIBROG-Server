@@ -255,4 +255,20 @@ exports.getflowerpots = async function(req, res){
             return res.send(response(baseResponse.SUCCESS, getFlowerpotMainResponse))
         }
 
+/**
+ * API No. 3.10
+ * API Name: 조건에 맞는 화분 획득 API
+ * [POST] /flowerpots/new/:userIdx
+ */
+exports.checkFlowerContidion = async function(req, res){
+    const userIdx = req.params.userIdx;
+    // validation
+    if(!userIdx){
+        return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
+    }else if(userIdx <= 0){
+        return res.send(errResponse(baseResponse.USER_USERIDX_LENGTH));
+    }
     
+    const checkFlowerContidionResult = await flowerpotService.flowerPotCondition(userIdx);
+    return res.send(checkFlowerContidionResult);
+}

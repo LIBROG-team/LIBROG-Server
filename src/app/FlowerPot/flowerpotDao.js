@@ -207,9 +207,29 @@ async function checkFlowerpotIdx(connection, flowerpotIdx){
       return selectFlowerMainQueryRows;
   }
     
-   
+// 가장 최근 화분 조회 쿼리
+async function selectRecentFlowerPot(connection, userIdx){
+      const recentFlowerPotQuery = `
+            SELECT f.idx, f.createdAt, f.exp
+            FROM FlowerPot f
+            LEFT JOIN FlowerData FD ON FD.idx = f.flowerDataIdx
+            WHERE f.userIdx = ? AND f.exp >= FD.maxExp
+            ORDER BY createdAt DESC;
+      `;
+      const [selectRecentFlowerPotRows] = await connection.query(recentFlowerPotQuery, userIdx);
+      return selectRecentFlowerPotRows;
+}
 
-
+async function selectCondition(connection, userIdx){
+      const conditionQuery = `
+            SELECT f.idx, FD.condition
+            FROM FlowerPot f
+            LEFT JOIN FlowerData FD on f.flowerDataIdx = FD.idx
+            WHERE f.userIdx = ?;
+      `;
+      const [selectConditionRows] = await connection.query(conditionQuery, userIdx);
+      return selectConditionRows;
+}
   module.exports = {
     selectUserFlowerpot,
     selectUserAcquiredFlowerpot,
@@ -224,4 +244,5 @@ async function checkFlowerpotIdx(connection, flowerpotIdx){
     deleteNoRecordFlowerPot,
     checkRecordCount,
     selectFlowerpotMain,
+    selectRecentFlowerPot,
   };
