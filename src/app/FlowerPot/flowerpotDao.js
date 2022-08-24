@@ -230,7 +230,7 @@ async function selectFlowerConditions(connection, userIdx){
       const [selectConditionRows] = await connection.query(conditionQuery, userIdx);
       return selectConditionRows;
 }
-
+// 3.10 UserFlowerList에 조건 맞는 flowerDataIdx 추가해 주는 쿼리
 async function insertUserFlowerList(connection, userIdx, flowerDataIdx){
       const insertQuery = `
             INSERT INTO UserFlowerList (userIdx, flowerDataIdx) VALUES (?, ?);
