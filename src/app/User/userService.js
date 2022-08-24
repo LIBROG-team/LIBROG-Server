@@ -13,7 +13,7 @@ const {connect} = require("http2");
 
 
 // 첫 가입시 화분 추가해주기
-async function getFirstFlowerpot(idx) {
+async function getFirstFlowerpot(idx, connection) {
     const createdUserIdx = idx;
 
     const acqFlowerpotResult = await userDao.acquireFlowerpot(connection, createdUserIdx);
@@ -55,7 +55,7 @@ exports.createUser = async function (email, password, name, profileImgUrl, intro
         const userIdResult = await userDao.insertUserInfo(connection, insertUserInfoParams);
 
         ////초기 화분 추가 api
-        getFirstFlowerpot(userIdResult.insertId);
+        getFirstFlowerpot(userIdResult.insertId, connection);
 
 
         // console.log(userIdResult[0].insertId);
@@ -165,7 +165,7 @@ exports.kakaoLogin = async function (kakaoResult) {
                 "loginType": 'kakao',
             }
 
-            getFirstFlowerpot(kakaoUserIdResult[0].insertId);
+            getFirstFlowerpot(kakaoUserIdResult[0].insertId, connection);
             return response(baseResponse.SUCCESS_KAKAO_LOGIN, kakaoLoginResultObj);
         }
 
