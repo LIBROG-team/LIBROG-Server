@@ -160,9 +160,10 @@ exports.retriveFilterRecent = async function (userIdx) {
     }catch(err){
         logger.error(`App - retriveReadingRecord Provider error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
+    }finally{
+        connection.release();
     }
-
-    connection.release();
+    
     return response(baseResponse.SUCCESS, retriveFilterRecent);
 }
 
