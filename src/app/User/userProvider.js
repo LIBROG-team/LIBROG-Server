@@ -76,3 +76,10 @@ exports.emailCheck = async function (email) {
     connection.release();
     return getProfileImgUrlResult[0].profileImgUrl;
   }
+
+  exports.getAccountCheckWithType = async function(email) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const getAccountCheckWithTypeResult = await userDao.getAccountCheckWithType(connection, email);
+    connection.release();
+    return getAccountCheckWithTypeResult;
+  }
