@@ -5,6 +5,7 @@ const baseResponse = require("../../../config/baseResponseStatus");
 const {response, errResponse} = require("../../../config/response");
 const flowerpotProvider = require("./flowerpotProvider");
 const recordProvider = require("../Record/recordProvider");
+const recordDao = require("../Record/recordDao");
 
 
 exports.deleteFlowerPotInfo = async function (flowerpotIdx) {
@@ -61,7 +62,7 @@ exports.deleteFlowerPotInfo = async function (flowerpotIdx) {
         if(addFlowerpotResult.length < 1){
             connection.release();
             return errResponse(baseResponse.FLOWERLIST_NO_FLOWERPOTS);
-          }
+        }
 
        
         await connection.commit();
@@ -135,8 +136,36 @@ exports.deleteFlowerPotInfo = async function (flowerpotIdx) {
     }catch(err){
         console.log(`App - flowerPotCondition Service Error\n: ${err.message}`);
         await connection.rollback();
-        return errResponse(baseResponse.DB_ERROR);   
+        return errResponse(baseResponse.DB_ERROR);
     }finally{
         connection.release();
     }
   }
+
+// 화분 획득 api (UserFlowerList에 추가)
+exports.addUFLList = async function(userIdx, flowerDataIdx){
+    const connection = await pool.getConnection(async (conn) => conn);
+    try{
+        connection.beginTransaction();
+        // user Status Check
+        const userStatus = await recordDao.checkUserIdx(connection, userIdx);
+        if(!userStatus){
+            return errResponse(baseResponse.USER_NOT_EXIST);
+        }else if(userStatus[0].status === 'INACTIVE'){
+            return errResponse(baseResponse.USER_INACTIVE_USER);
+        }else if(userStatus[0].status === 'DELETED'){
+            return errResponse(baseResponse.USER_DELETED_USER);
+        }
+
+        // UserFlowerList에 추가
+        const addResult = await flowerpotDao.insertUserFlowerList(connection, userIdx, flowerDataIdx);
+        connection.commit();
+        return response(baseResponse.SUCCESS, addResult);
+    }catch(err){
+        console.log(`App - addURLList Service Error\n: ${err.message}`);
+        await connection.rollback();
+        return errResponse(baseResponse.DB_ERROR);
+    }finally{
+        connection.release();
+    }
+}
