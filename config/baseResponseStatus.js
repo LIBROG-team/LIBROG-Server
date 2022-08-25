@@ -36,7 +36,7 @@ module.exports = {
     RECORDS_CONTENT_LENGTH : { "isSuccess": false, "code": 2031, "message":"content는 10000자보다 짧게 입력해주세요." },
 
     
-    RECORDS_AUTHOR_LENGTH : { "isSuccess": false, "code": 2033, "message":"author값은 45자보다 짧게 입력해주세요." },
+    RECORDS_AUTHOR_LENGTH : { "isSuccess": false, "code": 2033, "message":"author값은 100자보다 짧게 입력해주세요." },
     RECORDS_PUBLISHER_LENGTH : { "isSuccess": false, "code": 2035, "message":"publisher값은 45자보다 짧게 입력해주세요." },
     RECORDS_PUBLISHED_DATE_LENGTH : { "isSuccess": false, "code": 2037, "message":"publishedDate값은 45자보다 짧게 입력해주세요." },
 
@@ -71,7 +71,7 @@ module.exports = {
     FLOWERLIST_EMPTY : { "isSuccess": false, "code": 2091, "message": "flowerListIdx를 입력해주세요." },
     FLOWERLIST_LENGTH : { "isSuccess": false, "code": 2092, "message": "flowerListIdx는 0보다 큰 값으로 입력해주세요." },
 
-
+    COUPON_CODE_EMPTY : { "isSuccess": false, "code": 2100, "message": "프로모션 코드를 입력해주세요." },
 
 
 
@@ -100,6 +100,9 @@ module.exports = {
     MAIN_FLOWERPOT_NOT_EXIST : { "isSuccess": false, "code": 3017, "message":"메인 화면에 표시할 화분이 없습니다." },
 
     STATISTICS_ERROR : { "isSuccess": false, "code": 3018, "message":"유저 통계를 불러오던 중 오류가 발생했습니다." },
+
+    NOT_VALID_COUPON : { "isSuccess": false, "code": 3019, "message":"유효하지 않은 쿠폰번호 입니다." },
+    COUPON_ADDED : { "isSuccess": false, "code": 3028, "message":"이미 추가된 쿠폰번호 입니다." },
     // Response error
     SIGNIN_EMAIL_WRONG : { "isSuccess": false, "code": 3020, "message": "이메일이 잘못 되었습니다." },
     SIGNIN_PASSWORD_WRONG : { "isSuccess": false, "code": 3021, "message": "비밀번호가 잘못 되었습니다." },

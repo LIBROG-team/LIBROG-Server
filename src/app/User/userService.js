@@ -11,6 +11,23 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const {connect} = require("http2");
 
+
+// 첫 가입시 화분 추가해주기
+async function getFirstFlowerpot(idx, connection) {
+    const createdUserIdx = idx;
+
+    const acqFlowerpotResult = await userDao.acquireFlowerpot(connection, createdUserIdx);
+    if(acqFlowerpotResult.length < 1){
+        connection.release();
+        return errResponse(baseResponse.USER_NOT_EXIST);
+    }
+    const userFlowerpotResult = await userDao.userFlowerpot(connection, createdUserIdx);
+    if(userFlowerpotResult.length < 1){
+        connection.release();
+        return errResponse(baseResponse.USER_NOT_EXIST);
+    }
+}
+
 // Service: Create, Update, Delete 비즈니스 로직 처리
 
 exports.createUser = async function (email, password, name, profileImgUrl, introduction) {
@@ -38,22 +55,7 @@ exports.createUser = async function (email, password, name, profileImgUrl, intro
         const userIdResult = await userDao.insertUserInfo(connection, insertUserInfoParams);
 
         ////초기 화분 추가 api
-
-        const createdUserIdx= userIdResult.insertId;
-
-        const acqFlowerpotResult = await userDao.acquireFlowerpot(connection, createdUserIdx);
-        if(acqFlowerpotResult.length < 1){
-            connection.release();
-            return errResponse(baseResponse.USER_NOT_EXIST);
-        }
-        const userFlowerpotResult = await userDao.userFlowerpot(connection, createdUserIdx);
-        if(userFlowerpotResult.length < 1){
-            connection.release();
-            return errResponse(baseResponse.USER_NOT_EXIST);
-        }
-
-        
-
+        getFirstFlowerpot(userIdResult.insertId, connection);
 
 
         // console.log(userIdResult[0].insertId);
@@ -162,6 +164,8 @@ exports.kakaoLogin = async function (kakaoResult) {
                 "profileImgUrl": kakaoResult.profileImgUrl,
                 "loginType": 'kakao',
             }
+
+            getFirstFlowerpot(kakaoUserIdResult[0].insertId, connection);
             return response(baseResponse.SUCCESS_KAKAO_LOGIN, kakaoLoginResultObj);
         }
 
