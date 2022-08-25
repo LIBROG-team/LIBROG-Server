@@ -84,10 +84,18 @@ exports.deleteFlowerPotInfo = async function (flowerpotIdx) {
     const connection = await pool.getConnection(async (conn) => conn);
     try{
         connection.beginTransaction();
+        // user Status Check
+        const userStatus = await recordDao.checkUserIdx(connection, userIdx);
+        if(userStatus.length < 1){
+            return errResponse(baseResponse.USER_NOT_EXIST);
+        }else if(userStatus[0].status === 'INACTIVE'){
+            return errResponse(baseResponse.USER_INACTIVE_USER);
+        }else if(userStatus[0].status === 'DELETED'){
+            return errResponse(baseResponse.USER_DELETED_USER);
+        }
         // 독서통계 -> 화분/책 개수 가져옴
         const userStatistics = await recordProvider.readStatistics(userIdx);
         if(!userStatistics.isSuccess){
-            // connection.rollback();
             connection.release();
             return errResponse(baseResponse.STATISTICS_ERROR);
         }
