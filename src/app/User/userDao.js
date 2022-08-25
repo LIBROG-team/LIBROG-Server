@@ -359,6 +359,17 @@ async function getProfileImgUrl(connection, idx) {
   return userFlowerpotRow;
 }
 
+// type, account check
+async function getAccountCheckWithType(connection, email) {
+  const getAccountCheckWithTypeQuery = `
+  SELECT email, type
+  FROM User
+  WHERE email = ?
+  `;
+  const [getAccountCheckWithTypeRow] = await connection.query(getAccountCheckWithTypeQuery, email);
+  return getAccountCheckWithTypeRow;
+}
+
   module.exports = {
     selectUserEmail,
     insertUserInfo,
@@ -384,5 +395,6 @@ async function getProfileImgUrl(connection, idx) {
     editProfile,
     getProfileImgUrl,
     acquireFlowerpot,
-    userFlowerpot
+    userFlowerpot,
+    getAccountCheckWithType,
   };

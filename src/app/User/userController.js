@@ -301,9 +301,18 @@ exports.editIntroduce = async function (req, res) {
     const newPassword = getNewPassword();
     
     //salt
+    const checkEmail = await userProvider.getAccountCheckWithType(email);
+
+    if (!checkEmail[0]) {
+        console.log(`checkemail[0] is undefined`)
+        return res.send(errResponse(baseResponse.SIGNIN_EMAIL_CANNOT_FIND));
+    } else if (checkEmail[0].type) {
+        return res.send(errResponse(baseResponse.CANT_CHANGE_PASSWORD_SOCIAL_ACCOUNT));
+    }
+
     const gottensalt = await userService.getSalt(email);
 
-    //newPassword+salt=>암호화
+    //newPassword + salt=>암호화
     const hashed = crypto.pbkdf2Sync(newPassword, gottensalt.result, 1, 64, 'sha512').toString('hex');
     
     const findPasswordParams = [hashed, email];
