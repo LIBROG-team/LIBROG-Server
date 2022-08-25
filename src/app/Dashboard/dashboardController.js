@@ -93,7 +93,7 @@ exports.promotionCertification = async function(req, res){
     // 검증 성공시 추가
     if(promotionCertificationResult.isSuccess){ 
         // console.log(promotionCertificationResult);
-        const flowerDataIdx = promotionCertificationResult.result.rewardsIdx;  // + 3 하면 fdIdx 값 됨.
+        const flowerDataIdx = promotionCertificationResult.result.rewardIdx;  // + 3 하면 fdIdx 값 됨.
         const userIdxList = await userProvider.accountCheck(email);
         if(!userIdxList){   // 유저 인덱스 없으면 오류나서 여기서 검증.
             return res.send(errResponse(baseResponse.USER_NOT_EXIST));

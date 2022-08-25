@@ -6,6 +6,7 @@ const userDao = require("./userDao");
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response} = require("../../../config/response");
 const {errResponse} = require("../../../config/response");
+const recordDao = require("../Record/recordDao");
 
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
@@ -78,7 +79,15 @@ API Name: 유저 탈퇴 API
 exports.deleteUserInfo = async function (userIdx) {
     const connection = await pool.getConnection(async (conn) => conn);
     try {
-
+        connection.beginTransaction();
+        // const userStatus = await recordDao.checkUserIdx(connection, userIdx);
+        // if(userStatus.length < 1){
+        //     return errResponse(baseResponse.USER_NOT_EXIST);
+        // }else if(userStatus[0].status === 'INACTIVE'){
+        //     return errResponse(baseResponse.USER_INACTIVE_USER);
+        // }else if(userStatus[0].status === 'DELETED'){
+        //     return errResponse(baseResponse.USER_DELETED_USER);
+        // }
         const deleteUserRRInfoResult = await userDao.deleteUserRRInfo(connection, userIdx);
         // console.log('SUCCESS. You deleted 1. ReadingRecord.');
         const deleteUserFPInfoResult = await userDao.deleteUserFPInfo(connection, userIdx);
@@ -88,8 +97,10 @@ exports.deleteUserInfo = async function (userIdx) {
         const deleteUserUInfoResult = await userDao.deleteUserUInfo(connection, userIdx);
         // console.log('SUCCESS. You deleted 4. User.');
 
+        connection.commit();
         return response(baseResponse.SUCCESS, { 'deletedUserIdx': userIdx });
     } catch (err) {
+        connection.rollback();
         console.log(`App - deleteUserInfo Service error\n: ${err.message}`);
         return errResponse(baseResponse.DB_ERROR);
     } finally {
