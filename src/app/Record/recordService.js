@@ -149,16 +149,17 @@ async function rewriteExp(connection, recordIdx, flowerPotIdx, ifDel) {
     const {starRating, quote, content, exp} = readingRecordStatus;
     
     let postExp = 0;
-    let max = 4000;
+    let max = 3000;
+    let ratioSum = 6;
     if(!ifDel){ // 지우지 않을때만. 지울때는 postExp == 0으로 산정 -> ReadingRecord, FlowerPot table에 반영.
         if(starRating !== null){
-            postExp += 500;
+            postExp += max * 1;
         }
         if(quote !== null){
-            postExp += 1500;
+            postExp += max * 2;
         }
         if(content !== null){
-            postExp += 3000;
+            postExp += max * 1;
         }
     }
 
