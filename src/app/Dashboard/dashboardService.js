@@ -43,7 +43,7 @@ exports.promotionCertification = async function(promotionCertificationparams) {
         }
         // 유저가 이미 화분 획득했는지 검증
         const userIdx = await userDao.selectUserAccount(connection, email);
-        const userFlowerList = await flowerpotDao.selectUFLList(connection, userIdx[0].idx, promotionCertification[0].rewardsIdx);
+        const userFlowerList = await flowerpotDao.selectUFLList(connection, userIdx[0].idx, promotionCertification[0].rewardIdx);
         // console.log(userFlowerList);
         if(userFlowerList.length > 0){
             return errResponse(baseResponse.COUPON_ADDED);
