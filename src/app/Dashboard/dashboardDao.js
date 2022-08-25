@@ -55,7 +55,7 @@ async function certificateEmail(connection, email) {
 
 async function promotionCertification(connection, code) {
   const promotionCertificationQuery = `
-  SELECT idx, couponName, rewards, code
+  SELECT idx, couponName, rewards, code, rewardIdx
   FROM PromotionCode
   WHERE code = ?`
   const [promotionCertificationRow] = await connection.query(promotionCertificationQuery, code);
