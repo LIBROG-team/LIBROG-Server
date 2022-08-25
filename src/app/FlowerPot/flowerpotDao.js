@@ -230,13 +230,23 @@ async function selectFlowerConditions(connection, userIdx){
       const [selectConditionRows] = await connection.query(conditionQuery, userIdx);
       return selectConditionRows;
 }
-// 3.10 UserFlowerList에 조건 맞는 flowerDataIdx 추가해 주는 쿼리
+// 3.10 UserFlowerList에 조건 맞는 flowerDataIdx 추가해 주는 쿼리 / 화분 획득 쿼리
 async function insertUserFlowerList(connection, userIdx, flowerDataIdx){
       const insertQuery = `
             INSERT INTO UserFlowerList (userIdx, flowerDataIdx) VALUES (?, ?);
       `;
       const [insertResult] = await connection.query(insertQuery, [userIdx, flowerDataIdx]);
       return insertResult;
+}
+// 화분 획득 조회 api
+async function selectUFLList(connection, userIdx, flowerDataIdx){
+      const selectQuery = `
+            SELECT ufl.idx
+            FROM UserFlowerList ufl
+            WHERE ufl.userIdx = ? AND ufl.flowerDataIdx = ?;
+      `;
+      const [selectUFLListResult] = await connection.query(selectQuery, [userIdx, flowerDataIdx]);
+      return selectUFLListResult;
 }
   module.exports = {
     selectUserFlowerpot,
@@ -254,5 +264,6 @@ async function insertUserFlowerList(connection, userIdx, flowerDataIdx){
     selectFlowerpotMain,
     selectCompleteFlowerPot,
     selectFlowerConditions,
-    insertUserFlowerList
+    insertUserFlowerList,
+    selectUFLList
   };

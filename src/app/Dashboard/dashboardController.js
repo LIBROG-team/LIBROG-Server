@@ -2,6 +2,8 @@ const dashboardProvider = require("../../app/Dashboard/dashboardProvider");
 const dashboardService = require("../../app/Dashboard/dashboardService");
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response, errResponse} = require("../../../config/response");
+const flowerpotService = require("../FlowerPot/flowerpotService");
+const userProvider = require("../User/userProvider");
 
 /**
  * API No.10.1
@@ -74,18 +76,30 @@ exports.countUser = async function(req, res){
  * [POST] /dashboard/promotion/code/certification
  */
 exports.promotionCertification = async function(req, res){
-    console.log(req.body);
+    // console.log(req.body);
     const {email, promotionCode} = req.body;
-    console.log(email, promotionCode);
+    // console.log(email, promotionCode);
 
     if (!email) {
-        return res.send("Email을 입력해주세요.");
+        return res.send(errResponse(baseResponse.SIGNIN_EMAIL_EMPTY))
     } else if (!promotionCode) {
-        return res.send("프로모션 코드를 입력해주세요.");
+        return res.send(errResponse(baseResponse.COUPON_CODE_EMPTY))
     }
 
     const promotionCertificationparams = [email, promotionCode];
     const promotionCertificationResult = await dashboardService.promotionCertification(promotionCertificationparams);
-    
-    return res.send(response(baseResponse.SUCCESS, promotionCertificationResult));
+    // console.log(promotionCertificationResult);
+
+    // 검증 성공시 추가
+    if(promotionCertificationResult.isSuccess){ 
+        // console.log(promotionCertificationResult);
+        const flowerDataIdx = promotionCertificationResult.result.rewards;  // + 3 하면 fdIdx 값 됨.
+        const userIdxList = await userProvider.accountCheck(email);
+        if(!userIdxList){   // 유저 인덱스 없으면 오류나서 여기서 검증.
+            return res.send(errResponse(baseResponse.USER_NOT_EXIST));
+        }
+        const promotionResult = await flowerpotService.addUFLList(userIdxList[0].idx, flowerDataIdx);
+        // console.log(promotionResult);
+    }
+    return res.send(promotionCertificationResult);
 }
