@@ -101,7 +101,7 @@ exports.deleteUsers = async function (req, res) {
     }
 
     const userIdxResult = await userService.deleteUserInfo(userIdx);
-    return res.send(response(baseResponse.SUCCESS, userIdxResult));
+    return res.send(userIdxResult);
 }
 
 /**
